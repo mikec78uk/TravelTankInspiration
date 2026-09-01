@@ -38,9 +38,16 @@ prompt box is active and still empty, and clear away as soon as the customer sta
 turned into a plain-English prompt, dropped into the textbox when the modal closes — by any
 route, including the X and the Esc key — and remains fully editable before sending.
 
-**3 — Conversation.** One text box. The assistant parses the opening message, works out which
-of interests / who / when / budget / distance / visa it already knows, and asks only what's
-missing, up to three questions. Every step offers *Skip this — just show me somewhere*.
+**3 — Conversation.** One text box, then a structured elicitation card. The assistant parses
+the opening message, shows a collapsible line explaining what it picked up and what is still
+missing, then asks only the gaps — up to three questions, batched into a single card the
+customer pages through (`‹ 2 of 3 ›`).
+
+Each question is a numbered list. It is fully keyboard-driven: `1`–`9` select, `↑` `↓`
+navigate, `↵` chooses, `esc` skips. Every question also carries a *Something else* field for a
+free-text answer, which is parsed the same way the opening message is, and the `×` stops the
+questioning outright and goes with whatever it has. Interests are multi-select — options
+toggle, and `esc` means done rather than discard once anything is picked.
 
 ## The results page
 

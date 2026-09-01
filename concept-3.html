@@ -6,15 +6,15 @@
 <title>Concept 3 — Conversation · TravelTank Inspiration</title>
 <link rel="stylesheet" href="assets/tt.css">
 <style>
-  .conv{max-width:760px;margin:0 auto;}
-  .thread{margin:26px 0 0;display:flex;flex-direction:column;gap:22px;}
+  .conv{max-width:780px;margin:0 auto;}
+  .thread{margin:26px 0 0;display:flex;flex-direction:column;gap:20px;}
   .msg{display:flex;gap:14px;align-items:flex-start;}
   .av{
     flex:0 0 auto;width:30px;height:30px;border:1px solid var(--line);
     display:flex;align-items:center;justify-content:center;font-size:.62rem;
     letter-spacing:.05em;font-weight:700;color:var(--ink-2);background:#fff;
   }
-  .bot .body{font-size:1rem;line-height:1.6;padding-top:3px;max-width:60ch;}
+  .bot .body{font-size:1rem;line-height:1.6;padding-top:3px;max-width:62ch;flex:1;}
   .bot .body p{margin:0 0 10px;}
   .bot .body p:last-child{margin-bottom:0;}
   .me{justify-content:flex-end;}
@@ -22,12 +22,6 @@
     background:var(--panel);border:1px solid var(--line-2);padding:12px 16px;
     font-size:.97rem;max-width:52ch;
   }
-  .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
-  .skip{
-    background:none;border:0;padding:0;margin-top:12px;font-size:.83rem;
-    color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:3px;
-  }
-  .skip:hover{color:var(--ink);}
   .dots span{
     display:inline-block;width:5px;height:5px;background:var(--ink-3);border-radius:50%;
     margin-right:4px;animation:bl 1.1s infinite;
@@ -35,6 +29,106 @@
   .dots span:nth-child(2){animation-delay:.18s;}
   .dots span:nth-child(3){animation-delay:.36s;}
   @keyframes bl{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
+
+  /* ---- collapsible reasoning line ---- */
+  .reason{
+    display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+    background:none;border:0;padding:2px 0;cursor:pointer;
+    font-size:.88rem;color:var(--ink-3);
+  }
+  .reason:hover{color:var(--ink-2);}
+  .reason .caret{transition:transform .15s;display:inline-block;}
+  .reason[aria-expanded="true"] .caret{transform:rotate(90deg);}
+  .reason-body{
+    border-left:1px solid var(--line);margin:10px 0 0 2px;padding:2px 0 2px 16px;
+    font-size:.88rem;color:var(--ink-3);
+  }
+  .reason-body dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;}
+  .reason-body dt{font-weight:600;color:var(--ink-2);white-space:nowrap;}
+  .reason-body dd{margin:0;}
+
+  /* ---- elicitation card ---- */
+  .elicit{border:1px solid var(--line);border-radius:4px;background:#fff;margin-top:4px;}
+  .elicit-hd{
+    display:flex;align-items:center;gap:14px;padding:18px 20px 14px;
+  }
+  .elicit-q{font-size:1.05rem;font-weight:500;flex:1;line-height:1.35;}
+  .elicit-nav{display:flex;align-items:center;gap:4px;flex:0 0 auto;}
+  .pg{
+    background:none;border:0;cursor:pointer;color:var(--ink-3);
+    width:24px;height:24px;border-radius:3px;font-size:.95rem;line-height:1;
+  }
+  .pg:hover:not([disabled]){background:var(--panel);color:var(--ink);}
+  .pg[disabled]{opacity:.3;cursor:default;}
+  .pg-count{font-size:.82rem;color:var(--ink-3);padding:0 2px;white-space:nowrap;}
+  .pg-x{margin-left:6px;font-size:1.05rem;}
+
+  .elicit-opts{list-style:none;margin:0;padding:0;}
+  .opt{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    background:none;border:0;border-top:1px solid var(--line-2);
+    padding:13px 20px;cursor:pointer;font-size:.95rem;color:var(--ink-2);
+  }
+  .opt .num{
+    flex:0 0 auto;width:26px;height:26px;border:1px solid var(--line);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.78rem;color:var(--ink-3);background:#fff;
+  }
+  .opt.cursor{background:var(--panel-2);color:var(--ink);}
+  .opt.cursor .num{border-color:var(--ink);background:var(--ink);color:#fff;}
+  .opt.picked .lbl{font-weight:600;color:var(--ink);}
+  .opt .tick{margin-left:auto;color:var(--ink);font-weight:600;visibility:hidden;}
+  .opt.picked .tick{visibility:visible;}
+
+  .elicit-ft{
+    display:flex;align-items:center;gap:12px;padding:10px 14px 10px 16px;
+    border-top:1px solid var(--line-2);background:var(--panel-2);
+    border-radius:0 0 3px 3px;
+  }
+  .pencil{
+    flex:0 0 auto;width:26px;height:26px;border:1px solid var(--line);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:.72rem;
+    color:var(--ink-3);background:#fff;
+  }
+  .elicit-other{
+    flex:1;border:0;outline:none;background:transparent;font:inherit;
+    font-size:.93rem;color:var(--ink);min-width:0;
+  }
+  .elicit-other::placeholder{color:var(--ink-3);}
+  .elicit-keys{
+    padding:9px 20px 12px;font-size:.75rem;color:var(--ink-3);
+    display:flex;gap:16px;flex-wrap:wrap;
+  }
+  .elicit-keys kbd{
+    border:1px solid var(--line);border-radius:2px;padding:0 4px;
+    font:inherit;font-size:.7rem;color:var(--ink-2);background:#fff;margin-right:4px;
+  }
+  .elicit.done{opacity:.5;pointer-events:none;}
+
+  @media(max-width:620px){
+    .elicit-hd{flex-wrap:wrap;gap:6px;}
+    .elicit-q{flex:1 0 100%;}
+    .elicit-nav{flex:1 0 100%;justify-content:flex-end;}
+    .elicit-keys{display:none;}          /* no hardware keyboard to hint at */
+    .conv .msg{gap:10px;}
+    .av{width:26px;height:26px;font-size:.56rem;}
+  }
+
+  .recap{
+    border:1px solid var(--line);padding:16px 20px;font-size:.9rem;
+  }
+  .recap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:7px 16px;}
+  .recap dt{color:var(--ink-3);}
+  .recap dd{margin:0;color:var(--ink);}
+
+  .brief-out{border:1px solid var(--line);padding:20px 22px;}
+  .brief-out .chip-set{margin:10px 0 18px;}
+  .starter{display:grid;gap:8px;margin-top:16px;}
+  .starter button{
+    text-align:left;border:1px solid var(--line);background:#fff;padding:13px 16px;
+    font-size:.92rem;color:var(--ink-2);cursor:pointer;border-radius:2px;
+  }
+  .starter button:hover{border-color:var(--ink-3);color:var(--ink);background:var(--panel-2);}
 
   .composer{
     position:sticky;bottom:0;background:#fff;padding:18px 0 26px;margin-top:34px;
@@ -53,16 +147,6 @@
     color:#fff;border-radius:2px;cursor:pointer;font-size:1rem;
   }
   .send:hover{background:#1263bb;}
-  .send[disabled]{background:var(--line);color:var(--ink-3);cursor:not-allowed;}
-
-  .brief-out{border:1px solid var(--line);padding:20px 22px;margin-top:16px;}
-  .brief-out .chip-set{margin:10px 0 18px;}
-  .starter{display:grid;gap:8px;margin-top:16px;}
-  .starter button{
-    text-align:left;border:1px solid var(--line);background:#fff;padding:13px 16px;
-    font-size:.92rem;color:var(--ink-2);cursor:pointer;border-radius:2px;
-  }
-  .starter button:hover{border-color:var(--ink-3);color:var(--ink);background:var(--panel-2);}
 </style>
 </head>
 <body>
@@ -77,14 +161,15 @@
     <div class="composer-in">
       <textarea id="input" rows="1" autocomplete="off" placeholder="Tell us about the trip…"></textarea>
       <div class="row">
-        <span class="hint" id="hintLine">Press Enter to send</span>
+        <span class="hint">Press Enter to send</span>
         <button class="send" id="send" aria-label="Send">&rarr;</button>
       </div>
     </div>
   </div>
 
   <p class="hint" style="margin-bottom:40px;">
-    Concept 3 — an open prompt that asks up to three follow-ups before recommending, adapting to whatever the opening message already covered.
+    Concept 3 — an open prompt, then a single card the customer pages through. It only asks what the
+    opening message left out, and every question can be answered in free text or skipped outright.
   </p>
 </main>
 
@@ -93,20 +178,18 @@
 <script>
 TT.mount('concept-3.html');
 
-let brief = TT.fresh();   // the conversation always opens empty
-let asked = [];
-let stage = 'open';          // open → asking → done
+let brief = TT.fresh();          // the conversation always opens empty
+let stage = 'open';              // open → asking → done
 const MAX_QUESTIONS = 3;
 
 const thread = document.getElementById('thread');
 const input  = document.getElementById('input');
-const sendBtn= document.getElementById('send');
 
-/* ---------- rendering ---------- */
+/* ---------------- thread rendering ---------------- */
 function bubble(who, html){
   const d = document.createElement('div');
-  d.className = 'msg ' + (who==='bot' ? 'bot' : 'me');
-  d.innerHTML = who==='bot'
+  d.className = 'msg ' + (who === 'bot' ? 'bot' : 'me');
+  d.innerHTML = who === 'bot'
     ? '<div class="av">TT</div><div class="body">' + html + '</div>'
     : '<div class="body">' + html + '</div>';
   thread.appendChild(d);
@@ -123,174 +206,281 @@ function thinking(){
   return d;
 }
 
-function say(html, delay){
-  const t = thinking();
-  setTimeout(()=>{ t.remove(); bubble('bot', html); }, delay||700);
-}
+function after(ms, fn){ const t = thinking(); setTimeout(()=>{ t.remove(); fn(); }, ms); }
 
-/* ---------- the question bank ---------- */
+/* ---------------- the question bank ---------------- */
 const QUESTIONS = {
   vibes:{
-    slot:'vibes',
-    ask:"What matters most on this one? Pick as many as apply.",
-    chips:()=>VIBES.map(v=>({label:v.label, apply:()=>TT.addVibe(brief, v.id)})),
-    multi:true
+    q:'What matters most on this trip?',
+    multi:true,
+    options:()=>VIBES.map(v=>({label:v.label, apply:()=>TT.addVibe(brief, v.id)}))
   },
   who:{
-    slot:'who',
-    ask:"Who's travelling?",
-    chips:()=>WHO.map(w=>({label:w.label, apply:()=>brief.who=w.id}))
+    q:"Who's travelling?",
+    options:()=>WHO.map(w=>({label:w.label, apply:()=>brief.who = w.id}))
   },
   month:{
-    slot:'month',
-    ask:"Roughly when are you thinking? A month is enough — we can work with flexible too.",
-    chips:()=>[{label:"I'm flexible", apply:()=>brief.month=null}]
-      .concat(MONTHS.map((m,i)=>({label:m, apply:()=>brief.month=i+1})))
+    q:'Roughly when are you thinking?',
+    options:()=>[{label:"I'm flexible", apply:()=>brief.month = null}]
+      .concat(MONTHS.map((m,i)=>({label:MONTHS_FULL[i], apply:()=>brief.month = i+1})))
   },
   budget:{
-    slot:'budget',
-    ask:"And roughly what are we spending? This only steers the shortlist — we'll price it properly after.",
-    chips:()=>BUDGETS.map(b=>({label:b.label, apply:()=>brief.budget=b.id}))
+    q:'Roughly what are we spending?',
+    note:'This only steers the shortlist — we price it properly after.',
+    options:()=>BUDGETS.map(b=>({label:b.label, apply:()=>brief.budget = b.id}))
   },
   maxHours:{
-    slot:'maxHours',
-    ask:"How far are you willing to fly from Lagos?",
-    chips:()=>FLIGHTS.map(f=>({label:f.label, apply:()=>brief.maxHours=f.id}))
+    q:'How far are you willing to fly from Lagos?',
+    options:()=>FLIGHTS.map(f=>({label:f.label, apply:()=>brief.maxHours = f.id}))
   },
   visa:{
-    slot:'visa',
-    ask:"And the passport question — do you want to stay visa-free, or are you happy to apply for one if the place is worth it?",
-    chips:()=>VISA_CHOICES.map(v=>({label:v.label, apply:()=>brief.visa=v.id}))
+    q:'Visa-free, or happy to apply for one?',
+    note:'On a Nigerian passport.',
+    options:()=>VISA_CHOICES.map(v=>({label:v.label, apply:()=>brief.visa = v.id}))
   }
 };
 const ORDER = ['vibes','who','month','budget','maxHours','visa'];
+const SLOT_NAME = {vibes:'What you want', who:'Who is going', month:'When',
+                   budget:'Budget', maxHours:'Flight length', visa:'Visa'};
 
 function missing(){
-  return ORDER.filter(k=>{
-    if(asked.includes(k)) return false;
-    if(k==='vibes') return brief.vibes.length===0;
-    return brief[k] === null || brief[k] === undefined;
+  return ORDER.filter(k => k === 'vibes' ? brief.vibes.length === 0
+                                         : brief[k] === null || brief[k] === undefined);
+}
+
+/* ---------------- the elicitation card ---------------- */
+let queue = [], idx = 0, cursor = 0, answers = {}, cardEl = null;
+
+function openCard(){
+  queue = missing().slice(0, MAX_QUESTIONS);
+  if(!queue.length){ finish(); return; }
+  idx = 0; cursor = 0; answers = {};
+  stage = 'asking';
+
+  const node = bubble('bot', '');
+  cardEl = document.createElement('div');
+  cardEl.className = 'elicit';
+  node.querySelector('.body').appendChild(cardEl);
+  drawCard();
+}
+
+function drawCard(){
+  const key = queue[idx], Q = QUESTIONS[key];
+  const opts = Q.options();
+  const picked = answers[key] && answers[key].labels ? answers[key].labels : [];
+
+  cardEl.innerHTML =
+    '<div class="elicit-hd">' +
+      '<div class="elicit-q">' + TT.esc(Q.q) +
+        (Q.note ? '<div class="hint" style="margin-top:4px;font-weight:400;">' + TT.esc(Q.note) + '</div>' : '') +
+      '</div>' +
+      '<div class="elicit-nav">' +
+        '<button class="pg" data-pg="-1" aria-label="Previous question"' + (idx===0?' disabled':'') + '>&lsaquo;</button>' +
+        '<span class="pg-count">' + (idx+1) + ' of ' + queue.length + '</span>' +
+        '<button class="pg" data-pg="1" aria-label="Next question"' + (idx===queue.length-1?' disabled':'') + '>&rsaquo;</button>' +
+        '<button class="pg pg-x" data-close="1" aria-label="Stop asking and show me somewhere">&times;</button>' +
+      '</div>' +
+    '</div>' +
+    '<ul class="elicit-opts">' +
+      opts.map((o,i)=>
+        '<li><button type="button" class="opt' +
+            (i===cursor?' cursor':'') + (picked.includes(o.label)?' picked':'') +
+            '" data-i="' + i + '">' +
+          '<span class="num">' + (i<9 ? (i+1) : '·') + '</span>' +
+          '<span class="lbl">' + TT.esc(o.label) + '</span>' +
+          '<span class="tick">&#10003;</span>' +
+        '</button></li>').join('') +
+    '</ul>' +
+    '<div class="elicit-ft">' +
+      '<span class="pencil">&#9998;</span>' +
+      '<input class="elicit-other" id="otherInput" autocomplete="off" placeholder="Something else — say it in your own words">' +
+      '<button type="button" class="btn btn-sm" data-act="' + (Q.multi && picked.length ? 'done' : 'skip') + '">' +
+        (Q.multi && picked.length ? 'Done' : 'Skip') + '</button>' +
+    '</div>' +
+    '<div class="elicit-keys">' +
+      '<span><kbd>1</kbd>&ndash;<kbd>' + Math.min(opts.length,9) + '</kbd>' + (Q.multi ? 'toggle' : 'select') + '</span>' +
+      '<span><kbd>&uarr;</kbd><kbd>&darr;</kbd>navigate</span>' +
+      '<span><kbd>&crarr;</kbd>' + (Q.multi ? 'toggle' : 'choose') + '</span>' +
+      '<span><kbd>esc</kbd>' + (Q.multi && picked.length ? 'done' : 'skip') + '</span>' +
+    '</div>';
+
+  cardEl.querySelectorAll('[data-i]').forEach(b=>{
+    b.addEventListener('mouseenter', ()=>{ cursor = +b.dataset.i; paintCursor(); });
+    b.addEventListener('click', ()=>choose(+b.dataset.i));
   });
-}
+  cardEl.querySelectorAll('[data-pg]').forEach(b=>{
+    b.addEventListener('click', ()=>page(+b.dataset.pg));
+  });
+  cardEl.querySelector('[data-close]').addEventListener('click', ()=>closeCard(true));
+  cardEl.querySelector('[data-act]').addEventListener('click', e=>{
+    if(e.currentTarget.dataset.act === 'done') advance(); else skip();
+  });
 
-/* ---------- flow ---------- */
-function nextStep(){
-  const gaps = missing();
-  if(asked.length >= MAX_QUESTIONS || gaps.length === 0){ finish(); return; }
-
-  const key = gaps[0];
-  asked.push(key);
-  const q = QUESTIONS[key];
-
-  const t = thinking();
-  setTimeout(()=>{
-    t.remove();
-    const node = bubble('bot', TT.esc(q.ask));
-    const body = node.querySelector('.body');
-
-    const wrap = document.createElement('div');
-    wrap.className = 'quick';
-    let chosen = [];
-
-    q.chips().forEach(c=>{
-      const b = document.createElement('button');
-      b.type='button'; b.className='chip'; b.textContent = c.label;
-      b.addEventListener('click', ()=>{
-        if(q.multi){
-          if(chosen.includes(c.label)){
-            chosen = chosen.filter(x=>x!==c.label);
-            b.classList.remove('on');
-          } else {
-            chosen.push(c.label); c.apply(); b.classList.add('on');
-          }
-          done.disabled = chosen.length===0;
-        } else {
-          c.apply();
-          wrap.remove(); skip.remove(); if(done) done.remove();
-          bubble('me', TT.esc(c.label));
-          nextStep();
-        }
-      });
-      wrap.appendChild(b);
-    });
-
-    let done = null;
-    if(q.multi){
-      done = document.createElement('button');
-      done.type='button'; done.className='btn btn-sm btn-primary';
-      done.textContent = 'That’s it';
-      done.style.marginTop = '14px';
-      done.disabled = true;
-      done.addEventListener('click', ()=>{
-        wrap.remove(); skip.remove(); done.remove();
-        bubble('me', TT.esc(chosen.join(', ')));
-        nextStep();
-      });
+  const other = cardEl.querySelector('#otherInput');
+  other.addEventListener('keydown', e=>{
+    e.stopPropagation();
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      const t = other.value.trim();
+      if(!t) return;
+      const notes = TT.parse(t, brief);
+      record(queue[idx], [t], notes.length ? null : 'free');
+      advance();
     }
+  });
 
-    const skip = document.createElement('button');
-    skip.type='button'; skip.className='skip';
-    skip.textContent = 'Skip this — just show me somewhere';
-    skip.addEventListener('click', ()=>{
-      wrap.remove(); skip.remove(); if(done) done.remove();
-      bubble('me', 'Just show me somewhere');
-      finish();
-    });
-
-    body.appendChild(wrap);
-    if(done) body.appendChild(done);
-    body.appendChild(skip);
-    body.appendChild(document.createElement('div'));
-    node.scrollIntoView({behavior:'smooth', block:'end'});
-  }, 800);
+  cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
-function finish(){
+function paintCursor(){
+  cardEl.querySelectorAll('.opt').forEach((b,i)=>b.classList.toggle('cursor', i===cursor));
+}
+
+function record(key, labels, flag){
+  answers[key] = {labels:labels, flag:flag};
+}
+
+function choose(i){
+  const key = queue[idx], Q = QUESTIONS[key];
+  const o = Q.options()[i];
+  o.apply();
+
+  if(Q.multi){
+    const cur = (answers[key] && answers[key].labels) || [];
+    record(key, cur.includes(o.label) ? cur.filter(x=>x!==o.label) : cur.concat(o.label));
+    if(answers[key].labels.length === 0) delete answers[key];
+    cursor = i;
+    drawCard();                       // stay put so they can pick more
+  } else {
+    record(key, [o.label]);
+    advance();
+  }
+}
+
+function skip(){
+  const key = queue[idx];
+  /* On a multi-select they may already have picked something — treat this as
+     "done with this one" rather than wiping what they chose. */
+  if(!(answers[key] && answers[key].labels.length)) record(key, [], 'skipped');
+  advance();
+}
+
+function page(d){
+  const n = idx + d;
+  if(n < 0 || n >= queue.length) return;
+  idx = n; cursor = 0; drawCard();
+}
+
+function advance(){
+  if(idx < queue.length - 1){ idx++; cursor = 0; drawCard(); }
+  else closeCard(false);
+}
+
+function closeCard(early){
+  cardEl.classList.add('done');
+  const answered = queue.filter(k=>answers[k] && answers[k].labels.length);
+  cardEl.parentElement.innerHTML =
+    '<div class="recap"><span class="lab">' +
+      (answered.length ? 'You told us' : 'Nothing answered') + '</span>' +
+      (answered.length
+        ? '<dl style="margin-top:10px;">' + answered.map(k=>
+            '<dt>' + SLOT_NAME[k] + '</dt><dd>' + TT.esc(answers[k].labels.join(', ')) + '</dd>').join('') + '</dl>'
+        : '<div class="hint" style="margin-top:6px;">That is fine — we will start broad and narrow it from the results.</div>') +
+    '</div>';
+  cardEl = null;
+  finish(early);
+}
+
+/* ---------------- finish ---------------- */
+function finish(early){
   stage = 'done';
   input.placeholder = 'Change anything before we go…';
 
-  const t = thinking();
-  setTimeout(()=>{
-    t.remove();
+  after(700, ()=>{
     const chips = TT.chips(brief);
-    const line = chips.length
-      ? "That's enough to work with. Here's what I've got:"
-      : "You've told me almost nothing — which is fine. I'll start you somewhere broad and we can narrow it from the results.";
+    const line = early
+      ? "Stopping there. I'll go with what I have."
+      : (chips.length ? "That's enough to work with." : "You've told me almost nothing — which is fine.");
 
     const node = bubble('bot', TT.esc(line));
-    const body = node.querySelector('.body');
-
     const box = document.createElement('div');
     box.className = 'brief-out';
+    box.style.marginTop = '12px';
     box.innerHTML =
       '<span class="lab">Your brief</span>' +
       '<div class="chip-set">' +
         (chips.length
-          ? chips.map(c=>'<span class="chip chip-sm on">'+TT.esc(c.label)+'</span>').join('')
+          ? chips.map(c=>'<span class="chip chip-sm on">' + TT.esc(c.label) + '</span>').join('')
           : '<span class="chip chip-sm">Open to anything</span>') +
       '</div>' +
       '<div class="btn-row">' +
         '<button class="btn btn-primary" id="goBtn">Show me where to go</button>' +
-        '<button class="btn" id="moreBtn">Ask me something else</button>' +
+        (missing().length ? '<button class="btn" id="moreBtn">Ask me something else</button>' : '') +
       '</div>';
-    body.appendChild(box);
+    node.querySelector('.body').appendChild(box);
 
     box.querySelector('#goBtn').addEventListener('click', ()=>{
       brief.source = 'concept-3';
       TT.save(brief);
       location.href = 'results.html';
     });
-    box.querySelector('#moreBtn').addEventListener('click', ()=>{
-      box.remove();
-      if(missing().length){ asked = asked.slice(0, MAX_QUESTIONS-1); nextStep(); }
-      else { say("I've got everything I usually ask for. Type anything else you want me to factor in, or just say go."); }
-    });
+    const more = box.querySelector('#moreBtn');
+    if(more) more.addEventListener('click', ()=>{ box.remove(); openCard(); });
 
     node.scrollIntoView({behavior:'smooth', block:'end'});
-  }, 900);
+  });
 }
 
-/* ---------- input ---------- */
+/* ---------------- reasoning disclosure ---------------- */
+function reasoning(found){
+  const gaps = missing().slice(0, MAX_QUESTIONS);
+  const node = bubble('bot', '');
+  const body = node.querySelector('.body');
+
+  const btn = document.createElement('button');
+  btn.className = 'reason';
+  btn.type = 'button';
+  btn.setAttribute('aria-expanded','false');
+  btn.innerHTML = '<span>Read your message and worked out what to ask</span><span class="caret">&rsaquo;</span>';
+
+  const panel = document.createElement('div');
+  panel.className = 'reason-body';
+  panel.hidden = true;
+  panel.innerHTML = '<dl>' +
+    '<dt>Picked up</dt><dd>' + (found.length ? TT.esc(found.join(', ')) : 'nothing specific yet') + '</dd>' +
+    '<dt>Still missing</dt><dd>' + (gaps.length ? gaps.map(k=>SLOT_NAME[k].toLowerCase()).join(', ') : 'nothing — I have enough') + '</dd>' +
+    '<dt>So I will ask</dt><dd>' + (gaps.length ? gaps.length + (gaps.length===1?' question':' questions') : 'nothing further') + '</dd>' +
+    '</dl>';
+
+  btn.addEventListener('click', ()=>{
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    panel.hidden = open;
+  });
+
+  body.appendChild(btn);
+  body.appendChild(panel);
+  return node;
+}
+
+/* ---------------- keyboard ---------------- */
+document.addEventListener('keydown', e=>{
+  if(!cardEl) return;
+  const tag = (e.target.tagName || '').toLowerCase();
+  if(tag === 'input' || tag === 'textarea') return;
+
+  const n = cardEl.querySelectorAll('.opt').length;
+  if(e.key === 'ArrowDown'){ e.preventDefault(); cursor = (cursor+1) % n; paintCursor(); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); cursor = (cursor-1+n) % n; paintCursor(); }
+  else if(e.key === 'Enter'){ e.preventDefault(); choose(cursor); }
+  else if(e.key === 'Escape'){ e.preventDefault(); skip(); }
+  else if(/^[1-9]$/.test(e.key)){
+    const i = +e.key - 1;
+    if(i < n){ e.preventDefault(); cursor = i; choose(i); }
+  }
+});
+
+/* ---------------- composer ---------------- */
 function grow(){ input.style.height='auto'; input.style.height = input.scrollHeight + 'px'; }
 input.addEventListener('input', grow);
 
@@ -303,37 +493,28 @@ function submit(){
   const notes = TT.parse(text, brief);
   brief.freeText = (brief.freeText ? brief.freeText + ' ' : '') + text;
 
-  if(stage === 'done'){
-    say(notes.length
-      ? 'Updated — ' + TT.esc(notes.join(', ')) + '. Still happy to go?'
-      : "Noted. I'll factor that in.");
-    setTimeout(finish, 1400);
-    return;
-  }
-
   if(stage === 'open'){
-    stage = 'asking';
-    const ack = notes.length
-      ? "Got it — " + TT.esc(notes.slice(0,3).join(', ')) + ". A couple of things and I can narrow this right down."
-      : "Right. Let me ask you a couple of things and I can narrow this right down.";
-    const t = thinking();
-    setTimeout(()=>{ t.remove(); bubble('bot', ack); nextStep(); }, 850);
-  } else {
-    nextStep();
+    after(850, ()=>{ reasoning(notes); setTimeout(openCard, 500); });
+  } else if(stage === 'done'){
+    after(700, ()=>{
+      bubble('bot', notes.length
+        ? 'Updated — ' + TT.esc(notes.join(', ')) + '.'
+        : "Noted. I'll factor that in.");
+      finish();
+    });
   }
 }
 
-sendBtn.addEventListener('click', submit);
+document.getElementById('send').addEventListener('click', submit);
 input.addEventListener('keydown', e=>{
-  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
 });
 
-/* ---------- opening ---------- */
+/* ---------------- opening ---------------- */
 (function start(){
   const node = bubble('bot',
     "<p>Hello. I'm going to find you somewhere to go.</p>" +
     "<p>Tell me whatever you've got — a mood, a month, a budget, who's coming. If you've no idea at all, say that and I'll ask.</p>");
-  const body = node.querySelector('.body');
   const st = document.createElement('div');
   st.className = 'starter';
   [
@@ -341,12 +522,12 @@ input.addEventListener('keydown', e=>{
     "I need a week off. Two of us, nothing to plan, good food.",
     "No idea. Surprise me."
   ].forEach(s=>{
-    const b=document.createElement('button');
-    b.type='button'; b.textContent = s;
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = s;
     b.addEventListener('click', ()=>{ input.value = s; grow(); submit(); });
     st.appendChild(b);
   });
-  body.appendChild(st);
+  node.querySelector('.body').appendChild(st);
 })();
 </script>
 </body>
