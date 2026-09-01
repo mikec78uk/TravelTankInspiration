@@ -218,7 +218,7 @@ document.querySelectorAll('.mode-tab').forEach(t=>{
     const ai = t.dataset.mode === 'ai';
     document.getElementById('panelAi').hidden = !ai;
     document.getElementById('panelClassic').hidden = ai;
-    if(ai) ta.focus(); else updateSuggests();
+    updateSuggests();   // no auto-focus: the suggestions wait until the customer clicks in
   });
 });
 
