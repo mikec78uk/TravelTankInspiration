@@ -61,6 +61,10 @@ Three destinations the customer toggles between:
   cap doesn't penalise the upgrade being offered
 - **Off the beaten track** — the brief still applies, but obscurity is weighted heavily
 
+The three sit in a tab strip detached from the card below, with a pointer tying the selected
+one to it. Each destination leads with its name and country, then an image mosaic — one lead
+tile with two stacked beside it — rather than a single banner with the name overlaid.
+
 For each destination: an editorial description, a *Why here* rationale generated from the
 brief, a Shark Tip, three return flight options from Lagos, and six hotels split into lower,
 middle and higher budget tiers. Selecting a different flight or hotel tier reprices the
