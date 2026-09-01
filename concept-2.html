@@ -99,14 +99,14 @@
   <p class="lede">Compare fares from Lagos to everywhere — or describe the trip you want and let us find the destination for you.</p>
 
   <div class="mode-tabs" role="tablist">
-    <button class="mode-tab" data-mode="flights">Flights</button>
+    <button class="mode-tab active" data-mode="flights">Flights</button>
     <button class="mode-tab" data-mode="hotels">Hotels</button>
     <button class="mode-tab" data-mode="holidays">Holidays</button>
-    <button class="mode-tab active" data-mode="ai">Inspire me <span class="tab-badge">New</span></button>
+    <button class="mode-tab" data-mode="ai">Inspire me <span class="tab-badge">New</span></button>
   </div>
 
   <div class="search-card">
-    <div id="panelClassic" hidden>
+    <div id="panelClassic">
       <div class="classic-form">
         <div class="field"><label>Leaving from</label><div class="val">Lagos (LOS)</div></div>
         <div class="field"><label>Going to</label><div class="val">City, airport or place</div></div>
@@ -114,10 +114,10 @@
         <div class="field"><label>Passengers &amp; class</label><div class="val">1 Adult · Economy</div></div>
         <button class="search-btn" type="button">Search</button>
       </div>
-      <p class="hint" style="margin-top:16px;">Standard search — out of scope for this concept. Switch back to <b>Inspire me</b>.</p>
+      <p class="hint" style="margin-top:16px;">Standard search, shown for context only — this is where the customer lands. Select <b>Inspire me</b> above for the concept.</p>
     </div>
 
-    <div id="panelAi">
+    <div id="panelAi" hidden>
       <form class="ai-pill" id="aiPill">
         <textarea id="aiPrompt" rows="1" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
         <div class="ai-toolbar">
@@ -128,7 +128,7 @@
         </div>
       </form>
 
-      <div class="suggests">
+      <div class="suggests" id="suggests" hidden>
         <span class="lab">You might ask</span>
         <button class="sug" type="button" data-fill="A quiet beach week for two in November, no kids, no fixed itinerary — just sun, good food and slow mornings.">
           <span class="ico">&#8250;</span>A quiet beach week for two in November — sun, good food, slow mornings</button>
@@ -191,6 +191,26 @@ ta.addEventListener('input', grow);
 ta.value = brief.freeText || '';
 grow();
 
+/* suggestions: only while the prompt box is active and still empty */
+const suggests = document.getElementById('suggests');
+let promptActive = false, focusToken = 0;
+
+function updateSuggests(){
+  suggests.hidden = !(promptActive && ta.value.trim() === '');
+}
+ta.addEventListener('focus', ()=>{ focusToken++; promptActive = true; updateSuggests(); });
+ta.addEventListener('input', updateSuggests);
+ta.addEventListener('blur', ()=>{
+  /* Deactivate on a delay so a suggestion click lands first — and ignore this
+     blur entirely if the box has been refocused in the meantime. */
+  const token = focusToken;
+  setTimeout(()=>{
+    if(token !== focusToken) return;
+    promptActive = false;
+    updateSuggests();
+  }, 140);
+});
+
 /* mode tabs */
 document.querySelectorAll('.mode-tab').forEach(t=>{
   t.addEventListener('click', ()=>{
@@ -199,12 +219,17 @@ document.querySelectorAll('.mode-tab').forEach(t=>{
     const ai = t.dataset.mode === 'ai';
     document.getElementById('panelAi').hidden = !ai;
     document.getElementById('panelClassic').hidden = ai;
+    if(ai) ta.focus(); else updateSuggests();
   });
 });
 
 /* suggestions */
 document.querySelectorAll('.sug').forEach(s=>{
-  s.addEventListener('click', ()=>{ ta.value = s.dataset.fill; grow(); ta.focus(); });
+  s.addEventListener('click', ()=>{
+    ta.value = s.dataset.fill; grow(); ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    updateSuggests();
+  });
 });
 
 /* submit */
@@ -272,6 +297,7 @@ function closeModal(){
   document.body.style.overflow='';
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
+  updateSuggests();
 }
 
 document.getElementById('helpBtn').addEventListener('click', openModal);

@@ -31,7 +31,9 @@ single on/off toggle, so the customer can say a visa is no obstacle instead of o
 to rule one out. Both options change the shortlist: visa-free excludes e-visa destinations as
 well as embassy ones, and visa-required actively surfaces the places that need one.
 
-**2 — Prompt with help on demand.** An open prompt with worked example suggestions.
+**2 — Prompt with help on demand.** Lands on the standard Flights search, as the real homepage
+does; *Inspire me* is the fourth tab. The worked-example suggestions appear only while the
+prompt box is active and still empty, and clear away as soon as the customer starts typing.
 *Need help?* opens a modal containing the Concept 1 questions. Whatever the customer picks is
 turned into a plain-English prompt, dropped into the textbox when the modal closes — by any
 route, including the X and the Esc key — and remains fully editable before sending.
