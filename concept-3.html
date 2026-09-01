@@ -154,11 +154,16 @@ const QUESTIONS = {
   },
   maxHours:{
     slot:'maxHours',
-    ask:"Last one — how far are you willing to fly from Lagos?",
+    ask:"How far are you willing to fly from Lagos?",
     chips:()=>FLIGHTS.map(f=>({label:f.label, apply:()=>brief.maxHours=f.id}))
+  },
+  visa:{
+    slot:'visa',
+    ask:"And the passport question — do you want to stay visa-free, or are you happy to apply for one if the place is worth it?",
+    chips:()=>VISA_CHOICES.map(v=>({label:v.label, apply:()=>brief.visa=v.id}))
   }
 };
-const ORDER = ['vibes','who','month','budget','maxHours'];
+const ORDER = ['vibes','who','month','budget','maxHours','visa'];
 
 function missing(){
   return ORDER.filter(k=>{

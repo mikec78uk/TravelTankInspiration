@@ -11,11 +11,19 @@ const TT = (function(){
   function blank(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
-      maxHours:null, visaOnly:false, heat:null, quieter:false, freeText:'', source:'', thread:[], lane:'best'
+      maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[], lane:'best'
     };
   }
   function load(){
-    try{ const r = sessionStorage.getItem(KEY); if(r) return Object.assign(blank(), JSON.parse(r)); }
+    try{
+      const r = sessionStorage.getItem(KEY);
+      if(r){
+        const b = Object.assign(blank(), JSON.parse(r));
+        if(b.visaOnly && !b.visa) b.visa = 'free';   // migrate the old single toggle
+        delete b.visaOnly;
+        return b;
+      }
+    }
     catch(e){}
     return blank();
   }
@@ -90,10 +98,14 @@ const TT = (function(){
       if(d.offbeat) why.push('Nowhere near as busy as the obvious choice');
     }
 
-    if(b.visaOnly){
+    if(b.visa==='free'){
       if(d.visa==='required') s -= 45;
       else if(d.visa==='free'){ s += 8; why.push('No visa at all on a Nigerian passport'); }
-      else s += 3;
+      else if(d.visa==='on-arrival'){ s += 5; why.push('Visa on arrival — nothing to arrange before you fly'); }
+      else s -= 28;   // an e-visa is still a visa
+    } else if(b.visa==='required'){
+      if(d.visa==='required'){ s += 12; why.push('Needs a visa, which you said you were happy to sort — and it earns it'); }
+      else if(d.visa==='easy'){ s += 4; }
     }
 
     return {score:s, why:why};
@@ -155,7 +167,7 @@ const TT = (function(){
 
   /* ---------- brief summary ---------- */
   function isEmpty(b){
-    return !b.who && !b.vibes.length && !b.month && !b.budget && !b.maxHours && !b.visaOnly && !b.heat && !b.quieter && !b.freeText.trim();
+    return !b.who && !b.vibes.length && !b.month && !b.budget && !b.maxHours && !b.visa && !b.heat && !b.quieter && !b.freeText.trim();
   }
 
   function summary(b){
@@ -168,7 +180,8 @@ const TT = (function(){
     if(b.maxHours && b.maxHours!==99) bits.push('within ' + b.maxHours + ' hours of ' + b.origin);
     if(b.heat==='hot') bits.push('somewhere reliably hot');
     if(b.quieter) bits.push('away from the crowds');
-    if(b.visaOnly) bits.push('no visa needed');
+    if(b.visa==='free') bits.push('no visa needed');
+    else if(b.visa==='required') bits.push('happy to sort a visa');
     return 'Based on ' + bits.join(', ') + '.';
   }
 
@@ -181,7 +194,8 @@ const TT = (function(){
     if(b.maxHours) out.push({k:'hours',  label:FLIGHTS.find(f=>f.id===b.maxHours).label});
     if(b.heat==='hot') out.push({k:'heat', label:'Somewhere hot'});
     if(b.quieter)      out.push({k:'quiet', label:'Less touristy'});
-    if(b.visaOnly) out.push({k:'visa',   label:'Visa-free only'});
+    if(b.visa==='free')     out.push({k:'visa', label:'Visa-free'});
+    else if(b.visa==='required') out.push({k:'visa', label:'Visa required'});
     return out;
   }
 
@@ -193,7 +207,7 @@ const TT = (function(){
     else if(k==='hours') b.maxHours=null;
     else if(k==='heat') b.heat=null;
     else if(k==='quiet') b.quieter=false;
-    else if(k==='visa') b.visaOnly=false;
+    else if(k==='visa') b.visa=null;
     return b;
   }
 
@@ -226,7 +240,8 @@ const TT = (function(){
     if(b.heat==='hot') rest.push('somewhere reliably hot');
     if(b.quieter) rest.push('away from the crowds');
     if(b.budget) rest.push(BUDGET_PHRASE[b.budget]);
-    if(b.visaOnly) rest.push('visa-free or visa on arrival for a Nigerian passport');
+    if(b.visa==='free') rest.push('visa-free or visa on arrival for a Nigerian passport');
+    else if(b.visa==='required') rest.push('happy to apply for a visa if it is worth it');
 
     return (rest.length ? head + ', ' + rest.join(', ') : head) + '.';
   }
@@ -245,7 +260,8 @@ const TT = (function(){
     [/cheap|budget|affordable|save money|not expensive|low cost/i, b=>b.budget=1, 'a tighter budget'],
     [/luxury|luxurious|splash out|all out|five star|5 star|premium/i, b=>b.budget=3, 'going all out'],
     [/\bhot\b|sunshine|sunny|somewhere warm|really warm/i, b=>b.heat='hot', 'somewhere reliably hot'],
-    [/visa.?free|no visa|without a visa|skip the visa/i, b=>b.visaOnly=true, 'visa-free only'],
+    [/visa.?free|no visa|without a visa|skip the visa|no embassy/i, b=>b.visa='free', 'visa-free only'],
+    [/happy to (get|apply for|sort).{0,14}visa|visa is fine|don'?t mind a visa|do not mind a visa|visa no problem/i, b=>b.visa='required', 'happy to sort a visa'],
     [/solo|on my own|by myself|just me/i,             b=>b.who='solo',    'travelling solo'],
     [/couple|two of us|me and my (wife|husband|partner|girlfriend|boyfriend)|partner/i, b=>b.who='couple','a trip for two'],
     [/friends|group of us|the lads|the girls/i,       b=>b.who='friends', 'a trip with friends'],
@@ -292,7 +308,7 @@ const TT = (function(){
       case 'adventure': addVibe(b,'adventure'); return 'added adventure to your brief';
       case 'beach':     addVibe(b,'beach');     return 'added more beach to your brief';
       case 'quieter':   b.quieter = true;       return 'pushed towards the less touristy end';
-      case 'visa':      b.visaOnly = true;      return 'filtered to visa-free and visa on arrival';
+      case 'visa':      b.visa = 'free';        return 'filtered to visa-free and visa on arrival';
     }
     return '';
   }

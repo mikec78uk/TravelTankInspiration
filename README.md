@@ -26,14 +26,19 @@ flights, hotels) and `core.js` (brief state, matching logic, page chrome).
 **1 — Guided brief.** The Figma frame, built out. Six groups of chips plus a free-text field.
 Every field is optional; submitting an empty form still returns a recommendation.
 
+*Entry requirements* is a two-way choice — **Visa-free** or **Visa required** — rather than a
+single on/off toggle, so the customer can say a visa is no obstacle instead of only being able
+to rule one out. Both options change the shortlist: visa-free excludes e-visa destinations as
+well as embassy ones, and visa-required actively surfaces the places that need one.
+
 **2 — Prompt with help on demand.** An open prompt with worked example suggestions.
 *Need help?* opens a modal containing the Concept 1 questions. Whatever the customer picks is
 turned into a plain-English prompt, dropped into the textbox when the modal closes — by any
 route, including the X and the Esc key — and remains fully editable before sending.
 
 **3 — Conversation.** One text box. The assistant parses the opening message, works out which
-of who / when / budget / distance / interests it already knows, and asks only what's missing,
-up to three questions. Every step offers *Skip this — just show me somewhere*.
+of interests / who / when / budget / distance / visa it already knows, and asks only what's
+missing, up to three questions. Every step offers *Skip this — just show me somewhere*.
 
 ## The results page
 

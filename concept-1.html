@@ -55,7 +55,7 @@
     </div>
 
     <div class="panel-row">
-      <span class="lab">Entry requirements</span>
+      <span class="lab">Entry requirements <span class="opt">— on a Nigerian passport</span></span>
       <div class="chip-set" id="visaSet"></div>
     </div>
 
@@ -126,9 +126,9 @@ function render(){
   })));
 
   const vz = document.getElementById('visaSet'); vz.innerHTML='';
-  vz.appendChild(chip('Visa-free or visa on arrival only', brief.visaOnly, ()=>{
-    brief.visaOnly = !brief.visaOnly; render();
-  }));
+  VISA_CHOICES.forEach(v=>vz.appendChild(chip(v.label, brief.visa===v.id, ()=>{
+    brief.visa = brief.visa===v.id ? null : v.id; render();
+  })));
 
   const n = TT.chips(brief).length;
   document.getElementById('count').textContent = n
@@ -156,7 +156,7 @@ document.getElementById('surpriseBtn').addEventListener('click', ()=>{
   brief.month = 1 + Math.floor(Math.random()*12);
   brief.budget = pick(BUDGETS).id;
   brief.maxHours = pick(FLIGHTS).id;
-  brief.visaOnly = Math.random() > 0.6;
+  brief.visa = Math.random() > 0.6 ? pick(VISA_CHOICES).id : null;
   document.getElementById('freeText').value = '';
   render();
   TT.go('concept-1');

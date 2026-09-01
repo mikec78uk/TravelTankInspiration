@@ -164,7 +164,7 @@
   <div class="panel-row"><span class="lab">When are you thinking?</span><div class="chip-set" id="mMonth"></div></div>
   <div class="panel-row"><span class="lab">Rough budget</span><div class="chip-set" id="mBudget"></div></div>
   <div class="panel-row"><span class="lab">How far will you fly?</span><div class="chip-set" id="mFlight"></div></div>
-  <div class="panel-row"><span class="lab">Entry requirements</span><div class="chip-set" id="mVisa"></div></div>
+  <div class="panel-row"><span class="lab">Entry requirements <span class="opt">— on a Nigerian passport</span></span><div class="chip-set" id="mVisa"></div></div>
 
   <span class="lab" style="padding:20px 26px 0;">Your prompt will read</span>
   <div class="preview" id="mPreview"><em>Nothing picked yet.</em></div>
@@ -243,8 +243,8 @@ function renderModal(){
        i=>draft.month===i.id, i=>draft.month = draft.month===i.id?null:i.id);
   fill('mBudget', BUDGETS, i=>draft.budget===i.id, i=>draft.budget = draft.budget===i.id?null:i.id);
   fill('mFlight', FLIGHTS, i=>draft.maxHours===i.id, i=>draft.maxHours = draft.maxHours===i.id?null:i.id);
-  fill('mVisa', [{id:1,label:'Visa-free or visa on arrival only'}],
-       ()=>draft.visaOnly, ()=>draft.visaOnly = !draft.visaOnly);
+  fill('mVisa', VISA_CHOICES, i=>draft.visa===i.id,
+       i=>draft.visa = draft.visa===i.id ? null : i.id);
 
   const p = TT.promptFromBrief(draft);
   document.getElementById('mPreview').innerHTML = p ? TT.esc(p) : '<em>Nothing picked yet.</em>';

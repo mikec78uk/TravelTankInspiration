@@ -35,6 +35,11 @@ const FLIGHTS = [
   {id:99,label:'Anywhere on earth'}
 ];
 
+const VISA_CHOICES = [
+  {id:'free',     label:'Visa-free'},
+  {id:'required', label:'Visa required'}
+];
+
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const VISA_LABEL = {free:'Visa-free','on-arrival':'Visa on arrival',easy:'Easy e-visa',required:'Visa required'};
