@@ -62,7 +62,7 @@
     <div class="panel-row">
       <span class="lab">Anything else? <span class="opt">— optional, say it however you like</span></span>
       <div class="free-wrap">
-        <textarea id="freeText" rows="3" placeholder="e.g. somewhere hot in December where the kids won't be bored…"></textarea>
+        <textarea id="freeText" rows="3" autocomplete="off" placeholder="e.g. somewhere hot in December where the kids won't be bored…"></textarea>
         <div class="hint">We'll read this alongside your picks above.</div>
       </div>
     </div>
@@ -84,7 +84,7 @@
 <script>
 TT.mount('concept-1.html');
 
-let brief = TT.load();
+let brief = TT.fresh();   // the guided brief always opens empty
 
 function chip(label, on, fn){
   const b = document.createElement('button');
@@ -162,7 +162,7 @@ document.getElementById('surpriseBtn').addEventListener('click', ()=>{
   TT.go('concept-1');
 });
 
-document.getElementById('freeText').value = brief.freeText || '';
+document.getElementById('freeText').value = '';
 render();
 </script>
 </body>

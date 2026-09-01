@@ -119,7 +119,7 @@
 
     <div id="panelAi" hidden>
       <form class="ai-pill" id="aiPill">
-        <textarea id="aiPrompt" rows="1" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
+        <textarea id="aiPrompt" rows="1" autocomplete="off" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
         <div class="ai-toolbar">
           <button type="button" class="ai-icon" title="Attach">+</button>
           <button type="button" class="ai-icon" title="Voice">◍</button>
@@ -181,14 +181,14 @@
 <script>
 TT.mount('concept-2.html');
 
-let brief = TT.load();
+let brief = TT.fresh();   // the prompt panel always opens empty
 const ta = document.getElementById('aiPrompt');
 
 /* auto-grow textarea */
 function grow(){ ta.style.height='auto'; ta.style.height = Math.max(52, ta.scrollHeight) + 'px'; }
 ta.addEventListener('input', grow);
 
-ta.value = brief.freeText || '';
+ta.value = '';
 grow();
 
 /* suggestions: only while the prompt box is active and still empty */

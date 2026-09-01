@@ -61,7 +61,9 @@ typing into the **Edit brief** side panel ("cheaper", "too far", "more beach", a
 budget figure). All three re-score all three destinations. **Not interested** drops that
 destination and promotes the next best fit for the slot.
 
-The brief carries between pages in `sessionStorage`, so any entry point feeds the same results.
+The brief carries from an entry point through to the results page in `sessionStorage`. All
+three entry points reset to their defaults on load — including on browser Back — so each run
+through starts from scratch rather than inheriting the last one's answers.
 
 ## Notes for review
 

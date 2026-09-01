@@ -33,6 +33,21 @@ const TT = (function(){
   }
   function clear(){ try{ sessionStorage.removeItem(KEY); }catch(e){} }
 
+  /* Entry points always start from scratch: wipe any brief left over from a
+     previous run through, and hand back a clean one. The results page uses
+     load() instead, since carrying the brief across is the whole point there. */
+  function fresh(){
+    clear();
+    /* Browser Back can restore a page straight from the bfcache without re-running
+       this script, which would put the previous run's answers back on screen.
+       Force a reload in that case so the reset actually happens. */
+    if(!fresh._armed){
+      fresh._armed = true;
+      window.addEventListener('pageshow', e=>{ if(e.persisted) location.reload(); });
+    }
+    return blank();
+  }
+
   /* ---------- formatting ---------- */
   const money = n => '₦' + Math.round(n).toLocaleString('en-NG');
   const nights = () => 6;
@@ -352,7 +367,7 @@ const TT = (function(){
 
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  return {blank,load,save,clear,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
+  return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
           isEmpty,summary,chips,removeChip,promptFromBrief,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

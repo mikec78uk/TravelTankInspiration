@@ -75,7 +75,7 @@
 
   <div class="composer">
     <div class="composer-in">
-      <textarea id="input" rows="1" placeholder="Tell us about the trip…"></textarea>
+      <textarea id="input" rows="1" autocomplete="off" placeholder="Tell us about the trip…"></textarea>
       <div class="row">
         <span class="hint" id="hintLine">Press Enter to send</span>
         <button class="send" id="send" aria-label="Send">&rarr;</button>
@@ -93,7 +93,7 @@
 <script>
 TT.mount('concept-3.html');
 
-let brief = TT.blank();
+let brief = TT.fresh();   // the conversation always opens empty
 let asked = [];
 let stage = 'open';          // open → asking → done
 const MAX_QUESTIONS = 3;
