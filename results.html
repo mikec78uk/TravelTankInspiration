@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Results — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css">
+<link rel="stylesheet" href="assets/tt.css?v=2">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
 
@@ -172,6 +172,38 @@
 
   .scrim{position:fixed;inset:0;background:rgba(17,19,21,.42);display:none;z-index:59;}
 
+  /* ---- "Not for me" modal ---- */
+  .mscrim{position:fixed;inset:0;background:rgba(17,19,21,.42);z-index:80;display:none;}
+  .mscrim.on{display:block;}
+  .modal{
+    position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(520px,92vw);background:#fff;border:1px solid var(--line);
+    display:none;flex-direction:column;max-height:88vh;
+  }
+  .modal.on{display:flex;}
+  .modal-hd{padding:24px 26px 6px;}
+  .modal-hd h3{margin:0;font-size:1.3rem;letter-spacing:-.01em;}
+  .modal-hd p{margin:8px 0 0;font-size:.9rem;color:var(--ink-3);line-height:1.5;}
+  .modal-bd{padding:18px 26px 4px;overflow:auto;}
+  .why{list-style:none;margin:0;padding:0;}
+  .why li + li{margin-top:8px;}
+  .why button{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    border:1px solid var(--line);background:#fff;padding:13px 15px;cursor:pointer;
+    font-size:.94rem;color:var(--ink-2);border-radius:2px;
+  }
+  .why button:hover{border-color:var(--ink-3);color:var(--ink);}
+  .why button.on{border-color:var(--ink);background:var(--panel-2);color:var(--ink);}
+  .why .bx{
+    flex:0 0 auto;width:18px;height:18px;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;
+  }
+  .why button.on .bx{background:var(--ink);border-color:var(--ink);}
+  .modal-ft{display:flex;align-items:center;gap:10px;padding:20px 26px 24px;}
+  .modal-ft .spacer{flex:1;}
+  .btn[disabled]{opacity:.42;cursor:default;}
+  .btn[disabled]:hover{border-color:var(--line);color:var(--ink-2);background:#fff;}
+
   /* Narrow screens have no width to give up, so it floats over instead. */
   @media(max-width:900px){
     body.rail-open{padding-left:0;}
@@ -183,6 +215,20 @@
 <body>
 
 <div class="scrim" id="scrim"></div>
+
+<div class="mscrim" id="mscrim"></div>
+<div class="modal" id="whyModal" role="dialog" aria-modal="true" aria-labelledby="whyTitle">
+  <div class="modal-hd">
+    <h3 id="whyTitle">Not for me</h3>
+    <p>Anything you can tell us helps — but it is optional. Skip straight to another option if you would rather.</p>
+  </div>
+  <div class="modal-bd"><ul class="why" id="whyList"></ul></div>
+  <div class="modal-ft">
+    <button class="btn" id="whyCancel">Cancel</button>
+    <span class="spacer"></span>
+    <button class="btn btn-primary" id="whyGo">Show me another</button>
+  </div>
+</div>
 <div class="layout">
 
 <aside class="rail" id="rail" inert aria-label="Your brief">
@@ -227,8 +273,8 @@
 
 </div>
 
-<script src="assets/data.js"></script>
-<script src="assets/core.js"></script>
+<script src="assets/data.js?v=2"></script>
+<script src="assets/core.js?v=2"></script>
 <script>
 TT.mount('results.html');
 
@@ -254,8 +300,6 @@ function render(noteText){
   document.getElementById('lede').textContent = TT.summary(brief);
 
   const n = document.getElementById('note');
-  if(noteText){ n.hidden = false; n.textContent = noteText; }
-  else n.hidden = true;
 
   /* nudges */
   const ns = document.getElementById('nudgeSet');
@@ -272,6 +316,15 @@ function render(noteText){
   });
 
   const L = TT.lanes(brief);
+  poolExhausted = !!L.recycled;
+
+  if(poolExhausted){
+    n.hidden = false;
+    n.textContent = 'You have ruled out most of the shortlist, so these are the closest that remain. '
+                  + 'Loosen the brief or start again to see more.';
+  } else if(noteText){
+    n.hidden = false; n.textContent = noteText;
+  } else n.hidden = true;
 
   /* lane switcher */
   const ls = document.getElementById('lanes');
@@ -383,7 +436,9 @@ function drawCard(item, meta){
 
     '</div>' +
     '<div class="card-foot">' +
-      '<button class="btn" id="notFor">Not interested</button>' +
+      (poolExhausted
+        ? '<button class="btn" id="notFor" disabled>Nothing left to swap in</button>'
+        : '<button class="btn" id="notFor">Not for me</button>') +
       '<span class="spacer"></span>' +
       '<button class="btn" id="cmpBtn">Compare all three</button>' +
       '<button class="btn btn-primary" id="tellMore">Tell me more</button>' +
@@ -403,11 +458,8 @@ function drawCard(item, meta){
     if(fav.has(d.id)) fav.delete(d.id); else fav.add(d.id);
     e.currentTarget.classList.toggle('on');
   });
-  host.querySelector('#notFor').addEventListener('click', ()=>{
-    brief.dismissed.push(d.id);
-    render('Dropped ' + d.name + '. Here is the next best fit for that slot.');
-    window.scrollTo({top:0, behavior:'smooth'});
-  });
+  const nf = host.querySelector('#notFor');
+  if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
   host.querySelector('#tellMore').addEventListener('click', ()=>{
     openRail('Tell me more about ' + d.name + '.');
   });
@@ -422,6 +474,83 @@ function drawCard(item, meta){
       }).join('\n'));
   });
 }
+
+/* ---------------- "Not for me" ----------------
+   Each reason does something to the brief, so the replacement is a genuine
+   answer to the objection rather than just the next name down the list. */
+const WHY = [
+  {id:'price',  label:'Too expensive',
+   apply:b=>TT.nudge(b,'cheaper')},
+  {id:'far',    label:'Too far to fly',
+   apply:b=>TT.nudge(b,'shorter')},
+  {id:'busy',   label:'Looks too touristy',
+   apply:b=>TT.nudge(b,'quieter')},
+  {id:'visa',   label:'The visa is a hassle',
+   apply:b=>TT.nudge(b,'visa')},
+  {id:'been',   label:'Been there already',
+   apply:()=>'ruled out somewhere you have already been'},
+  {id:'vibe',   label:"Just not the right feel",
+   apply:()=>'noted that this one was not the right feel'}
+];
+
+const mscrim = document.getElementById('mscrim');
+const whyModal = document.getElementById('whyModal');
+let whyFor = null, whyPicked = new Set(), poolExhausted = false;
+
+function openWhy(d){
+  whyFor = d;
+  whyPicked = new Set();
+  document.getElementById('whyTitle').textContent = 'Not ' + d.name + ', then';
+  drawWhy();
+  mscrim.classList.add('on');
+  whyModal.classList.add('on');
+}
+function closeWhy(){
+  mscrim.classList.remove('on');
+  whyModal.classList.remove('on');
+  whyFor = null;
+}
+function drawWhy(){
+  const ul = document.getElementById('whyList');
+  ul.innerHTML = '';
+  WHY.forEach(w=>{
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type='button';
+    b.className = whyPicked.has(w.id) ? 'on' : '';
+    b.innerHTML = '<span class="bx">' + (whyPicked.has(w.id) ? '&#10003;' : '') + '</span>' +
+                  '<span>' + TT.esc(w.label) + '</span>';
+    b.addEventListener('click', ()=>{
+      whyPicked.has(w.id) ? whyPicked.delete(w.id) : whyPicked.add(w.id);
+      drawWhy();
+    });
+    li.appendChild(b);
+    ul.appendChild(li);
+  });
+  document.getElementById('whyGo').textContent =
+    whyPicked.size ? 'Update and show me another' : 'Show me another';
+}
+
+document.getElementById('whyCancel').addEventListener('click', closeWhy);
+mscrim.addEventListener('click', closeWhy);
+document.getElementById('whyGo').addEventListener('click', ()=>{
+  const d = whyFor;
+  if(!d) return;
+
+  const said = [];
+  WHY.filter(w=>whyPicked.has(w.id)).forEach(w=>{
+    const t = w.apply(brief);
+    if(t) said.push(t);
+  });
+
+  if(brief.dismissed.indexOf(d.id) === -1) brief.dismissed.push(d.id);
+  closeWhy();
+
+  render(said.length
+    ? 'Dropped ' + d.name + '. We ' + said.join(', ') + ' and picked again.'
+    : 'Dropped ' + d.name + '. Here is the next best fit for that slot.');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
 
 /* ---------------- brief rail ---------------- */
 const scrim = document.getElementById('scrim'), rail = document.getElementById('rail');
@@ -484,7 +613,10 @@ function toggleRail(){ rail.classList.contains('on') ? closeRail() : openRail();
 
 editBtn.addEventListener('click', toggleRail);
 scrim.addEventListener('click', closeRail);
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeRail(); });
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  if(whyModal.classList.contains('on')) closeWhy(); else closeRail();
+});
 
 function drSubmit(){
   const t = drInput.value.trim();

@@ -65,6 +65,12 @@ The three sit in a tab strip detached from the card below, with a pointer tying 
 one to it. Each destination leads with its name and country, then an image mosaic — one lead
 tile with two stacked beside it — rather than a single banner with the name overlaid.
 
+**Not for me** asks why before it swaps. The reasons are optional and multi-select, and each
+one changes the brief rather than just being recorded — *too expensive* drops the budget a
+notch, *too far* tightens the flight cap, *the visa is a hassle* filters to visa-free — so the
+replacement answers the objection instead of being the next name down the list. Rule out
+everything and it says so and stops, rather than quietly re-offering what you already rejected.
+
 For each destination: an editorial description, a *Why here* rationale generated from the
 brief, a Shark Tip, three return flight options from Lagos, and six hotels split into lower,
 middle and higher budget tiers. Selecting a different flight or hotel tier reprices the

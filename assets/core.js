@@ -137,7 +137,11 @@ const TT = (function(){
   function lanes(b){
     const dropped = b.dismissed || [];
     let pool = DEST.filter(d=>!dropped.includes(d.id));
-    if(pool.length < 3) pool = DEST;
+    /* We always need three lanes to render. If the customer has ruled out so much
+       that we cannot fill them, fall back to the full list but say so, rather than
+       quietly handing back something they already rejected. */
+    let recycled = false;
+    if(pool.length < 3){ pool = DEST; recycled = true; }
     const scored = pool.map(d=>{
       const r = score(d,b);
       return {d:d, score:r.score, why:r.why};
@@ -162,7 +166,7 @@ const TT = (function(){
       .map(x=>({...x, lift:x.score + (x.d.offbeat?40:0)}))
       .sort((a,b2)=>b2.lift-a.lift)[0];
 
-    return {best:best, premium:premium, offbeat:offbeat};
+    return {best:best, premium:premium, offbeat:offbeat, recycled:recycled};
   }
 
   const LANE_META = {
