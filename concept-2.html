@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 2 — Prompt + Need help? · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css">
+<style>
+  .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
+  .mode-tab{
+    border:1px solid var(--line);border-bottom:0;background:var(--panel-2);
+    padding:13px 22px;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-3);cursor:pointer;
+  }
+  .mode-tab.active{background:#fff;color:var(--ink);position:relative;top:1px;}
+  .tab-badge{
+    display:inline-block;margin-left:8px;border:1px solid var(--line);background:#fff;
+    padding:1px 6px;font-size:.62rem;letter-spacing:.06em;color:var(--ink-2);
+  }
+  .search-card{border:1px solid var(--line);background:#fff;padding:26px;}
+
+  .classic-form{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:0;border:1px solid var(--line);}
+  .classic-form .field{padding:14px 18px;border-right:1px solid var(--line);}
+  .classic-form .field label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px;}
+  .classic-form .field .val{font-size:.93rem;color:var(--ink-2);}
+  .classic-form .search-btn{border:0;background:var(--accent);color:#fff;padding:0 30px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;}
+  @media(max-width:860px){.classic-form{grid-template-columns:1fr;}.classic-form .field{border-right:0;border-bottom:1px solid var(--line);}.classic-form .search-btn{padding:16px;}}
+
+  .ai-pill{border:1px solid var(--line);padding:16px 18px 12px;}
+  .ai-pill:focus-within{border-color:var(--ink-3);}
+  .ai-pill textarea{
+    width:100%;border:0;outline:none;resize:none;overflow:hidden;
+    font:inherit;font-size:1.02rem;line-height:1.5;color:var(--ink);background:transparent;min-height:52px;
+  }
+  .ai-pill textarea::placeholder{color:var(--ink-3);}
+  .ai-toolbar{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .ai-icon{
+    width:34px;height:34px;border:1px solid var(--line);background:#fff;
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+    font-size:.95rem;color:var(--ink-3);border-radius:2px;
+  }
+  .ai-icon:hover{border-color:var(--ink-3);color:var(--ink);}
+  .help-btn{
+    border:1px solid var(--line);background:#fff;padding:8px 16px;font-size:.83rem;
+    cursor:pointer;border-radius:2px;color:var(--ink-2);
+  }
+  .help-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .help-btn b{font-weight:600;color:var(--ink);}
+  .ai-send{
+    margin-left:auto;width:38px;height:38px;border:0;background:var(--accent);color:#fff;
+    border-radius:2px;cursor:pointer;font-size:1.05rem;
+  }
+  .ai-send:hover{background:#1263bb;}
+
+  .suggests{border:1px solid var(--line);border-top:0;}
+  .suggests .lab{padding:14px 18px 6px;margin:0;}
+  .sug{
+    display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+    border:0;border-top:1px solid var(--line-2);background:#fff;
+    padding:14px 18px;font-size:.92rem;cursor:pointer;color:var(--ink-2);
+  }
+  .sug:hover{background:var(--panel-2);color:var(--ink);}
+  .sug .ico{color:var(--ink-3);flex:0 0 auto;}
+  .sug-foot{padding:12px 18px;border-top:1px solid var(--line-2);font-size:.8rem;color:var(--ink-3);background:var(--panel-2);}
+
+  /* modal */
+  .ovl{position:fixed;inset:0;background:rgba(17,19,21,.42);display:none;z-index:50;}
+  .ovl.on{display:block;}
+  .modal{
+    position:fixed;z-index:51;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:min(760px,calc(100vw - 32px));max-height:86vh;overflow:auto;
+    background:#fff;border:1px solid var(--line);display:none;
+  }
+  .modal.on{display:block;}
+  .modal-head{
+    position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);
+    padding:20px 26px;display:flex;align-items:flex-start;gap:16px;
+  }
+  .modal-head h2{margin:0 0 3px;}
+  .modal-x{
+    margin-left:auto;border:1px solid var(--line);background:#fff;width:34px;height:34px;
+    cursor:pointer;font-size:1rem;color:var(--ink-2);border-radius:2px;flex:0 0 auto;
+  }
+  .modal-foot{
+    position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);
+    padding:18px 26px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  }
+  .preview{
+    margin:0 26px 20px;border:1px solid var(--line-2);background:var(--panel);
+    padding:14px 16px;font-size:.92rem;color:var(--ink-2);min-height:52px;
+  }
+  .preview em{color:var(--ink-3);}
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <h1 style="margin-bottom:6px;">Find and book cheap flights.</h1>
+  <p class="lede">Compare fares from Lagos to everywhere — or describe the trip you want and let us find the destination for you.</p>
+
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab" data-mode="flights">Flights</button>
+    <button class="mode-tab" data-mode="hotels">Hotels</button>
+    <button class="mode-tab" data-mode="holidays">Holidays</button>
+    <button class="mode-tab active" data-mode="ai">Inspire me <span class="tab-badge">New</span></button>
+  </div>
+
+  <div class="search-card">
+    <div id="panelClassic" hidden>
+      <div class="classic-form">
+        <div class="field"><label>Leaving from</label><div class="val">Lagos (LOS)</div></div>
+        <div class="field"><label>Going to</label><div class="val">City, airport or place</div></div>
+        <div class="field"><label>When?</label><div class="val">Choose a date</div></div>
+        <div class="field"><label>Passengers &amp; class</label><div class="val">1 Adult · Economy</div></div>
+        <button class="search-btn" type="button">Search</button>
+      </div>
+      <p class="hint" style="margin-top:16px;">Standard search — out of scope for this concept. Switch back to <b>Inspire me</b>.</p>
+    </div>
+
+    <div id="panelAi">
+      <form class="ai-pill" id="aiPill">
+        <textarea id="aiPrompt" rows="1" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
+        <div class="ai-toolbar">
+          <button type="button" class="ai-icon" title="Attach">+</button>
+          <button type="button" class="ai-icon" title="Voice">◍</button>
+          <button type="button" class="help-btn" id="helpBtn"><b>Need help?</b> — pick from a few options instead</button>
+          <button type="submit" class="ai-send" id="sendBtn" aria-label="Inspire me">&rarr;</button>
+        </div>
+      </form>
+
+      <div class="suggests">
+        <span class="lab">You might ask</span>
+        <button class="sug" type="button" data-fill="A quiet beach week for two in November, no kids, no fixed itinerary — just sun, good food and slow mornings.">
+          <span class="ico">&#8250;</span>A quiet beach week for two in November — sun, good food, slow mornings</button>
+        <button class="sug" type="button" data-fill="Somewhere warm in October for a family of three, under ₦2,000,000 all in, and ideally visa-free.">
+          <span class="ico">&#8250;</span>Somewhere warm in October, under ₦2,000,000, family of three, visa-free</button>
+        <button class="sug" type="button" data-fill="A short adventurous trip with friends — under 6 hours flying, city and nightlife, keeping it cheap.">
+          <span class="ico">&#8250;</span>A short adventurous trip with friends — under 6 hours, cheap, good nightlife</button>
+        <button class="sug" type="button" data-fill="First safari for two in August. Happy to go all out for something we'll remember.">
+          <span class="ico">&#8250;</span>First safari for two in August — happy to go all out</button>
+        <div class="sug-foot">…or anything you want. There is no wrong way to ask.</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" style="margin-top:18px;">
+    Concept 2 — an open prompt as the primary route, with the Concept 1 questions available on demand behind <b>Need help?</b> for anyone who would rather pick than type.
+  </p>
+</main>
+
+<!-- ============ Need help? modal ============ -->
+<div class="ovl" id="ovl"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-head">
+    <div>
+      <h2 id="mTitle">Not sure what to type?</h2>
+      <div class="hint">Pick whatever applies. We'll turn it into a prompt you can edit before you send it.</div>
+    </div>
+    <button class="modal-x" id="mClose" aria-label="Close">&times;</button>
+  </div>
+
+  <div class="panel-row"><span class="lab">Who's going?</span><div class="chip-set" id="mWho"></div></div>
+  <div class="panel-row"><span class="lab">What are you looking for? <span class="opt">— pick as many as you like</span></span><div class="chip-set" id="mVibe"></div></div>
+  <div class="panel-row"><span class="lab">When are you thinking?</span><div class="chip-set" id="mMonth"></div></div>
+  <div class="panel-row"><span class="lab">Rough budget</span><div class="chip-set" id="mBudget"></div></div>
+  <div class="panel-row"><span class="lab">How far will you fly?</span><div class="chip-set" id="mFlight"></div></div>
+  <div class="panel-row"><span class="lab">Entry requirements</span><div class="chip-set" id="mVisa"></div></div>
+
+  <span class="lab" style="padding:20px 26px 0;">Your prompt will read</span>
+  <div class="preview" id="mPreview"><em>Nothing picked yet.</em></div>
+
+  <div class="modal-foot">
+    <button class="btn btn-primary" id="mDone">Add to my prompt</button>
+    <button class="btn" id="mReset">Clear</button>
+    <span class="hint" style="margin-left:auto;">You can edit it afterwards.</span>
+  </div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script>
+TT.mount('concept-2.html');
+
+let brief = TT.load();
+const ta = document.getElementById('aiPrompt');
+
+/* auto-grow textarea */
+function grow(){ ta.style.height='auto'; ta.style.height = Math.max(52, ta.scrollHeight) + 'px'; }
+ta.addEventListener('input', grow);
+
+ta.value = brief.freeText || '';
+grow();
+
+/* mode tabs */
+document.querySelectorAll('.mode-tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const ai = t.dataset.mode === 'ai';
+    document.getElementById('panelAi').hidden = !ai;
+    document.getElementById('panelClassic').hidden = ai;
+  });
+});
+
+/* suggestions */
+document.querySelectorAll('.sug').forEach(s=>{
+  s.addEventListener('click', ()=>{ ta.value = s.dataset.fill; grow(); ta.focus(); });
+});
+
+/* submit */
+function submit(){
+  const text = ta.value.trim();
+  brief = TT.load();
+  brief.freeText = text;
+  if(text) TT.parse(text, brief);
+  TT.save(brief);
+  TT.go('concept-2');
+}
+document.getElementById('aiPill').addEventListener('submit', e=>{ e.preventDefault(); submit(); });
+ta.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
+});
+
+/* ---------------- Need help? modal ---------------- */
+const ovl = document.getElementById('ovl'), modal = document.getElementById('modal');
+let draft = TT.blank();
+
+function mchip(label, on, fn){
+  const b=document.createElement('button');
+  b.type='button'; b.className='chip'+(on?' on':''); b.textContent=label;
+  b.addEventListener('click',fn); return b;
+}
+
+function renderModal(){
+  const fill=(id,items,isOn,onClick)=>{
+    const el=document.getElementById(id); el.innerHTML='';
+    items.forEach(it=>el.appendChild(mchip(it.label,isOn(it),()=>{onClick(it);renderModal();})));
+  };
+  fill('mWho', WHO, i=>draft.who===i.id, i=>draft.who = draft.who===i.id?null:i.id);
+  fill('mVibe', VIBES, i=>draft.vibes.includes(i.id),
+       i=>draft.vibes = draft.vibes.includes(i.id) ? draft.vibes.filter(v=>v!==i.id) : draft.vibes.concat(i.id));
+  fill('mMonth', [{id:null,label:'Flexible'}].concat(MONTHS.map((m,i)=>({id:i+1,label:m}))),
+       i=>draft.month===i.id, i=>draft.month = draft.month===i.id?null:i.id);
+  fill('mBudget', BUDGETS, i=>draft.budget===i.id, i=>draft.budget = draft.budget===i.id?null:i.id);
+  fill('mFlight', FLIGHTS, i=>draft.maxHours===i.id, i=>draft.maxHours = draft.maxHours===i.id?null:i.id);
+  fill('mVisa', [{id:1,label:'Visa-free or visa on arrival only'}],
+       ()=>draft.visaOnly, ()=>draft.visaOnly = !draft.visaOnly);
+
+  const p = TT.promptFromBrief(draft);
+  document.getElementById('mPreview').innerHTML = p ? TT.esc(p) : '<em>Nothing picked yet.</em>';
+}
+
+function openModal(){
+  draft = TT.load();
+  renderModal();
+  ovl.classList.add('on'); modal.classList.add('on');
+  document.body.style.overflow='hidden';
+}
+
+/* Closing the modal by ANY route commits the picks into the textbox. */
+function closeModal(){
+  const p = TT.promptFromBrief(draft);
+  if(p){
+    const existing = ta.value.trim();
+    ta.value = existing && existing !== p ? existing.replace(/\.?$/,'. ') + p : p;
+    grow();
+  }
+  Object.assign(brief, draft);
+  brief.freeText = ta.value;
+  TT.save(brief);
+  ovl.classList.remove('on'); modal.classList.remove('on');
+  document.body.style.overflow='';
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+document.getElementById('helpBtn').addEventListener('click', openModal);
+document.getElementById('mClose').addEventListener('click', closeModal);
+document.getElementById('mDone').addEventListener('click', closeModal);
+ovl.addEventListener('click', closeModal);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('on')) closeModal(); });
+document.getElementById('mReset').addEventListener('click', ()=>{ draft = TT.blank(); renderModal(); });
+</script>
+</body>
+</html>

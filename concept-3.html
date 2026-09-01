@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 3 — Conversation · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css">
+<style>
+  .conv{max-width:760px;margin:0 auto;}
+  .thread{margin:26px 0 0;display:flex;flex-direction:column;gap:22px;}
+  .msg{display:flex;gap:14px;align-items:flex-start;}
+  .av{
+    flex:0 0 auto;width:30px;height:30px;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:.62rem;
+    letter-spacing:.05em;font-weight:700;color:var(--ink-2);background:#fff;
+  }
+  .bot .body{font-size:1rem;line-height:1.6;padding-top:3px;max-width:60ch;}
+  .bot .body p{margin:0 0 10px;}
+  .bot .body p:last-child{margin-bottom:0;}
+  .me{justify-content:flex-end;}
+  .me .body{
+    background:var(--panel);border:1px solid var(--line-2);padding:12px 16px;
+    font-size:.97rem;max-width:52ch;
+  }
+  .quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .skip{
+    background:none;border:0;padding:0;margin-top:12px;font-size:.83rem;
+    color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:3px;
+  }
+  .skip:hover{color:var(--ink);}
+  .dots span{
+    display:inline-block;width:5px;height:5px;background:var(--ink-3);border-radius:50%;
+    margin-right:4px;animation:bl 1.1s infinite;
+  }
+  .dots span:nth-child(2){animation-delay:.18s;}
+  .dots span:nth-child(3){animation-delay:.36s;}
+  @keyframes bl{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
+
+  .composer{
+    position:sticky;bottom:0;background:#fff;padding:18px 0 26px;margin-top:34px;
+    border-top:1px solid var(--line-2);
+  }
+  .composer-in{border:1px solid var(--line);padding:14px 16px 10px;background:#fff;}
+  .composer-in:focus-within{border-color:var(--ink-3);}
+  .composer textarea{
+    width:100%;border:0;outline:none;resize:none;overflow:hidden;font:inherit;
+    font-size:1rem;line-height:1.5;min-height:26px;background:transparent;color:var(--ink);
+  }
+  .composer textarea::placeholder{color:var(--ink-3);}
+  .composer .row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .send{
+    margin-left:auto;width:36px;height:36px;border:0;background:var(--accent);
+    color:#fff;border-radius:2px;cursor:pointer;font-size:1rem;
+  }
+  .send:hover{background:#1263bb;}
+  .send[disabled]{background:var(--line);color:var(--ink-3);cursor:not-allowed;}
+
+  .brief-out{border:1px solid var(--line);padding:20px 22px;margin-top:16px;}
+  .brief-out .chip-set{margin:10px 0 18px;}
+  .starter{display:grid;gap:8px;margin-top:16px;}
+  .starter button{
+    text-align:left;border:1px solid var(--line);background:#fff;padding:13px 16px;
+    font-size:.92rem;color:var(--ink-2);cursor:pointer;border-radius:2px;
+  }
+  .starter button:hover{border-color:var(--ink-3);color:var(--ink);background:var(--panel-2);}
+</style>
+</head>
+<body>
+
+<main class="shell conv">
+  <h1>Where should we send you?</h1>
+  <p class="lede">Start anywhere — a mood, a month, a budget, a half-formed idea. We'll ask about the rest.</p>
+
+  <div class="thread" id="thread"></div>
+
+  <div class="composer">
+    <div class="composer-in">
+      <textarea id="input" rows="1" placeholder="Tell us about the trip…"></textarea>
+      <div class="row">
+        <span class="hint" id="hintLine">Press Enter to send</span>
+        <button class="send" id="send" aria-label="Send">&rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" style="margin-bottom:40px;">
+    Concept 3 — an open prompt that asks up to three follow-ups before recommending, adapting to whatever the opening message already covered.
+  </p>
+</main>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script>
+TT.mount('concept-3.html');
+
+let brief = TT.blank();
+let asked = [];
+let stage = 'open';          // open → asking → done
+const MAX_QUESTIONS = 3;
+
+const thread = document.getElementById('thread');
+const input  = document.getElementById('input');
+const sendBtn= document.getElementById('send');
+
+/* ---------- rendering ---------- */
+function bubble(who, html){
+  const d = document.createElement('div');
+  d.className = 'msg ' + (who==='bot' ? 'bot' : 'me');
+  d.innerHTML = who==='bot'
+    ? '<div class="av">TT</div><div class="body">' + html + '</div>'
+    : '<div class="body">' + html + '</div>';
+  thread.appendChild(d);
+  d.scrollIntoView({behavior:'smooth', block:'end'});
+  return d;
+}
+
+function thinking(){
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = '<div class="av">TT</div><div class="body dots"><span></span><span></span><span></span></div>';
+  thread.appendChild(d);
+  d.scrollIntoView({behavior:'smooth', block:'end'});
+  return d;
+}
+
+function say(html, delay){
+  const t = thinking();
+  setTimeout(()=>{ t.remove(); bubble('bot', html); }, delay||700);
+}
+
+/* ---------- the question bank ---------- */
+const QUESTIONS = {
+  vibes:{
+    slot:'vibes',
+    ask:"What matters most on this one? Pick as many as apply.",
+    chips:()=>VIBES.map(v=>({label:v.label, apply:()=>TT.addVibe(brief, v.id)})),
+    multi:true
+  },
+  who:{
+    slot:'who',
+    ask:"Who's travelling?",
+    chips:()=>WHO.map(w=>({label:w.label, apply:()=>brief.who=w.id}))
+  },
+  month:{
+    slot:'month',
+    ask:"Roughly when are you thinking? A month is enough — we can work with flexible too.",
+    chips:()=>[{label:"I'm flexible", apply:()=>brief.month=null}]
+      .concat(MONTHS.map((m,i)=>({label:m, apply:()=>brief.month=i+1})))
+  },
+  budget:{
+    slot:'budget',
+    ask:"And roughly what are we spending? This only steers the shortlist — we'll price it properly after.",
+    chips:()=>BUDGETS.map(b=>({label:b.label, apply:()=>brief.budget=b.id}))
+  },
+  maxHours:{
+    slot:'maxHours',
+    ask:"Last one — how far are you willing to fly from Lagos?",
+    chips:()=>FLIGHTS.map(f=>({label:f.label, apply:()=>brief.maxHours=f.id}))
+  }
+};
+const ORDER = ['vibes','who','month','budget','maxHours'];
+
+function missing(){
+  return ORDER.filter(k=>{
+    if(asked.includes(k)) return false;
+    if(k==='vibes') return brief.vibes.length===0;
+    return brief[k] === null || brief[k] === undefined;
+  });
+}
+
+/* ---------- flow ---------- */
+function nextStep(){
+  const gaps = missing();
+  if(asked.length >= MAX_QUESTIONS || gaps.length === 0){ finish(); return; }
+
+  const key = gaps[0];
+  asked.push(key);
+  const q = QUESTIONS[key];
+
+  const t = thinking();
+  setTimeout(()=>{
+    t.remove();
+    const node = bubble('bot', TT.esc(q.ask));
+    const body = node.querySelector('.body');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'quick';
+    let chosen = [];
+
+    q.chips().forEach(c=>{
+      const b = document.createElement('button');
+      b.type='button'; b.className='chip'; b.textContent = c.label;
+      b.addEventListener('click', ()=>{
+        if(q.multi){
+          if(chosen.includes(c.label)){
+            chosen = chosen.filter(x=>x!==c.label);
+            b.classList.remove('on');
+          } else {
+            chosen.push(c.label); c.apply(); b.classList.add('on');
+          }
+          done.disabled = chosen.length===0;
+        } else {
+          c.apply();
+          wrap.remove(); skip.remove(); if(done) done.remove();
+          bubble('me', TT.esc(c.label));
+          nextStep();
+        }
+      });
+      wrap.appendChild(b);
+    });
+
+    let done = null;
+    if(q.multi){
+      done = document.createElement('button');
+      done.type='button'; done.className='btn btn-sm btn-primary';
+      done.textContent = 'That’s it';
+      done.style.marginTop = '14px';
+      done.disabled = true;
+      done.addEventListener('click', ()=>{
+        wrap.remove(); skip.remove(); done.remove();
+        bubble('me', TT.esc(chosen.join(', ')));
+        nextStep();
+      });
+    }
+
+    const skip = document.createElement('button');
+    skip.type='button'; skip.className='skip';
+    skip.textContent = 'Skip this — just show me somewhere';
+    skip.addEventListener('click', ()=>{
+      wrap.remove(); skip.remove(); if(done) done.remove();
+      bubble('me', 'Just show me somewhere');
+      finish();
+    });
+
+    body.appendChild(wrap);
+    if(done) body.appendChild(done);
+    body.appendChild(skip);
+    body.appendChild(document.createElement('div'));
+    node.scrollIntoView({behavior:'smooth', block:'end'});
+  }, 800);
+}
+
+function finish(){
+  stage = 'done';
+  input.placeholder = 'Change anything before we go…';
+
+  const t = thinking();
+  setTimeout(()=>{
+    t.remove();
+    const chips = TT.chips(brief);
+    const line = chips.length
+      ? "That's enough to work with. Here's what I've got:"
+      : "You've told me almost nothing — which is fine. I'll start you somewhere broad and we can narrow it from the results.";
+
+    const node = bubble('bot', TT.esc(line));
+    const body = node.querySelector('.body');
+
+    const box = document.createElement('div');
+    box.className = 'brief-out';
+    box.innerHTML =
+      '<span class="lab">Your brief</span>' +
+      '<div class="chip-set">' +
+        (chips.length
+          ? chips.map(c=>'<span class="chip chip-sm on">'+TT.esc(c.label)+'</span>').join('')
+          : '<span class="chip chip-sm">Open to anything</span>') +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="goBtn">Show me where to go</button>' +
+        '<button class="btn" id="moreBtn">Ask me something else</button>' +
+      '</div>';
+    body.appendChild(box);
+
+    box.querySelector('#goBtn').addEventListener('click', ()=>{
+      brief.source = 'concept-3';
+      TT.save(brief);
+      location.href = 'results.html';
+    });
+    box.querySelector('#moreBtn').addEventListener('click', ()=>{
+      box.remove();
+      if(missing().length){ asked = asked.slice(0, MAX_QUESTIONS-1); nextStep(); }
+      else { say("I've got everything I usually ask for. Type anything else you want me to factor in, or just say go."); }
+    });
+
+    node.scrollIntoView({behavior:'smooth', block:'end'});
+  }, 900);
+}
+
+/* ---------- input ---------- */
+function grow(){ input.style.height='auto'; input.style.height = input.scrollHeight + 'px'; }
+input.addEventListener('input', grow);
+
+function submit(){
+  const text = input.value.trim();
+  if(!text) return;
+  input.value=''; grow();
+  bubble('me', TT.esc(text));
+
+  const notes = TT.parse(text, brief);
+  brief.freeText = (brief.freeText ? brief.freeText + ' ' : '') + text;
+
+  if(stage === 'done'){
+    say(notes.length
+      ? 'Updated — ' + TT.esc(notes.join(', ')) + '. Still happy to go?'
+      : "Noted. I'll factor that in.");
+    setTimeout(finish, 1400);
+    return;
+  }
+
+  if(stage === 'open'){
+    stage = 'asking';
+    const ack = notes.length
+      ? "Got it — " + TT.esc(notes.slice(0,3).join(', ')) + ". A couple of things and I can narrow this right down."
+      : "Right. Let me ask you a couple of things and I can narrow this right down.";
+    const t = thinking();
+    setTimeout(()=>{ t.remove(); bubble('bot', ack); nextStep(); }, 850);
+  } else {
+    nextStep();
+  }
+}
+
+sendBtn.addEventListener('click', submit);
+input.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
+});
+
+/* ---------- opening ---------- */
+(function start(){
+  const node = bubble('bot',
+    "<p>Hello. I'm going to find you somewhere to go.</p>" +
+    "<p>Tell me whatever you've got — a mood, a month, a budget, who's coming. If you've no idea at all, say that and I'll ask.</p>");
+  const body = node.querySelector('.body');
+  const st = document.createElement('div');
+  st.className = 'starter';
+  [
+    "Somewhere hot in December where the kids won't be bored",
+    "I need a week off. Two of us, nothing to plan, good food.",
+    "No idea. Surprise me."
+  ].forEach(s=>{
+    const b=document.createElement('button');
+    b.type='button'; b.textContent = s;
+    b.addEventListener('click', ()=>{ input.value = s; grow(); submit(); });
+    st.appendChild(b);
+  });
+  body.appendChild(st);
+})();
+</script>
+</body>
+</html>

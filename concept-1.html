@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 1 — Guided brief · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css">
+<style>
+  .c1-panel{margin-top:8px;}
+  .c1-actions{display:flex;align-items:center;gap:12px;padding:22px 26px;flex-wrap:wrap;}
+  .c1-count{margin-left:auto;font-size:.82rem;color:var(--ink-3);}
+  .free-wrap{border:1px solid var(--line);padding:14px 16px 12px;}
+  .free-wrap textarea{
+    width:100%;border:0;outline:none;resize:vertical;min-height:64px;
+    font:inherit;font-size:.95rem;color:var(--ink);background:transparent;
+  }
+  .free-wrap textarea::placeholder{color:var(--ink-3);}
+  .free-wrap .hint{margin-top:8px;}
+  .month-scroll{display:flex;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+
+<main class="shell shell-narrow">
+  <h1>Not sure where to go? We can help</h1>
+  <p class="lede">
+    Tell us how you want your trip to feel.<br>
+    We'll pick one for you, show you three directions you could take it instead, and help you decide between them.
+  </p>
+
+  <div class="panel c1-panel">
+    <div class="panel-row">
+      <span class="lab">Who's going?</span>
+      <div class="chip-set" id="whoSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">What are you looking for? <span class="opt">— pick as many as you like</span></span>
+      <div class="chip-set" id="vibeSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">When are you thinking?</span>
+      <div class="month-scroll" id="monthSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">Rough budget</span>
+      <div class="chip-set" id="budgetSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">How far will you fly?</span>
+      <div class="chip-set" id="flightSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">Entry requirements</span>
+      <div class="chip-set" id="visaSet"></div>
+    </div>
+
+    <div class="panel-row">
+      <span class="lab">Anything else? <span class="opt">— optional, say it however you like</span></span>
+      <div class="free-wrap">
+        <textarea id="freeText" rows="3" placeholder="e.g. somewhere hot in December where the kids won't be bored…"></textarea>
+        <div class="hint">We'll read this alongside your picks above.</div>
+      </div>
+    </div>
+
+    <div class="c1-actions">
+      <button class="btn btn-primary" id="inspireBtn">Inspire me</button>
+      <button class="btn" id="surpriseBtn">Surprise me</button>
+      <span class="c1-count" id="count"></span>
+    </div>
+  </div>
+
+  <p class="hint" style="margin-top:18px;">
+    Concept 1 — a structured brief. Every answer is optional; the customer can submit an empty form and still get a recommendation.
+  </p>
+</main>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script>
+TT.mount('concept-1.html');
+
+let brief = TT.load();
+
+function chip(label, on, fn){
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip' + (on ? ' on' : '');
+  b.textContent = label;
+  b.addEventListener('click', fn);
+  return b;
+}
+
+function render(){
+  const who = document.getElementById('whoSet'); who.innerHTML='';
+  WHO.forEach(w=>who.appendChild(chip(w.label, brief.who===w.id, ()=>{
+    brief.who = brief.who===w.id ? null : w.id; render();
+  })));
+
+  const vs = document.getElementById('vibeSet'); vs.innerHTML='';
+  VIBES.forEach(v=>vs.appendChild(chip(v.label, brief.vibes.includes(v.id), ()=>{
+    brief.vibes = brief.vibes.includes(v.id)
+      ? brief.vibes.filter(x=>x!==v.id)
+      : brief.vibes.concat(v.id);
+    render();
+  })));
+
+  const ms = document.getElementById('monthSet'); ms.innerHTML='';
+  ms.appendChild(chip('Flexible', brief.month===null, ()=>{ brief.month=null; render(); }));
+  MONTHS.forEach((m,i)=>ms.appendChild(chip(m, brief.month===i+1, ()=>{
+    brief.month = brief.month===i+1 ? null : i+1; render();
+  })));
+
+  const bs = document.getElementById('budgetSet'); bs.innerHTML='';
+  BUDGETS.forEach(b=>bs.appendChild(chip(b.label, brief.budget===b.id, ()=>{
+    brief.budget = brief.budget===b.id ? null : b.id; render();
+  })));
+
+  const fs = document.getElementById('flightSet'); fs.innerHTML='';
+  FLIGHTS.forEach(f=>fs.appendChild(chip(f.label, brief.maxHours===f.id, ()=>{
+    brief.maxHours = brief.maxHours===f.id ? null : f.id; render();
+  })));
+
+  const vz = document.getElementById('visaSet'); vz.innerHTML='';
+  vz.appendChild(chip('Visa-free or visa on arrival only', brief.visaOnly, ()=>{
+    brief.visaOnly = !brief.visaOnly; render();
+  }));
+
+  const n = TT.chips(brief).length;
+  document.getElementById('count').textContent = n
+    ? n + (n===1?' thing':' things') + ' told us so far'
+    : "Nothing picked? Fine — we'll start you somewhere good";
+
+  TT.save(brief);
+}
+
+document.getElementById('freeText').addEventListener('input', e=>{
+  brief.freeText = e.target.value; TT.save(brief);
+});
+
+document.getElementById('inspireBtn').addEventListener('click', ()=>{
+  if(brief.freeText.trim()) TT.parse(brief.freeText, brief);
+  TT.save(brief);
+  TT.go('concept-1');
+});
+
+document.getElementById('surpriseBtn').addEventListener('click', ()=>{
+  const pick = a => a[Math.floor(Math.random()*a.length)];
+  brief = TT.blank();
+  brief.who = pick(WHO).id;
+  brief.vibes = [...new Set([pick(VIBES).id, pick(VIBES).id])];
+  brief.month = 1 + Math.floor(Math.random()*12);
+  brief.budget = pick(BUDGETS).id;
+  brief.maxHours = pick(FLIGHTS).id;
+  brief.visaOnly = Math.random() > 0.6;
+  document.getElementById('freeText').value = '';
+  render();
+  TT.go('concept-1');
+});
+
+document.getElementById('freeText').value = brief.freeText || '';
+render();
+</script>
+</body>
+</html>

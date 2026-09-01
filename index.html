@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TravelTank Inspiration — three entry points</title>
+<link rel="stylesheet" href="assets/tt.css">
+<style>
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:8px;}
+  @media(max-width:960px){.cards{grid-template-columns:1fr;}}
+  .ec{border:1px solid var(--line);display:flex;flex-direction:column;background:#fff;}
+  .ec .num{
+    font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-3);padding:16px 20px 0;
+  }
+  .ec h2{padding:6px 20px 0;font-size:1.12rem;}
+  .ec .sub{padding:6px 20px 14px;font-size:.9rem;color:var(--ink-2);flex:0 0 auto;}
+  .ec .prev{height:150px;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);padding:16px 20px;display:flex;flex-direction:column;gap:7px;justify-content:center;}
+  .bar{height:9px;background:var(--panel);}
+  .bar.w1{width:38%;} .bar.w2{width:70%;} .bar.w3{width:52%;} .bar.w4{width:84%;}
+  .pills{display:flex;gap:5px;flex-wrap:wrap;}
+  .pill{height:17px;border:1px solid var(--line);border-radius:999px;}
+  .pill.p1{width:44px;}.pill.p2{width:62px;}.pill.p3{width:36px;}.pill.p4{width:54px;}.pill.p5{width:70px;}
+  .box{border:1px solid var(--line);height:44px;}
+  .box.tall{height:60px;}
+  .ec ul{margin:14px 0 0;padding:0 20px 0 38px;font-size:.87rem;color:var(--ink-2);display:grid;gap:7px;}
+  .ec .go{padding:18px 20px 20px;margin-top:auto;}
+  .meta{border:1px solid var(--line);padding:20px 24px;margin-top:34px;background:var(--panel-2);}
+  .meta h2{font-size:1rem;}
+  .meta ul{margin:10px 0 0;padding-left:20px;font-size:.9rem;color:var(--ink-2);display:grid;gap:6px;}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.82rem;color:var(--ink-3);margin-top:14px;}
+  .flow b{border:1px solid var(--line);background:#fff;padding:6px 12px;font-weight:500;color:var(--ink-2);}
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <h1>Inspiration — three ways in</h1>
+  <p class="lede">
+    Three entry points to the same recommendation engine, presented as greyscale wireframes.
+    Each one leads to the same results page, so the difference being tested is purely how the
+    customer gives us their brief.
+  </p>
+
+  <div class="cards">
+
+    <div class="ec">
+      <div class="num">Entry point 1</div>
+      <h2>Guided brief</h2>
+      <div class="sub">A structured panel of questions. Nothing to type unless you want to.</div>
+      <div class="prev">
+        <div class="bar w1"></div>
+        <div class="pills"><span class="pill p1"></span><span class="pill p2"></span><span class="pill p3"></span></div>
+        <div class="bar w3"></div>
+        <div class="pills"><span class="pill p4"></span><span class="pill p2"></span><span class="pill p5"></span><span class="pill p1"></span></div>
+        <div class="box"></div>
+      </div>
+      <ul>
+        <li>Lowest effort — every field optional</li>
+        <li>Customer sees the full shape of what we ask</li>
+        <li>Weakest at anything we did not think to ask</li>
+      </ul>
+      <div class="go"><a class="btn btn-primary" href="concept-1.html" style="text-decoration:none;display:inline-block;">Open concept 1</a></div>
+    </div>
+
+    <div class="ec">
+      <div class="num">Entry point 2</div>
+      <h2>Prompt, with help on demand</h2>
+      <div class="sub">An open prompt with suggestions — and the concept 1 questions behind a “Need help?” button.</div>
+      <div class="prev">
+        <div class="box tall"></div>
+        <div class="pills"><span class="pill p3"></span><span class="pill p5"></span></div>
+        <div class="bar w4"></div>
+        <div class="bar w2"></div>
+        <div class="bar w3"></div>
+      </div>
+      <ul>
+        <li>Fastest for anyone who knows what they want</li>
+        <li>“Need help?” builds the prompt for anyone who doesn't</li>
+        <li>Customer can edit the generated prompt before sending</li>
+      </ul>
+      <div class="go"><a class="btn btn-primary" href="concept-2.html" style="text-decoration:none;display:inline-block;">Open concept 2</a></div>
+    </div>
+
+    <div class="ec">
+      <div class="num">Entry point 3</div>
+      <h2>Conversation</h2>
+      <div class="sub">One text box that asks up to three follow-ups, adapting to what you already said.</div>
+      <div class="prev">
+        <div class="bar w2"></div>
+        <div class="bar w1"></div>
+        <div class="pills"><span class="pill p2"></span><span class="pill p1"></span><span class="pill p4"></span></div>
+        <div class="bar w3" style="margin-left:auto;"></div>
+        <div class="box"></div>
+      </div>
+      <ul>
+        <li>Feels like being served, not filling a form</li>
+        <li>Only asks what the opening message missed</li>
+        <li>Longest path to a result — “just show me” at every step</li>
+      </ul>
+      <div class="go"><a class="btn btn-primary" href="concept-3.html" style="text-decoration:none;display:inline-block;">Open concept 3</a></div>
+    </div>
+
+  </div>
+
+  <div class="meta">
+    <h2>What all three lead to</h2>
+    <div class="flow">
+      <b>Entry point</b> → <b>Results: best match</b> ↔ <b>Premium</b> ↔ <b>Off the beaten track</b> → <b>Edit brief (side panel)</b> → <b>Re-picked</b>
+    </div>
+    <ul>
+      <li>Three destinations the customer toggles between, re-scored live against the brief.</li>
+      <li>Three flight options and six hotels per destination, split into lower, middle and higher budget tiers, with an indicative trip total that reprices as you change either.</li>
+      <li>“Nudge it” chips and a conversational <b>Edit brief</b> side panel, both of which redo the shortlist.</li>
+      <li><a href="results.html">Jump straight to the results page</a> with an empty brief to see the fallback behaviour.</li>
+    </ul>
+    <p class="hint" style="margin-top:14px;">
+      Greyscale throughout, with a single accent reserved for the primary action — matching the agreed wireframe treatment.
+      All destinations, flights, hotels and prices are indicative placeholders for demonstration only.
+    </p>
+  </div>
+</main>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script>TT.mount('index.html');</script>
+</body>
+</html>

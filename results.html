@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Results — Here's where we'd send you · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css">
+<style>
+  .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
+
+  .nudge{border:1px solid var(--line);padding:16px 20px;margin:22px 0 26px;}
+  .nudge .lab{margin-bottom:10px;}
+
+  /* lane switcher */
+  .lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:-1px;}
+  .lane{
+    border:1px solid var(--line);background:var(--panel-2);padding:15px 18px;
+    text-align:left;cursor:pointer;
+  }
+  .lane .k{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;display:block;}
+  .lane .n{font-size:1.02rem;font-weight:600;margin-top:5px;display:block;color:var(--ink-2);}
+  .lane .p{font-size:.78rem;color:var(--ink-3);margin-top:3px;display:block;}
+  .lane.on{background:#fff;border-bottom-color:#fff;}
+  .lane.on .k,.lane.on .n{color:var(--ink);}
+  @media(max-width:820px){.lanes{grid-template-columns:1fr;}.lane.on{border-bottom-color:var(--line);}}
+
+  .card{border:1px solid var(--line);background:#fff;}
+  .hero{height:330px;display:flex;align-items:flex-end;padding:26px 30px;position:relative;}
+  .hero h2{font-size:2.1rem;letter-spacing:-.02em;margin:0;}
+  .hero .cty{font-size:.95rem;color:var(--ink-2);margin-top:2px;}
+  .fav{
+    position:absolute;top:18px;right:20px;width:38px;height:38px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;font-size:1rem;color:var(--ink-2);border-radius:2px;
+  }
+  .fav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .card-body{padding:28px 30px 30px;}
+  .blurb{font-size:.98rem;color:var(--ink-2);margin:0 0 22px;max-width:78ch;}
+
+  .why{background:var(--panel);padding:20px 22px;margin-bottom:14px;}
+  .why .hd{display:flex;gap:12px;align-items:center;margin-bottom:12px;}
+  .why .spark{color:var(--ink-2);font-size:1rem;}
+  .why p{margin:0;font-size:.95rem;color:var(--ink-2);}
+  .tip{background:var(--panel);padding:18px 22px;margin-bottom:6px;}
+  .tip p{margin:6px 0 0;font-size:.95rem;color:var(--ink-2);}
+
+  /* sections */
+  .sec{margin-top:34px;}
+  .sec-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+  .sec-hd h3{margin:0;font-size:1.05rem;font-weight:600;}
+  .sec-hd .hint{margin-left:auto;}
+
+  /* flights */
+  .fl{
+    display:grid;grid-template-columns:24px 1.4fr 1fr .9fr auto;gap:16px;align-items:center;
+    border:1px solid var(--line);padding:15px 18px;margin-bottom:-1px;cursor:pointer;background:#fff;
+    text-align:left;width:100%;
+  }
+  .fl:hover{background:var(--panel-2);}
+  .fl.on{border-color:var(--ink);position:relative;z-index:1;background:#fff;}
+  .radio{width:16px;height:16px;border:1px solid var(--ink-3);border-radius:50%;display:inline-block;}
+  .fl.on .radio{border:5px solid var(--ink);}
+  .fl .car{font-weight:600;font-size:.93rem;display:block;}
+  .fl .rt{font-size:.82rem;color:var(--ink-3);margin-top:2px;display:block;}
+  .fl .dur{font-size:.9rem;color:var(--ink-2);}
+  .fl .stp{font-size:.8rem;color:var(--ink-3);}
+  .fl .nt{font-size:.8rem;color:var(--ink-3);}
+  .fl .pr{font-size:1.02rem;font-weight:600;text-align:right;white-space:nowrap;}
+  .fl .pr small{display:block;font-weight:400;font-size:.72rem;color:var(--ink-3);}
+  @media(max-width:820px){
+    .fl{grid-template-columns:24px 1fr auto;row-gap:6px;}
+    .fl .note-col{display:none;}
+    .fl .dur-col{grid-column:2 / -1;font-size:.82rem;}
+  }
+
+  /* hotels */
+  .tiers{display:flex;gap:2px;}
+  .tier{
+    border:1px solid var(--line);background:var(--panel-2);padding:9px 18px;cursor:pointer;
+    font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .tier.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .hotels{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:820px){.hotels{grid-template-columns:1fr;}}
+  .hot{border:1px solid var(--line);display:flex;flex-direction:column;}
+  .hot .thumb{height:132px;}
+  .hot .in{padding:16px 18px;display:flex;flex-direction:column;flex:1;}
+  .hot .nm{font-weight:600;font-size:.98rem;}
+  .hot .ar{font-size:.82rem;color:var(--ink-3);margin-top:2px;}
+  .hot .meta{font-size:.8rem;color:var(--ink-2);margin-top:9px;}
+  .hot .nte{font-size:.84rem;color:var(--ink-3);margin-top:9px;flex:1;}
+  .hot .pr{
+    margin-top:14px;padding-top:12px;border-top:1px solid var(--line-2);
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .hot .pr b{font-size:1.02rem;}
+  .hot .pr span{font-size:.78rem;color:var(--ink-3);}
+  .hot .tot{font-size:.78rem;color:var(--ink-3);margin-left:auto;}
+
+  /* total */
+  .total{
+    border:1px solid var(--ink);padding:20px 24px;margin-top:24px;
+    display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  }
+  .total .big{font-size:1.6rem;font-weight:600;letter-spacing:-.02em;}
+  .total .bd{font-size:.85rem;color:var(--ink-3);}
+
+  .card-foot{display:flex;gap:12px;align-items:center;padding:24px 30px;border-top:1px solid var(--line-2);flex-wrap:wrap;}
+
+  .note{
+    border:1px solid var(--line);background:var(--panel-2);padding:12px 18px;
+    font-size:.88rem;color:var(--ink-2);margin-bottom:18px;
+  }
+
+  /* drawer */
+  .scrim{position:fixed;inset:0;background:rgba(17,19,21,.42);display:none;z-index:60;}
+  .scrim.on{display:block;}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);background:#fff;
+    border-left:1px solid var(--line);z-index:61;transform:translateX(100%);
+    transition:transform .22s ease;display:flex;flex-direction:column;
+  }
+  .drawer.on{transform:translateX(0);}
+  .dr-hd{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px;}
+  .dr-hd h2{margin:0 0 3px;font-size:1.05rem;}
+  .dr-x{margin-left:auto;border:1px solid var(--line);background:#fff;width:32px;height:32px;cursor:pointer;border-radius:2px;color:var(--ink-2);}
+  .dr-brief{padding:18px 24px;border-bottom:1px solid var(--line-2);background:var(--panel-2);}
+  .dr-body{flex:1;overflow:auto;padding:22px 24px;display:flex;flex-direction:column;gap:18px;}
+  .dr-msg{font-size:.93rem;line-height:1.55;}
+  .dr-msg.bot{color:var(--ink-2);}
+  .dr-msg.me{align-self:flex-end;background:var(--panel);border:1px solid var(--line-2);padding:10px 14px;max-width:88%;}
+  .dr-ft{border-top:1px solid var(--line);padding:16px 24px 20px;}
+  .dr-ft .box{border:1px solid var(--line);padding:11px 14px 8px;}
+  .dr-ft textarea{width:100%;border:0;outline:none;resize:none;font:inherit;font-size:.94rem;min-height:24px;background:transparent;}
+  .dr-ft .row{display:flex;align-items:center;margin-top:6px;}
+  .dr-ft .send{margin-left:auto;width:32px;height:32px;border:0;background:var(--accent);color:#fff;cursor:pointer;border-radius:2px;}
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <div class="top-actions">
+    <button class="btn btn-cap" id="editBrief">Edit brief</button>
+    <button class="btn btn-cap" id="startAgain">Start again</button>
+  </div>
+
+  <h1>Here's where we'd send you</h1>
+  <p class="lede" id="lede"></p>
+
+  <div class="note" id="note" hidden></div>
+
+  <div class="nudge">
+    <span class="lab">Nudge it</span>
+    <div class="chip-set" id="nudgeSet"></div>
+  </div>
+
+  <div class="lanes" id="lanes"></div>
+  <div id="card"></div>
+
+  <p class="hint" style="margin-top:22px;">
+    All prices are indicative placeholders for wireframe purposes — flights are return from Lagos, hotels are per room per night, totals assume 6 nights.
+  </p>
+</main>
+
+<!-- ============ edit brief drawer ============ -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Edit your brief">
+  <div class="dr-hd">
+    <div>
+      <h2>Your brief</h2>
+      <div class="hint">Tell us what to change and we'll redo the shortlist.</div>
+    </div>
+    <button class="dr-x" id="drX" aria-label="Close">&times;</button>
+  </div>
+  <div class="dr-brief">
+    <span class="lab">Right now we're working from</span>
+    <div class="chip-set" id="drChips"></div>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-ft">
+    <div class="box">
+      <textarea id="drInput" rows="1" placeholder="e.g. &quot;too far&quot;, &quot;more beach&quot;, &quot;nothing in Europe&quot;…"></textarea>
+      <div class="row"><button class="send" id="drSend" aria-label="Send">&rarr;</button></div>
+    </div>
+  </div>
+</aside>
+
+<script src="assets/data.js"></script>
+<script src="assets/core.js"></script>
+<script>
+TT.mount('results.html');
+
+let brief = TT.load();
+brief.dismissed = brief.dismissed || [];
+let lane = brief.lane || 'best';
+const ui = {};                              // per-destination flight/tier selection
+const fav = new Set();
+
+const LANE_KEYS = ['best','premium','offbeat'];
+const TIERS = [['low','Lower'],['mid','Middle'],['high','Higher']];
+
+function stateFor(id){
+  if(!ui[id]) ui[id] = {flight:1, tier:'mid'};
+  return ui[id];
+}
+
+/* ---------------- render ---------------- */
+function render(noteText){
+  brief.lane = lane;
+  TT.save(brief);
+
+  document.getElementById('lede').textContent = TT.summary(brief);
+
+  const n = document.getElementById('note');
+  if(noteText){ n.hidden = false; n.textContent = noteText; }
+  else n.hidden = true;
+
+  /* nudges */
+  const ns = document.getElementById('nudgeSet');
+  ns.innerHTML = '';
+  NUDGES.forEach(x=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='chip'; b.textContent = x.label;
+    b.addEventListener('click', ()=>{
+      const said = TT.nudge(brief, x.id);
+      render('We ' + said + ' and picked again.');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+    ns.appendChild(b);
+  });
+
+  const L = TT.lanes(brief);
+
+  /* lane switcher */
+  const ls = document.getElementById('lanes');
+  ls.innerHTML = '';
+  LANE_KEYS.forEach(k=>{
+    const meta = TT.LANE_META[k], item = L[k];
+    const b = document.createElement('button');
+    b.type='button'; b.className='lane' + (k===lane ? ' on':'');
+    b.innerHTML = '<span class="k">'+meta.label+'</span>' +
+                  '<span class="n">'+TT.esc(item.d.name)+'</span>' +
+                  '<span class="p">'+TT.esc(item.d.country)+' · from '+TT.money(item.d.flights[0].price)+'</span>';
+    b.addEventListener('click', ()=>{ lane = k; render(); });
+    ls.appendChild(b);
+  });
+
+  drawCard(L[lane], TT.LANE_META[lane]);
+  renderDrawerBrief();
+}
+
+function drawCard(item, meta){
+  const d = item.d;
+  const st = stateFor(d.id);
+  const flight = d.flights[st.flight];
+  const hotels = d.hotels[st.tier];
+  const nights = TT.nights();
+  const total = flight.price + hotels[0].night * nights;
+
+  const why = item.why.slice(0,3);
+  if(!why.length) why.push('A safe first pick while you tell us more');
+
+  const html =
+  '<div class="card">' +
+    '<div class="hero ph">' +
+      '<button class="fav'+(fav.has(d.id)?' on':'')+'" id="favBtn" aria-label="Save">&#9825;</button>' +
+      '<div><h2>'+TT.esc(d.name)+'</h2><div class="cty">'+TT.esc(d.country)+'</div></div>' +
+    '</div>' +
+    '<div class="card-body">' +
+
+      '<p class="blurb">'+TT.esc(d.blurb)+'</p>' +
+
+      '<div class="why">' +
+        '<div class="hd"><span class="spark">&#10022;</span><span class="lab" style="margin:0;">Why '+TT.esc(d.name)+'</span></div>' +
+        '<p>'+TT.esc(d.why)+'</p>' +
+        '<ul class="ticks">'+ why.map(w=>'<li>'+TT.esc(w)+'</li>').join('') +'</ul>' +
+      '</div>' +
+
+      '<div class="tip"><span class="lab" style="margin:0;">Shark tip</span><p>'+TT.esc(d.tip)+'</p></div>' +
+
+      '<div class="facts">' +
+        '<div><span class="lab">Flight from Lagos</span><div class="v">'+d.hours+' hours</div></div>' +
+        '<div><span class="lab">Best months</span><div class="v">'+TT.monthRuns(d)+'</div></div>' +
+        '<div><span class="lab">Entry</span><div class="v">'+VISA_LABEL[d.visa]+'</div></div>' +
+        '<div><span class="lab">Flights from</span><div class="v"><strong>'+TT.money(d.flights[0].price)+'</strong></div></div>' +
+      '</div>' +
+
+      /* ---- flights ---- */
+      '<div class="sec">' +
+        '<div class="sec-hd"><h3>Getting there</h3><span class="hint">Return from Lagos · economy · indicative</span></div>' +
+        d.flights.map((f,i)=>
+          '<button type="button" class="fl'+(i===st.flight?' on':'')+'" data-fl="'+i+'">' +
+            '<span class="radio"></span>' +
+            '<span><span class="car">'+TT.esc(f.carrier)+'</span><span class="rt">'+TT.esc(f.route)+'</span></span>' +
+            '<span class="dur-col"><span class="dur">'+f.dur+'</span><span class="stp"> · '+f.stops+'</span></span>' +
+            '<span class="note-col"><span class="nt">'+TT.esc(f.note)+'</span></span>' +
+            '<span class="pr">'+TT.money(f.price)+'<small>per person</small></span>' +
+          '</button>').join('') +
+      '</div>' +
+
+      /* ---- hotels ---- */
+      '<div class="sec">' +
+        '<div class="sec-hd"><h3>Where to stay</h3>' +
+          '<div class="tiers">' + TIERS.map(([k,l])=>
+            '<button type="button" class="tier'+(k===st.tier?' on':'')+'" data-tier="'+k+'">'+l+'</button>').join('') +
+          '</div>' +
+          '<span class="hint">Per room, per night</span>' +
+        '</div>' +
+        '<div class="hotels">' +
+          hotels.map(h=>
+            '<div class="hot">' +
+              '<div class="thumb ph ph-sm"></div>' +
+              '<div class="in">' +
+                '<div class="nm">'+TT.esc(h.n)+'</div>' +
+                '<div class="ar">'+TT.esc(h.area)+'</div>' +
+                '<div class="meta">'+h.stars+'-star · '+TT.esc(h.board)+'</div>' +
+                '<div class="nte">'+TT.esc(h.note)+'</div>' +
+                '<div class="pr"><b>'+TT.money(h.night)+'</b><span>per night</span>' +
+                  '<span class="tot">'+TT.money(h.night*nights)+' for '+nights+' nights</span></div>' +
+              '</div>' +
+            '</div>').join('') +
+        '</div>' +
+      '</div>' +
+
+      /* ---- total ---- */
+      '<div class="total">' +
+        '<div><span class="lab">Indicative trip total</span>' +
+          '<div class="big">'+TT.money(total)+'</div>' +
+          '<div class="bd">'+nights+' nights · '+TT.esc(flight.carrier)+' · '+TT.esc(hotels[0].n)+'</div>' +
+        '</div>' +
+        '<div style="margin-left:auto;text-align:right;">' +
+          '<div class="bd">Flights '+TT.money(flight.price)+' &nbsp;+&nbsp; Hotel '+TT.money(hotels[0].night*nights)+'</div>' +
+          '<div class="bd">Change the flight or hotel tier above to reprice</div>' +
+        '</div>' +
+      '</div>' +
+
+    '</div>' +
+    '<div class="card-foot">' +
+      '<button class="btn" id="notFor">Not interested</button>' +
+      '<span class="spacer"></span>' +
+      '<button class="btn" id="cmpBtn">Compare all three</button>' +
+      '<button class="btn btn-primary" id="tellMore">Tell me more</button>' +
+    '</div>' +
+  '</div>';
+
+  const host = document.getElementById('card');
+  host.innerHTML = html;
+
+  host.querySelectorAll('[data-fl]').forEach(el=>{
+    el.addEventListener('click', ()=>{ st.flight = +el.dataset.fl; drawCard(item, meta); });
+  });
+  host.querySelectorAll('[data-tier]').forEach(el=>{
+    el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; drawCard(item, meta); });
+  });
+  host.querySelector('#favBtn').addEventListener('click', e=>{
+    if(fav.has(d.id)) fav.delete(d.id); else fav.add(d.id);
+    e.currentTarget.classList.toggle('on');
+  });
+  host.querySelector('#notFor').addEventListener('click', ()=>{
+    brief.dismissed.push(d.id);
+    render('Dropped ' + d.name + '. Here is the next best fit for that slot.');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  host.querySelector('#tellMore').addEventListener('click', ()=>{
+    openDrawer('Tell me more about ' + d.name + '.');
+  });
+  host.querySelector('#cmpBtn').addEventListener('click', ()=>{
+    const L = TT.lanes(brief);
+    openDrawer(null,
+      'Side by side:\n' +
+      LANE_KEYS.map(k=>{
+        const x = L[k].d, s = stateFor(x.id);
+        return '· ' + TT.LANE_META[k].label + ' — ' + x.name + ', ' + x.hours + 'h, ' +
+               VISA_LABEL[x.visa] + ', from ' + TT.money(x.flights[0].price + x.hotels[s.tier][0].night*TT.nights()) + ' all in.';
+      }).join('\n'));
+  });
+}
+
+/* ---------------- drawer ---------------- */
+const scrim = document.getElementById('scrim'), drawer = document.getElementById('drawer');
+const drBody = document.getElementById('drBody'), drInput = document.getElementById('drInput');
+
+function drSay(who, text){
+  const d = document.createElement('div');
+  d.className = 'dr-msg ' + who;
+  d.innerHTML = TT.esc(text).replace(/\n/g,'<br>');
+  drBody.appendChild(d);
+  drBody.scrollTop = drBody.scrollHeight;
+}
+
+function renderDrawerBrief(){
+  const el = document.getElementById('drChips');
+  const chips = TT.chips(brief);
+  el.innerHTML = '';
+  if(!chips.length){
+    el.innerHTML = '<span class="chip chip-sm">Nothing yet — open to anything</span>';
+    return;
+  }
+  chips.forEach(c=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='chip chip-sm on chip-x';
+    b.innerHTML = TT.esc(c.label) + ' <b>&times;</b>';
+    b.title = 'Remove';
+    b.addEventListener('click', ()=>{
+      TT.removeChip(brief, c.k);
+      render('Removed “' + c.label + '” and picked again.');
+      drSay('bot', 'Dropped “' + c.label + '”. Shortlist redone.');
+    });
+    el.appendChild(b);
+  });
+}
+
+let drawerOpened = false;
+function openDrawer(prefill, botLine){
+  scrim.classList.add('on'); drawer.classList.add('on');
+  if(!drawerOpened){
+    drawerOpened = true;
+    drSay('bot', "This is your brief. Change anything — tell me in your own words, or take a chip off above and I'll pick again.");
+  }
+  if(botLine) drSay('bot', botLine);
+  if(prefill){ drInput.value = prefill; drInput.focus(); }
+  renderDrawerBrief();
+}
+function closeDrawer(){ scrim.classList.remove('on'); drawer.classList.remove('on'); }
+
+document.getElementById('editBrief').addEventListener('click', ()=>openDrawer());
+document.getElementById('drX').addEventListener('click', closeDrawer);
+scrim.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
+
+function drSubmit(){
+  const t = drInput.value.trim();
+  if(!t) return;
+  drInput.value=''; drInput.style.height='auto';
+  drSay('me', t);
+
+  const notes = TT.parse(t, brief);
+
+  setTimeout(()=>{
+    if(notes.length){
+      drSay('bot', 'Updated: ' + notes.join(', ') + '. I have redone all three options.');
+      render('Brief updated — ' + notes.join(', ') + '.');
+    } else {
+      drSay('bot', "I have added that to your brief as a note. It did not change the shortlist on its own — try something like “cheaper”, “more beach”, “shorter flight” or a month.");
+      brief.freeText = (brief.freeText ? brief.freeText+' ' : '') + t;
+      TT.save(brief);
+    }
+    renderDrawerBrief();
+  }, 450);
+}
+document.getElementById('drSend').addEventListener('click', drSubmit);
+drInput.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); drSubmit(); }
+});
+drInput.addEventListener('input', ()=>{ drInput.style.height='auto'; drInput.style.height = drInput.scrollHeight+'px'; });
+
+document.getElementById('startAgain').addEventListener('click', ()=>{
+  TT.clear();
+  location.href = brief.source ? brief.source + '.html' : 'index.html';
+});
+
+render();
+</script>
+</body>
+</html>
