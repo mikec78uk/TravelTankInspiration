@@ -322,7 +322,8 @@ const TT = (function(){
       case 'shorter': {
         const o=[3,6,10,99], c=b.maxHours||99;
         b.maxHours = o[Math.max(0,o.indexOf(c)-1)];
-        return b.maxHours===99 ? 'any flight length' : 'flights within ' + b.maxHours + ' hours';
+        /* Reads inside "We ___ and picked again", so it has to be a verb phrase. */
+        return b.maxHours===99 ? 'left the flight length open' : 'capped flights at ' + b.maxHours + ' hours';
       }
       case 'adventure': addVibe(b,'adventure'); return 'added adventure to your brief';
       case 'beach':     addVibe(b,'beach');     return 'added more beach to your brief';
