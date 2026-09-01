@@ -263,15 +263,15 @@ const TT = (function(){
 
   /* ---------- natural-language brief parsing ---------- */
   const KEYWORDS = [
-    [/beach|sea|sand|coast|island|swim|lagoon/i,      b=>addVibe(b,'beach'),    'beach time'],
+    [/beach|\bsea\b|sand|coast|island|swim|lagoon/i,      b=>addVibe(b,'beach'),    'beach time'],
     [/city|culture|museum|history|architect|gallery/i,b=>addVibe(b,'city'),     'city and culture'],
-    [/adventure|hike|climb|trek|active|surf|raft/i,   b=>addVibe(b,'adventure'),'adventure'],
+    [/adventure|hike|climb|trek|\bactive\b|surf|raft/i,   b=>addVibe(b,'adventure'),'adventure'],
     [/safari|wildlife|animal|nature|game drive|bird/i,b=>addVibe(b,'wildlife'), 'wildlife'],
-    [/food|eat|restaurant|nightlife|bar|party/i,      b=>addVibe(b,'food'),     'food and nightlife'],
+    [/\bfood\b|\beat(ing|s)?\b|restaurant|nightlife|\bbars?\b|part(y|ies)/i,      b=>addVibe(b,'food'),     'food and nightlife'],
     [/romantic|romance|honeymoon|anniversar/i,        b=>addVibe(b,'romance'),  'romance'],
     [/kids|children|child|family/i,                   b=>{addVibe(b,'family'); b.who='family';}, 'a family trip'],
-    [/spa|wellness|relax|reset|unwind|slow morning/i, b=>addVibe(b,'wellness'), 'rest'],
-    [/less touristy|not touristy|off the beaten|away from the crowds|somewhere quiet/i, b=>b.quieter=true, 'away from the crowds'],
+    [/\bspas?\b|wellness|relax|reset|unwind|slow morning/i, b=>addVibe(b,'wellness'), 'rest'],
+    [/less touristy|not touristy|too touristy|off the beaten|away from the crowds|somewhere quiet|fewer (people|crowds)/i, b=>b.quieter=true, 'away from the crowds'],
     [/cheap|budget|affordable|save money|not expensive|low cost/i, b=>b.budget=1, 'a tighter budget'],
     [/luxury|luxurious|splash out|all out|five star|5 star|premium/i, b=>b.budget=3, 'going all out'],
     [/\bhot\b|sunshine|sunny|somewhere warm|really warm/i, b=>b.heat='hot', 'somewhere reliably hot'],
@@ -294,7 +294,7 @@ const TT = (function(){
     const notes = [];
     KEYWORDS.forEach(([re,fn,note])=>{ if(re.test(text)){ fn(b); if(notes.indexOf(note)<0) notes.push(note); } });
     MONTHS_FULL.forEach((m,i)=>{
-      if(new RegExp('\\b'+m+'\\b','i').test(text) || new RegExp('\\b'+MONTHS[i]+'\\b','i').test(text)){
+      if(new RegExp('\b'+m+'\b','i').test(text) || new RegExp('\b'+MONTHS[i]+'\b','i').test(text)){
         b.month = i+1; notes.push('travelling in ' + m);
       }
     });

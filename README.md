@@ -38,10 +38,12 @@ prompt box is active and still empty, and clear away as soon as the customer sta
 turned into a plain-English prompt, dropped into the textbox when the modal closes — by any
 route, including the X and the Esc key — and remains fully editable before sending.
 
-**3 — Conversation.** One text box, then a structured elicitation card. The assistant parses
-the opening message, shows a collapsible line explaining what it picked up and what is still
-missing, then asks only the gaps — up to three questions, batched into a single card the
-customer pages through (`‹ 2 of 3 ›`).
+**3 — Conversation.** The same homepage furniture as Concept 2, but the search panel itself
+does the asking. Everything happens inside that one card, which grows as it goes: the prompt is
+replaced by an echo of what the customer said (with *Edit*), then a collapsible line explaining
+what was picked up and what is still missing, then the questions — up to three, paged through
+in place (`‹ 2 of 3 ›`), then the brief and the hand-off. No chat bubbles and no separate
+conversation page; the difference from Concept 2 is only what the panel does after you type.
 
 Each question is a numbered list. It is fully keyboard-driven: `1`–`9` select, `↑` `↓`
 navigate, `↵` chooses, `esc` skips. Every question also carries a *Something else* field for a
