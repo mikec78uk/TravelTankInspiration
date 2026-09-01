@@ -71,7 +71,9 @@ middle and higher budget tiers. Selecting a different flight or hotel tier repri
 indicative trip total live.
 
 Refinement works three ways — the **Nudge it** chips, removing a chip from the brief, or
-typing into the **Edit brief** side panel ("cheaper", "too far", "more beach", a month, a
+typing into the **Edit brief** rail, which opens on-page from the left and compresses the
+results rather than covering them (it floats over with a scrim below 900px, where there is no
+width to give up) ("cheaper", "too far", "more beach", a month, a
 budget figure). All three re-score all three destinations. **Not interested** drops that
 destination and promotes the next best fit for the slot.
 

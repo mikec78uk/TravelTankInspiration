@@ -134,31 +134,76 @@
     font-size:.88rem;color:var(--ink-2);margin-bottom:18px;
   }
 
-  /* drawer */
-  .scrim{position:fixed;inset:0;background:rgba(17,19,21,.42);display:none;z-index:60;}
-  .scrim.on{display:block;}
-  .drawer{
-    position:fixed;top:0;right:0;bottom:0;width:min(460px,100vw);background:#fff;
-    border-left:1px solid var(--line);z-index:61;transform:translateX(100%);
-    transition:transform .22s ease;display:flex;flex-direction:column;
+  /* ---- on-page brief rail: pushes the page right rather than covering it ---- */
+  .layout{display:flex;align-items:flex-start;min-height:100vh;}
+  .layout .shell{flex:1;min-width:0;}
+
+  .rail{
+    flex:0 0 0;width:0;overflow:hidden;
+    background:var(--panel-2);border-right:0;
+    position:sticky;top:0;align-self:stretch;max-height:100vh;
+    transition:flex-basis .24s ease,width .24s ease;
   }
-  .drawer.on{transform:translateX(0);}
-  .dr-hd{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px;}
-  .dr-hd h2{margin:0 0 3px;font-size:1.05rem;}
-  .dr-x{margin-left:auto;border:1px solid var(--line);background:#fff;width:32px;height:32px;cursor:pointer;border-radius:2px;color:var(--ink-2);}
-  .dr-brief{padding:18px 24px;border-bottom:1px solid var(--line-2);background:var(--panel-2);}
-  .dr-body{flex:1;overflow:auto;padding:22px 24px;display:flex;flex-direction:column;gap:18px;}
-  .dr-msg{font-size:.93rem;line-height:1.55;}
-  .dr-msg.bot{color:var(--ink-2);}
-  .dr-msg.me{align-self:flex-end;background:var(--panel);border:1px solid var(--line-2);padding:10px 14px;max-width:88%;}
-  .dr-ft{border-top:1px solid var(--line);padding:16px 24px 20px;}
-  .dr-ft .box{border:1px solid var(--line);padding:11px 14px 8px;}
-  .dr-ft textarea{width:100%;border:0;outline:none;resize:none;font:inherit;font-size:.94rem;min-height:24px;background:transparent;}
-  .dr-ft .row{display:flex;align-items:center;margin-top:6px;}
-  .dr-ft .send{margin-left:auto;width:32px;height:32px;border:0;background:var(--accent);color:#fff;cursor:pointer;border-radius:2px;}
+  .rail.on{flex:0 0 360px;width:360px;border-right:1px solid var(--line);}
+  .rail-in{
+    width:360px;height:100%;max-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  .rail-hd{padding:22px 22px 18px;border-bottom:1px solid var(--line-2);}
+  .rail-hd .chip-set{margin-top:10px;}
+  .rail-body{flex:1;overflow:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px;}
+  .rail-msg{font-size:.92rem;line-height:1.55;}
+  .rail-msg.bot{color:var(--ink-2);}
+  .rail-msg.me{
+    align-self:flex-end;background:#dfe4e6;border:1px solid var(--line);
+    padding:11px 14px;max-width:90%;color:var(--ink);
+  }
+  .rail-ft{padding:16px 22px 22px;}
+  .rail-ft .box{border:1px solid var(--line);background:#fff;padding:13px 15px 10px;position:relative;}
+  .rail-ft textarea{
+    width:100%;border:0;outline:none;resize:none;font:inherit;font-size:.92rem;
+    line-height:1.5;min-height:66px;background:transparent;color:var(--ink);
+  }
+  .rail-ft textarea::placeholder{color:var(--ink-3);}
+  .rail-ft .send{
+    display:block;margin-left:auto;width:34px;height:34px;border:1px solid var(--line);
+    background:#fff;color:var(--ink-2);border-radius:50%;cursor:pointer;font-size:.95rem;
+  }
+  .rail-ft .send:hover{background:var(--ink);border-color:var(--ink);color:#fff;}
+
+  .scrim{position:fixed;inset:0;background:rgba(17,19,21,.42);display:none;z-index:59;}
+
+  /* Narrow screens have no room to give up, so the rail floats over instead. */
+  @media(max-width:900px){
+    .rail{position:fixed;left:0;top:0;bottom:0;z-index:60;max-height:none;
+          transform:translateX(-100%);transition:transform .24s ease;
+          flex-basis:0;width:min(360px,88vw);}
+    .rail.on{transform:translateX(0);flex-basis:0;width:min(360px,88vw);}
+    .rail-in{width:min(360px,88vw);max-height:none;}
+    .scrim.on{display:block;}
+  }
 </style>
 </head>
 <body>
+
+<div class="scrim" id="scrim"></div>
+<div class="layout">
+
+<aside class="rail" id="rail" inert aria-label="Your brief">
+  <div class="rail-in">
+    <div class="rail-hd">
+      <span class="lab">Your brief</span>
+      <div class="chip-set" id="drChips"></div>
+    </div>
+    <div class="rail-body" id="drBody"></div>
+    <div class="rail-ft">
+      <div class="box">
+        <textarea id="drInput" rows="3" autocomplete="off" placeholder="Refine your recommendations — just tell us what you're looking for: &quot;too far&quot;, &quot;more beach&quot;, &quot;nothing in Europe&quot;…"></textarea>
+        <button class="send" id="drSend" aria-label="Send">&rarr;</button>
+      </div>
+    </div>
+  </div>
+</aside>
 
 <main class="shell">
   <div class="top-actions">
@@ -184,28 +229,7 @@
   </p>
 </main>
 
-<!-- ============ edit brief drawer ============ -->
-<div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer" aria-label="Edit your brief">
-  <div class="dr-hd">
-    <div>
-      <h2>Your brief</h2>
-      <div class="hint">Tell us what to change and we'll redo the shortlist.</div>
-    </div>
-    <button class="dr-x" id="drX" aria-label="Close">&times;</button>
-  </div>
-  <div class="dr-brief">
-    <span class="lab">Right now we're working from</span>
-    <div class="chip-set" id="drChips"></div>
-  </div>
-  <div class="dr-body" id="drBody"></div>
-  <div class="dr-ft">
-    <div class="box">
-      <textarea id="drInput" rows="1" placeholder="e.g. &quot;too far&quot;, &quot;more beach&quot;, &quot;nothing in Europe&quot;…"></textarea>
-      <div class="row"><button class="send" id="drSend" aria-label="Send">&rarr;</button></div>
-    </div>
-  </div>
-</aside>
+</div>
 
 <script src="assets/data.js"></script>
 <script src="assets/core.js"></script>
@@ -389,11 +413,11 @@ function drawCard(item, meta){
     window.scrollTo({top:0, behavior:'smooth'});
   });
   host.querySelector('#tellMore').addEventListener('click', ()=>{
-    openDrawer('Tell me more about ' + d.name + '.');
+    openRail('Tell me more about ' + d.name + '.');
   });
   host.querySelector('#cmpBtn').addEventListener('click', ()=>{
     const L = TT.lanes(brief);
-    openDrawer(null,
+    openRail(null,
       'Side by side:\n' +
       LANE_KEYS.map(k=>{
         const x = L[k].d, s = stateFor(x.id);
@@ -403,13 +427,14 @@ function drawCard(item, meta){
   });
 }
 
-/* ---------------- drawer ---------------- */
-const scrim = document.getElementById('scrim'), drawer = document.getElementById('drawer');
+/* ---------------- brief rail ---------------- */
+const scrim = document.getElementById('scrim'), rail = document.getElementById('rail');
 const drBody = document.getElementById('drBody'), drInput = document.getElementById('drInput');
+const editBtn = document.getElementById('editBrief');
 
 function drSay(who, text){
   const d = document.createElement('div');
-  d.className = 'dr-msg ' + who;
+  d.className = 'rail-msg ' + who;
   d.innerHTML = TT.esc(text).replace(/\n/g,'<br>');
   drBody.appendChild(d);
   drBody.scrollTop = drBody.scrollHeight;
@@ -437,28 +462,36 @@ function renderDrawerBrief(){
   });
 }
 
-let drawerOpened = false;
-function openDrawer(prefill, botLine){
-  scrim.classList.add('on'); drawer.classList.add('on');
-  if(!drawerOpened){
-    drawerOpened = true;
+let railOpened = false;
+function openRail(prefill, botLine){
+  rail.classList.add('on');
+  rail.removeAttribute('inert');
+  scrim.classList.add('on');
+  editBtn.textContent = 'Hide brief';
+  if(!railOpened){
+    railOpened = true;
     drSay('bot', "This is your brief. Change anything — tell me in your own words, or take a chip off above and I'll pick again.");
   }
   if(botLine) drSay('bot', botLine);
   if(prefill){ drInput.value = prefill; drInput.focus(); }
   renderDrawerBrief();
 }
-function closeDrawer(){ scrim.classList.remove('on'); drawer.classList.remove('on'); }
+function closeRail(){
+  rail.classList.remove('on');
+  rail.setAttribute('inert','');
+  scrim.classList.remove('on');
+  editBtn.textContent = 'Edit brief';
+}
+function toggleRail(){ rail.classList.contains('on') ? closeRail() : openRail(); }
 
-document.getElementById('editBrief').addEventListener('click', ()=>openDrawer());
-document.getElementById('drX').addEventListener('click', closeDrawer);
-scrim.addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
+editBtn.addEventListener('click', toggleRail);
+scrim.addEventListener('click', closeRail);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeRail(); });
 
 function drSubmit(){
   const t = drInput.value.trim();
   if(!t) return;
-  drInput.value=''; drInput.style.height='auto';
+  drInput.value='';
   drSay('me', t);
 
   const notes = TT.parse(t, brief);
@@ -479,7 +512,6 @@ document.getElementById('drSend').addEventListener('click', drSubmit);
 drInput.addEventListener('keydown', e=>{
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); drSubmit(); }
 });
-drInput.addEventListener('input', ()=>{ drInput.style.height='auto'; drInput.style.height = drInput.scrollHeight+'px'; });
 
 document.getElementById('startAgain').addEventListener('click', ()=>{
   TT.clear();
