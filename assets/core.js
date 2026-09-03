@@ -243,6 +243,35 @@ const TT = (function(){
   };
   const BUDGET_PHRASE = {1:'keeping the cost down', 2:'nothing extravagant', 3:'happy to go all out'};
 
+  /* One field of the brief on its own, as a standalone sentence. Needed where an
+     answer has to be added to wording the customer has already written, so we add
+     only the new fact instead of restating — and contradicting — the whole brief. */
+  function promptFragment(b, key){
+    const cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
+    switch(key){
+      case 'who':
+        return b.who ? WHO_PHRASE[b.who] + '.' : '';
+      case 'vibes': {
+        if(!b.vibes.length) return '';
+        const v = b.vibes.map(x=>VIBE_PHRASE[x] || VIBES.find(y=>y.id===x).label.toLowerCase());
+        return 'We want ' + (v.length>1 ? v.slice(0,-1).join(', ') + ' and ' + v[v.length-1] : v[0]) + '.';
+      }
+      case 'month':    return b.month ? 'In ' + MONTHS_FULL[b.month-1] + '.' : '';
+      case 'budget':   return b.budget ? cap(BUDGET_PHRASE[b.budget]) + '.' : '';
+      case 'maxHours':
+        if(!b.maxHours) return '';
+        return b.maxHours === 99 ? 'Anywhere in the world.'
+             : 'No more than ' + b.maxHours + ' hours from ' + b.origin + '.';
+      case 'visa':
+        if(b.visa === 'free')     return 'Visa-free or visa on arrival.';
+        if(b.visa === 'required') return 'Happy to apply for a visa if it is worth it.';
+        return '';
+      case 'heat':     return b.heat === 'hot' ? 'Somewhere reliably hot.' : '';
+      case 'quieter':  return b.quieter ? 'Away from the crowds.' : '';
+    }
+    return '';
+  }
+
   function promptFromBrief(b){
     if(isEmpty(b)) return '';
 
@@ -340,6 +369,7 @@ const TT = (function(){
       ['concept-1.html','1 · Guided brief'],
       ['concept-2.html','2 · Prompt + help'],
       ['concept-3.html','3 · Conversation'],
+      ['concept-4.html','4 · Stepped prompt'],
       ['results.html','Results']
     ];
     return '<div class="wf-bar"><div class="wf-bar-in">' +
@@ -373,6 +403,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

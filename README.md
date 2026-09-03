@@ -76,6 +76,14 @@ brief, a Shark Tip, three return flight options from Lagos, and six hotels split
 middle and higher budget tiers. Selecting a different flight or hotel tier reprices the
 indicative trip total live.
 
+**4 — Stepped prompt.** Concept 2's questions taken out of the *Need help?* modal and put on
+the page, one at a time directly above the prompt box. A dot indicator shows how many questions
+there are and which one you are on, and the dots are clickable to go back. Each answer writes
+into the prompt as a sentence, and the prompt stays editable throughout — type into it and your
+words are kept: while the generated opening is still intact we rewrite only that and preserve
+your tail, and once you have rewritten it yourself we stop owning it and each later answer
+appends just its own fact rather than restating the whole brief over the top of you.
+
 Refinement works three ways — the **Nudge it** chips, removing a chip from the brief, or
 typing into the **Edit brief** rail, which opens on-page from the left and pushes the results
 across rather than covering them. The rail is full-height, so its composer sits on the bottom

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 4 — Stepped prompt · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css?v=5">
+<style>
+  /* ---- homepage furniture, shared with concepts 2 and 3 ---- */
+  .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
+  .mode-tab{
+    border:1px solid var(--line);border-bottom:0;background:var(--panel-2);
+    padding:13px 22px;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-3);cursor:pointer;
+  }
+  .mode-tab.active{background:#fff;color:var(--ink);position:relative;top:1px;}
+  .tab-badge{
+    display:inline-block;margin-left:8px;border:1px solid var(--line);background:#fff;
+    padding:1px 6px;font-size:.62rem;letter-spacing:.06em;color:var(--ink-2);
+  }
+  .search-card{border:1px solid var(--line);background:#fff;}
+
+  .classic-wrap{padding:26px;}
+  .classic-form{display:grid;grid-template-columns:repeat(4,1fr) auto;border:1px solid var(--line);}
+  .classic-form .field{padding:14px 18px;border-right:1px solid var(--line);}
+  .classic-form .field label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px;}
+  .classic-form .field .val{font-size:.93rem;color:var(--ink-2);}
+  .classic-form .search-btn{border:0;background:var(--accent);color:#fff;padding:0 30px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;}
+  @media(max-width:860px){.classic-form{grid-template-columns:1fr;}.classic-form .field{border-right:0;border-bottom:1px solid var(--line);}.classic-form .search-btn{padding:16px;}}
+
+  /* ---- the stepped question strip, above the prompt ---- */
+  .step{padding:26px 28px 4px;}
+  .step-hd{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+  .step-q{
+    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink);
+  }
+  .step-skip{
+    background:none;border:0;padding:0;cursor:pointer;color:var(--accent);
+    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  }
+  .step-skip:hover{text-decoration:underline;}
+  .dots{margin-left:auto;display:flex;align-items:center;gap:9px;}
+  .dot{
+    width:15px;height:15px;border-radius:50%;border:1px solid var(--line-2);
+    background:#fff;padding:0;cursor:pointer;
+  }
+  .dot:hover{border-color:var(--ink-3);}
+  .dot.done{background:var(--ink);border-color:var(--ink);}
+  .dot.now{background:var(--ink-3);border-color:var(--ink-3);}
+  .dot-count{font-size:.76rem;color:var(--ink-3);margin-left:4px;white-space:nowrap;}
+
+  .step-opts{display:flex;flex-wrap:wrap;gap:10px;}
+  .step-opts .chip{font-size:.95rem;padding:11px 22px;}
+  .step-note{margin:12px 0 0;font-size:.82rem;color:var(--ink-3);}
+
+  .step-done{
+    padding:22px 28px 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .step-done .lab{margin:0;}
+
+  /* ---- the prompt, which the answers write into ---- */
+  .ask-lab{
+    padding:22px 28px 10px;font-size:.76rem;letter-spacing:.1em;
+    text-transform:uppercase;font-weight:600;color:var(--ink-2);
+  }
+  .ask{padding:0 28px 26px;}
+  .ask-box{border:1px solid var(--line);padding:16px 18px 12px;}
+  .ask-box:focus-within{border-color:var(--ink-3);}
+  .ask-box textarea{
+    width:100%;border:0;outline:none;resize:none;overflow:hidden;font:inherit;
+    font-size:1.02rem;line-height:1.55;min-height:58px;background:transparent;color:var(--ink);
+  }
+  .ask-box textarea::placeholder{color:var(--ink-3);}
+  .ask-bar{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .ask-icon{
+    width:34px;height:34px;border:1px solid var(--line);background:#fff;border-radius:2px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:.95rem;color:var(--ink-3);cursor:pointer;
+  }
+  .ask-icon:hover{border-color:var(--ink-3);color:var(--ink);}
+  .ask-send{
+    margin-left:auto;width:44px;height:44px;border:0;background:var(--accent);color:#fff;
+    border-radius:2px;cursor:pointer;font-size:1.1rem;
+  }
+  .ask-send:hover{background:#1263bb;}
+  .edited{font-size:.8rem;color:var(--ink-3);}
+
+  @media(max-width:620px){
+    .step{padding:20px 18px 4px;}
+    .ask-lab{padding:18px 18px 10px;}
+    .ask{padding:0 18px 20px;}
+    .step-hd{flex-wrap:wrap;gap:10px;}
+    .dots{margin-left:0;width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <h1 style="margin-bottom:6px;">Find and book cheap flights.</h1>
+  <p class="lede">Compare fares from Lagos to everywhere — or describe the trip you want and let us find the destination for you.</p>
+
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" data-mode="flights">Flights</button>
+    <button class="mode-tab" data-mode="hotels">Hotels</button>
+    <button class="mode-tab" data-mode="holidays">Holidays</button>
+    <button class="mode-tab" data-mode="ai">Inspire me <span class="tab-badge">New</span></button>
+  </div>
+
+  <div class="search-card">
+    <div id="panelClassic">
+      <div class="classic-wrap">
+        <div class="classic-form">
+          <div class="field"><label>Leaving from</label><div class="val">Lagos (LOS)</div></div>
+          <div class="field"><label>Going to</label><div class="val">City, airport or place</div></div>
+          <div class="field"><label>When?</label><div class="val">Choose a date</div></div>
+          <div class="field"><label>Passengers &amp; class</label><div class="val">1 Adult · Economy</div></div>
+          <button class="search-btn" type="button">Search</button>
+        </div>
+        <p class="hint" style="margin-top:16px;">Standard search, shown for context only — this is where the customer lands. Select <b>Inspire me</b> above for the concept.</p>
+      </div>
+    </div>
+
+    <div id="panelAi" hidden>
+      <div id="stepHost"></div>
+
+      <div class="ask-lab">You can add anything that's important to you</div>
+      <div class="ask">
+        <div class="ask-box">
+          <textarea id="prompt" rows="2" autocomplete="off" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
+          <div class="ask-bar">
+            <button type="button" class="ask-icon" title="Attach">+</button>
+            <span class="edited" id="editedNote" hidden>Your wording — we'll keep it</span>
+            <button type="button" class="ask-send" id="sendBtn" aria-label="Find me somewhere">&rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" style="margin-top:18px;margin-bottom:60px;">
+    Concept 4 — the Concept 2 questions brought out of the modal and onto the page, one at a time
+    above the prompt. Each answer writes into the prompt, which stays editable throughout.
+  </p>
+</main>
+
+<script src="assets/data.js?v=5"></script>
+<script src="assets/core.js?v=5"></script>
+<script>
+TT.mount('concept-4.html');
+
+let brief = TT.fresh();            // always opens empty
+const promptEl = document.getElementById('prompt');
+const stepHost = document.getElementById('stepHost');
+const editedNote = document.getElementById('editedNote');
+
+/* ---------------- the questions, in order ---------------- */
+const STEPS = [
+  {key:'who',   q:"Who's going?",
+   options:()=>WHO.map(w=>({label:w.label, on:()=>brief.who===w.id, apply:()=>brief.who = brief.who===w.id ? null : w.id}))},
+
+  {key:'vibes', q:'What matters most?', multi:true,
+   note:'Pick as many as you like.',
+   options:()=>VIBES.map(v=>({label:v.label, on:()=>brief.vibes.includes(v.id),
+     apply:()=>brief.vibes.includes(v.id)
+       ? brief.vibes = brief.vibes.filter(x=>x!==v.id)
+       : TT.addVibe(brief, v.id)}))},
+
+  {key:'month', q:'When are you thinking?',
+   options:()=>[{label:'Flexible', on:()=>brief.month===null, apply:()=>brief.month = null}]
+     .concat(MONTHS.map((m,i)=>({label:m, on:()=>brief.month===i+1,
+       apply:()=>brief.month = brief.month===i+1 ? null : i+1})))},
+
+  {key:'budget', q:'Rough budget?',
+   note:'This only steers the shortlist — we price it properly after.',
+   options:()=>BUDGETS.map(b=>({label:b.label, on:()=>brief.budget===b.id,
+     apply:()=>brief.budget = brief.budget===b.id ? null : b.id}))},
+
+  {key:'maxHours', q:'How far will you fly?',
+   options:()=>FLIGHTS.map(f=>({label:f.label, on:()=>brief.maxHours===f.id,
+     apply:()=>brief.maxHours = brief.maxHours===f.id ? null : f.id}))},
+
+  {key:'visa', q:'Entry requirements?',
+   note:'On a Nigerian passport.',
+   options:()=>VISA_CHOICES.map(v=>({label:v.label, on:()=>brief.visa===v.id,
+     apply:()=>brief.visa = brief.visa===v.id ? null : v.id}))}
+];
+
+let step = 0;
+const visited = new Set();         // steps the customer has answered or skipped
+
+/* ---------------- keeping the prompt in sync without stealing their words ----------------
+   The generated sentence is always the prefix. Anything the customer types is kept as a
+   tail and re-attached when an answer changes the prefix. If they rewrite the prefix
+   themselves we stop owning it, and later answers append instead of overwriting. */
+let autoText = '';
+let ownsPrefix = true;
+
+function syncPrompt(changedKey){
+  const next = TT.promptFromBrief(brief);
+  const cur = promptEl.value;
+
+  if(ownsPrefix && cur.startsWith(autoText)){
+    /* We still own the opening sentence — rewrite just that, keep their tail. */
+    promptEl.value = next + cur.slice(autoText.length);
+    autoText = next;
+  } else {
+    /* They have rewritten it. Add only the new fact, so we never contradict
+       or duplicate what they said. */
+    ownsPrefix = false;
+    const frag = TT.promptFragment(brief, changedKey);
+    if(frag && cur.indexOf(frag) === -1){
+      const sep = !cur.trim() ? '' : (/[.!?]\s*$/.test(cur) ? ' ' : '. ');
+      promptEl.value = cur.replace(/\s+$/,'') + sep + frag;
+    }
+  }
+  editedNote.hidden = ownsPrefix;
+  grow();
+}
+
+function grow(){
+  promptEl.style.height='auto';
+  promptEl.style.height = Math.max(58, promptEl.scrollHeight) + 'px';
+}
+promptEl.addEventListener('input', ()=>{
+  /* If they have edited into the generated part, it is theirs now. */
+  if(ownsPrefix && !promptEl.value.startsWith(autoText)){
+    ownsPrefix = false;
+    editedNote.hidden = false;
+  }
+  grow();
+});
+
+/* ---------------- render ---------------- */
+function drawStep(){
+  if(step >= STEPS.length){
+    const answered = STEPS.filter(s=>visited.has(s.key) && filled(s.key)).length;
+    stepHost.innerHTML =
+      '<div class="step-done">' +
+        '<span class="lab">' + (answered ? 'All done — ' + answered + ' answered' : 'All skipped') + '</span>' +
+        '<button type="button" class="btn btn-sm" id="againBtn">Go through them again</button>' +
+        '<span class="hint" style="margin:0;">Or just edit the prompt below and send it.</span>' +
+      '</div>';
+    stepHost.querySelector('#againBtn').addEventListener('click', ()=>{ step = 0; drawStep(); });
+    return;
+  }
+
+  const S = STEPS[step];
+  stepHost.innerHTML =
+    '<div class="step">' +
+      '<div class="step-hd">' +
+        '<span class="step-q">' + TT.esc(S.q) + '</span>' +
+        '<button type="button" class="step-skip" id="skipBtn">' + (S.multi && filled('vibes') ? 'Next' : 'Skip') + '</button>' +
+        '<span class="dots" id="dots"></span>' +
+      '</div>' +
+      '<div class="step-opts" id="opts"></div>' +
+      (S.note ? '<p class="step-note">' + TT.esc(S.note) + '</p>' : '') +
+    '</div>';
+
+  const opts = stepHost.querySelector('#opts');
+  S.options().forEach(o=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip' + (o.on() ? ' on' : '');
+    b.textContent = o.label;
+    b.addEventListener('click', ()=>{
+      o.apply();
+      visited.add(S.key);
+      syncPrompt(S.key);
+      if(S.multi) drawStep();          // stay put so they can add more
+      else advance();
+    });
+    opts.appendChild(b);
+  });
+
+  stepHost.querySelector('#skipBtn').addEventListener('click', ()=>{ visited.add(S.key); advance(); });
+  drawDots();
+}
+
+function filled(key){
+  return key === 'vibes' ? brief.vibes.length > 0
+                         : brief[key] !== null && brief[key] !== undefined;
+}
+
+function drawDots(){
+  const host = stepHost.querySelector('#dots');
+  if(!host) return;
+  host.innerHTML = '';
+  STEPS.forEach((s,i)=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'dot' + (i===step ? ' now' : (filled(s.key) ? ' done' : ''));
+    b.setAttribute('aria-label', 'Question ' + (i+1) + ' — ' + s.q);
+    b.title = s.q;
+    b.addEventListener('click', ()=>{ step = i; drawStep(); });
+    host.appendChild(b);
+  });
+  const c = document.createElement('span');
+  c.className = 'dot-count';
+  c.textContent = (step+1) + ' of ' + STEPS.length;
+  host.appendChild(c);
+}
+
+function advance(){ step++; drawStep(); }
+
+/* ---------------- submit ---------------- */
+function submit(){
+  const text = promptEl.value.trim();
+  brief.freeText = text;
+  if(text) TT.parse(text, brief);       // catches anything they typed themselves
+  brief.source = 'concept-4';
+  TT.save(brief);
+  location.href = 'results.html';
+}
+document.getElementById('sendBtn').addEventListener('click', submit);
+promptEl.addEventListener('keydown', e=>{
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
+});
+
+/* ---------------- mode tabs ---------------- */
+document.querySelectorAll('.mode-tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const ai = t.dataset.mode === 'ai';
+    document.getElementById('panelAi').hidden = !ai;
+    document.getElementById('panelClassic').hidden = ai;
+  });
+});
+
+drawStep();
+grow();
+</script>
+</body>
+</html>
