@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Concept 4 — Stepped prompt · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=5">
+<link rel="stylesheet" href="assets/tt.css?v=6">
 <style>
   /* ---- homepage furniture, shared with concepts 2 and 3 ---- */
   .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
@@ -28,45 +28,54 @@
   .classic-form .search-btn{border:0;background:var(--accent);color:#fff;padding:0 30px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;}
   @media(max-width:860px){.classic-form{grid-template-columns:1fr;}.classic-form .field{border-right:0;border-bottom:1px solid var(--line);}.classic-form .search-btn{padding:16px;}}
 
-  /* ---- the stepped question strip, above the prompt ---- */
-  .step{padding:26px 28px 4px;}
-  .step-hd{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
-  .step-q{
-    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink);
-  }
-  .step-skip{
-    background:none;border:0;padding:0;cursor:pointer;color:var(--accent);
-    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
-  }
-  .step-skip:hover{text-decoration:underline;}
-  .step-meta{margin-left:auto;display:flex;align-items:center;gap:16px;}
-  .step-back{
-    background:none;border:0;padding:0;cursor:pointer;color:var(--ink-3);
-    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
-  }
-  .step-back:hover{color:var(--ink);text-decoration:underline;}
+  /* ---- the stepped question block ----
+     One shape for every step: a progress bar, a meta line, the question as the
+     clear focal point, then the options, then a single action row that never
+     moves between steps. ---- */
+  .step{border-bottom:1px solid var(--line-2);}
+  .prog{height:3px;background:var(--line-2);}
+  .prog span{display:block;height:100%;background:var(--ink);transition:width .3s ease;}
+
+  .step-in{padding:24px 28px 26px;}
+
+  .step-meta{display:flex;align-items:baseline;gap:16px;margin-bottom:10px;}
   .step-count{
-    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;
+    font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
     color:var(--ink-3);white-space:nowrap;
   }
-  .q-word{}                                  /* dropped on narrow screens */
-
-  .step-opts{display:flex;flex-wrap:wrap;gap:10px;}
-  .step-go{display:flex;align-items:center;gap:14px;margin-top:16px;}
-  .step-go .count{font-size:.85rem;color:var(--ink-3);}
-  .step-opts .chip{font-size:.95rem;padding:11px 22px;}
-  .step-note{margin:12px 0 0;font-size:.82rem;color:var(--ink-3);}
-
-  .step-done{
-    padding:22px 28px 4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  .step-count b{color:var(--ink-2);font-weight:600;}
+  .step-back{
+    margin-left:auto;background:none;border:0;padding:0;cursor:pointer;color:var(--ink-3);
+    font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
   }
-  .step-done .lab{margin:0;}
+  .step-back:hover{color:var(--ink);}
+
+  .step-q{
+    margin:0;font-size:1.32rem;line-height:1.3;letter-spacing:-.01em;
+    font-weight:600;color:var(--ink);
+  }
+  .step-help{margin:7px 0 0;font-size:.9rem;color:var(--ink-3);line-height:1.5;}
+
+  .step-opts{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px;}
+  .step-opts .chip{font-size:.94rem;padding:10px 20px;}
+
+  /* Always in the same place, whatever kind of question it is. */
+  .step-act{display:flex;align-items:center;gap:14px;margin-top:20px;}
+  .step-sel{font-size:.86rem;color:var(--ink-3);}
+
+  .step-done{padding:24px 28px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .step-done .tick{
+    width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:.8rem;flex:0 0 auto;
+  }
+  .step-done .txt{font-size:1.05rem;font-weight:600;}
 
   /* ---- the prompt, which the answers write into ---- */
   .ask-lab{
-    padding:22px 28px 10px;font-size:.76rem;letter-spacing:.1em;
-    text-transform:uppercase;font-weight:600;color:var(--ink-2);
+    padding:22px 28px 2px;font-size:.72rem;letter-spacing:.12em;
+    text-transform:uppercase;font-weight:600;color:var(--ink-3);
   }
+  .ask-sub{padding:0 28px 12px;margin:6px 0 0;font-size:.9rem;color:var(--ink-3);}
   .ask{padding:0 28px 26px;}
   .ask-box{border:1px solid var(--line);padding:16px 18px 12px;}
   .ask-box:focus-within{border-color:var(--ink-3);}
@@ -89,12 +98,12 @@
   .edited{font-size:.8rem;color:var(--ink-3);}
 
   @media(max-width:620px){
-    .step{padding:20px 18px 4px;}
-    .ask-lab{padding:18px 18px 10px;}
+    .step-in,.step-done{padding:20px 18px 22px;}
+    .ask-lab{padding:18px 18px 2px;}
+    .ask-sub{padding:0 18px 10px;}
     .ask{padding:0 18px 20px;}
-    .step-hd{flex-wrap:wrap;gap:10px;}
-    .step-meta{margin-left:auto;gap:12px;}
-    .q-word{display:none;}                   /* just "1 of 6" on a phone */
+    .q-word{display:none;}                   /* just "3 of 6" on a phone */
+    .step-q{font-size:1.15rem;}
   }
 </style>
 </head>
@@ -128,7 +137,8 @@
     <div id="panelAi" hidden>
       <div id="stepHost"></div>
 
-      <div class="ask-lab">You can add anything that's important to you</div>
+      <div class="ask-lab">In your own words</div>
+      <p class="ask-sub">Add anything that matters to you — the answers above are already in here, and you can change any of it.</p>
       <div class="ask">
         <div class="ask-box">
           <textarea id="prompt" rows="2" autocomplete="off" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
@@ -148,8 +158,8 @@
   </p>
 </main>
 
-<script src="assets/data.js?v=5"></script>
-<script src="assets/core.js?v=5"></script>
+<script src="assets/data.js?v=6"></script>
+<script src="assets/core.js?v=6"></script>
 <script>
 TT.mount('concept-4.html');
 
@@ -160,32 +170,32 @@ const editedNote = document.getElementById('editedNote');
 
 /* ---------------- the questions, in order ---------------- */
 const STEPS = [
-  {key:'who',   q:"Who's going?",
+  {key:'who',   q:"Who's going?", help:'Every question is optional — skip any of them.',
    options:()=>WHO.map(w=>({label:w.label, on:()=>brief.who===w.id, apply:()=>brief.who = brief.who===w.id ? null : w.id}))},
 
   {key:'vibes', q:'What matters most?', multi:true,
-   note:'Pick as many as you like, then Next.',
+   help:'Pick as many as you like, then Next.',
    options:()=>VIBES.map(v=>({label:v.label, on:()=>brief.vibes.includes(v.id),
      apply:()=>brief.vibes.includes(v.id)
        ? brief.vibes = brief.vibes.filter(x=>x!==v.id)
        : TT.addVibe(brief, v.id)}))},
 
-  {key:'month', q:'When are you thinking?',
+  {key:'month', q:'When are you thinking?', help:'Pick a month, or leave it flexible.',
    options:()=>[{label:'Flexible', on:()=>brief.month===null, apply:()=>brief.month = null}]
      .concat(MONTHS.map((m,i)=>({label:m, on:()=>brief.month===i+1,
        apply:()=>brief.month = brief.month===i+1 ? null : i+1})))},
 
   {key:'budget', q:'Rough budget?',
-   note:'This only steers the shortlist — we price it properly after.',
+   help:'This only steers the shortlist — we price it properly after.',
    options:()=>BUDGETS.map(b=>({label:b.label, on:()=>brief.budget===b.id,
      apply:()=>brief.budget = brief.budget===b.id ? null : b.id}))},
 
-  {key:'maxHours', q:'How far will you fly?',
+  {key:'maxHours', q:'How far will you fly?', help:'Flight time from Lagos.',
    options:()=>FLIGHTS.map(f=>({label:f.label, on:()=>brief.maxHours===f.id,
      apply:()=>brief.maxHours = brief.maxHours===f.id ? null : f.id}))},
 
   {key:'visa', q:'Entry requirements?',
-   note:'On a Nigerian passport.',
+   help:'On a Nigerian passport.',
    options:()=>VISA_CHOICES.map(v=>({label:v.label, on:()=>brief.visa===v.id,
      apply:()=>brief.visa = brief.visa===v.id ? null : v.id}))}
 ];
@@ -237,43 +247,36 @@ promptEl.addEventListener('input', ()=>{
 
 /* ---------------- render ---------------- */
 function drawStep(){
-  if(step >= STEPS.length){
-    const answered = STEPS.filter(s=>visited.has(s.key) && filled(s.key)).length;
-    stepHost.innerHTML =
-      '<div class="step-done">' +
-        '<span class="lab">' + (answered ? 'All done — ' + answered + ' answered' : 'All skipped') + '</span>' +
-        '<button type="button" class="btn btn-sm" id="againBtn">Go through them again</button>' +
-        '<span class="hint" style="margin:0;">Or just edit the prompt below and send it.</span>' +
-      '</div>';
-    stepHost.querySelector('#againBtn').addEventListener('click', ()=>{ step = 0; drawStep(); });
-    return;
-  }
+  if(step >= STEPS.length){ drawDone(); return; }
 
   const S = STEPS[step];
-  const picked = S.multi ? countPicked(S) : 0;
+  const picked = countPicked(S);
+  const pct = Math.round(((step + 1) / STEPS.length) * 100);
+
+  /* The forward control sits in the same place on every step. On a single-select
+     the chips advance on their own, so it offers Skip; on a multi-select, which
+     cannot know when you have finished, it becomes the Next you have to press. */
+  const goPrimary = S.multi && picked > 0;
+  const goLabel   = goPrimary ? 'Next &rarr;' : 'Skip this question';
 
   stepHost.innerHTML =
     '<div class="step">' +
-      '<div class="step-hd">' +
-        '<span class="step-q">' + TT.esc(S.q) + '</span>' +
-        (S.multi ? '' : '<button type="button" class="step-skip" id="skipBtn">Skip</button>') +
-        '<span class="step-meta">' +
+      '<div class="prog"><span style="width:' + pct + '%"></span></div>' +
+      '<div class="step-in">' +
+        '<div class="step-meta">' +
+          '<span class="step-count"><span class="q-word">Question </span><b>' +
+            (step+1) + '</b> of ' + STEPS.length + '</span>' +
           (step > 0 ? '<button type="button" class="step-back" id="backBtn">&lsaquo; Back</button>' : '') +
-          '<span class="step-count"><span class="q-word">Question </span>' +
-            (step+1) + ' of ' + STEPS.length + '</span>' +
-        '</span>' +
+        '</div>' +
+        '<h2 class="step-q">' + TT.esc(S.q) + '</h2>' +
+        (S.help ? '<p class="step-help">' + TT.esc(S.help) + '</p>' : '') +
+        '<div class="step-opts" id="opts"></div>' +
+        '<div class="step-act">' +
+          '<button type="button" class="btn' + (goPrimary ? ' btn-primary' : '') + '" id="goBtn">' +
+            goLabel + '</button>' +
+          (picked && S.multi ? '<span class="step-sel">' + picked + ' selected</span>' : '') +
+        '</div>' +
       '</div>' +
-      '<div class="step-opts" id="opts"></div>' +
-      (S.note ? '<p class="step-note">' + TT.esc(S.note) + '</p>' : '') +
-      /* Multi-select cannot advance on its own, so the way onward has to be a
-         real button rather than the quiet text link the other steps use. */
-      (S.multi
-        ? '<div class="step-go">' +
-            '<button type="button" class="btn btn-sm' + (picked ? ' btn-primary' : '') + '" id="skipBtn">' +
-              (picked ? 'Next &rarr;' : 'Skip this one') + '</button>' +
-            (picked ? '<span class="count">' + picked + ' selected</span>' : '') +
-          '</div>'
-        : '') +
     '</div>';
 
   const opts = stepHost.querySelector('#opts');
@@ -292,9 +295,23 @@ function drawStep(){
     opts.appendChild(b);
   });
 
-  stepHost.querySelector('#skipBtn').addEventListener('click', ()=>{ visited.add(S.key); advance(); });
+  stepHost.querySelector('#goBtn').addEventListener('click', ()=>{ visited.add(S.key); advance(); });
   const back = stepHost.querySelector('#backBtn');
   if(back) back.addEventListener('click', ()=>{ step--; drawStep(); });
+}
+
+function drawDone(){
+  const answered = STEPS.filter(s=>filled(s.key)).length;
+  stepHost.innerHTML =
+    '<div class="step">' +
+      '<div class="prog"><span style="width:100%"></span></div>' +
+      '<div class="step-done">' +
+        '<span class="tick">&#10003;</span>' +
+        '<span class="txt">' + (answered ? 'That is everything we need' : 'All skipped — no problem') + '</span>' +
+        '<button type="button" class="btn btn-sm" id="againBtn">Go back through them</button>' +
+      '</div>' +
+    '</div>';
+  stepHost.querySelector('#againBtn').addEventListener('click', ()=>{ step = 0; drawStep(); });
 }
 
 function countPicked(S){
