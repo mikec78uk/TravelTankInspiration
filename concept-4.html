@@ -39,17 +39,21 @@
     font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   }
   .step-skip:hover{text-decoration:underline;}
-  .dots{margin-left:auto;display:flex;align-items:center;gap:9px;}
-  .dot{
-    width:15px;height:15px;border-radius:50%;border:1px solid var(--line-2);
-    background:#fff;padding:0;cursor:pointer;
+  .step-meta{margin-left:auto;display:flex;align-items:center;gap:16px;}
+  .step-back{
+    background:none;border:0;padding:0;cursor:pointer;color:var(--ink-3);
+    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
   }
-  .dot:hover{border-color:var(--ink-3);}
-  .dot.done{background:var(--ink);border-color:var(--ink);}
-  .dot.now{background:var(--ink-3);border-color:var(--ink-3);}
-  .dot-count{font-size:.76rem;color:var(--ink-3);margin-left:4px;white-space:nowrap;}
+  .step-back:hover{color:var(--ink);text-decoration:underline;}
+  .step-count{
+    font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);white-space:nowrap;
+  }
+  .q-word{}                                  /* dropped on narrow screens */
 
   .step-opts{display:flex;flex-wrap:wrap;gap:10px;}
+  .step-go{display:flex;align-items:center;gap:14px;margin-top:16px;}
+  .step-go .count{font-size:.85rem;color:var(--ink-3);}
   .step-opts .chip{font-size:.95rem;padding:11px 22px;}
   .step-note{margin:12px 0 0;font-size:.82rem;color:var(--ink-3);}
 
@@ -89,7 +93,8 @@
     .ask-lab{padding:18px 18px 10px;}
     .ask{padding:0 18px 20px;}
     .step-hd{flex-wrap:wrap;gap:10px;}
-    .dots{margin-left:0;width:100%;}
+    .step-meta{margin-left:auto;gap:12px;}
+    .q-word{display:none;}                   /* just "1 of 6" on a phone */
   }
 </style>
 </head>
@@ -159,7 +164,7 @@ const STEPS = [
    options:()=>WHO.map(w=>({label:w.label, on:()=>brief.who===w.id, apply:()=>brief.who = brief.who===w.id ? null : w.id}))},
 
   {key:'vibes', q:'What matters most?', multi:true,
-   note:'Pick as many as you like.',
+   note:'Pick as many as you like, then Next.',
    options:()=>VIBES.map(v=>({label:v.label, on:()=>brief.vibes.includes(v.id),
      apply:()=>brief.vibes.includes(v.id)
        ? brief.vibes = brief.vibes.filter(x=>x!==v.id)
@@ -245,15 +250,30 @@ function drawStep(){
   }
 
   const S = STEPS[step];
+  const picked = S.multi ? countPicked(S) : 0;
+
   stepHost.innerHTML =
     '<div class="step">' +
       '<div class="step-hd">' +
         '<span class="step-q">' + TT.esc(S.q) + '</span>' +
-        '<button type="button" class="step-skip" id="skipBtn">' + (S.multi && filled('vibes') ? 'Next' : 'Skip') + '</button>' +
-        '<span class="dots" id="dots"></span>' +
+        (S.multi ? '' : '<button type="button" class="step-skip" id="skipBtn">Skip</button>') +
+        '<span class="step-meta">' +
+          (step > 0 ? '<button type="button" class="step-back" id="backBtn">&lsaquo; Back</button>' : '') +
+          '<span class="step-count"><span class="q-word">Question </span>' +
+            (step+1) + ' of ' + STEPS.length + '</span>' +
+        '</span>' +
       '</div>' +
       '<div class="step-opts" id="opts"></div>' +
       (S.note ? '<p class="step-note">' + TT.esc(S.note) + '</p>' : '') +
+      /* Multi-select cannot advance on its own, so the way onward has to be a
+         real button rather than the quiet text link the other steps use. */
+      (S.multi
+        ? '<div class="step-go">' +
+            '<button type="button" class="btn btn-sm' + (picked ? ' btn-primary' : '') + '" id="skipBtn">' +
+              (picked ? 'Next &rarr;' : 'Skip this one') + '</button>' +
+            (picked ? '<span class="count">' + picked + ' selected</span>' : '') +
+          '</div>'
+        : '') +
     '</div>';
 
   const opts = stepHost.querySelector('#opts');
@@ -273,31 +293,17 @@ function drawStep(){
   });
 
   stepHost.querySelector('#skipBtn').addEventListener('click', ()=>{ visited.add(S.key); advance(); });
-  drawDots();
+  const back = stepHost.querySelector('#backBtn');
+  if(back) back.addEventListener('click', ()=>{ step--; drawStep(); });
+}
+
+function countPicked(S){
+  return S.key === 'vibes' ? brief.vibes.length : (filled(S.key) ? 1 : 0);
 }
 
 function filled(key){
   return key === 'vibes' ? brief.vibes.length > 0
                          : brief[key] !== null && brief[key] !== undefined;
-}
-
-function drawDots(){
-  const host = stepHost.querySelector('#dots');
-  if(!host) return;
-  host.innerHTML = '';
-  STEPS.forEach((s,i)=>{
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'dot' + (i===step ? ' now' : (filled(s.key) ? ' done' : ''));
-    b.setAttribute('aria-label', 'Question ' + (i+1) + ' — ' + s.q);
-    b.title = s.q;
-    b.addEventListener('click', ()=>{ step = i; drawStep(); });
-    host.appendChild(b);
-  });
-  const c = document.createElement('span');
-  c.className = 'dot-count';
-  c.textContent = (step+1) + ' of ' + STEPS.length;
-  host.appendChild(c);
 }
 
 function advance(){ step++; drawStep(); }

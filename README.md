@@ -77,8 +77,10 @@ middle and higher budget tiers. Selecting a different flight or hotel tier repri
 indicative trip total live.
 
 **4 — Stepped prompt.** Concept 2's questions taken out of the *Need help?* modal and put on
-the page, one at a time directly above the prompt box. A dot indicator shows how many questions
-there are and which one you are on, and the dots are clickable to go back. Each answer writes
+the page, one at a time directly above the prompt box. A counter reads *Question 2 of 6* on desktop
+and drops to *2 of 6* on a phone, with a Back link to step through what you have answered.
+The multi-select step cannot advance on its own, so its way onward is a real button — *Skip
+this one* until something is picked, then a filled *Next* with a count beside it. Each answer writes
 into the prompt as a sentence, and the prompt stays editable throughout — type into it and your
 words are kept: while the generated opening is still intact we rewrite only that and preserve
 your tail, and once you have rewritten it yourself we stop owning it and each later answer
