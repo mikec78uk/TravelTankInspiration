@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], pinned:null, lane:'best'
+      dismissed:[], pinned:null, stay:null, lane:'best'
     };
   }
   function load(){
@@ -51,7 +51,44 @@ const TT = (function(){
 
   /* ---------- formatting ---------- */
   const money = n => '₦' + Math.round(n).toLocaleString('en-NG');
-  const nights = () => 6;
+  /* Dates drive every price on the page, so they live on the brief rather than
+     being a constant nobody can see or change. */
+  const DEFAULT_NIGHTS = 6;
+  const nights = b => (b && b.stay && b.stay.nights) ? b.stay.nights : DEFAULT_NIGHTS;
+
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function iso(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function addDays(isoStr, n){
+    const d = new Date(isoStr + 'T00:00:00');
+    d.setDate(d.getDate() + n);
+    return iso(d);
+  }
+  function fmtDate(isoStr){
+    const d = new Date(isoStr + 'T00:00:00');
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function daysBetween(a, b){
+    return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+  }
+
+  /* Seed a plausible check-in: the month they asked for if there is one, else six
+     weeks out. Always in the future. */
+  function defaultStay(b){
+    const today = new Date();
+    let d;
+    if(b && b.month){
+      d = new Date(today.getFullYear(), b.month - 1, 8);
+      if(d < today) d = new Date(today.getFullYear() + 1, b.month - 1, 8);
+    } else {
+      d = new Date(today.getTime() + 42 * 86400000);
+    }
+    return {from: iso(d), nights: DEFAULT_NIGHTS};
+  }
+
+  function stayOf(b){
+    if(!b.stay) b.stay = defaultStay(b);
+    return b.stay;
+  }
 
   function monthRuns(d){
     const ms=[...d.months].sort((a,b)=>a-b), runs=[];
@@ -191,7 +228,7 @@ const TT = (function(){
   function tripCost(d, tier, flightIdx){
     const f = d.flights[flightIdx==null?1:flightIdx];
     const h = d.hotels[tier][0];
-    const n = nights();
+    const n = nights(b);
     return {flight:f.price, hotelNight:h.night, hotelTotal:h.night*n, nights:n,
             total:f.price + h.night*n};
   }
@@ -535,7 +572,7 @@ const TT = (function(){
 
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
+  return {blank,load,save,clear,fresh,money,nights,stayOf,defaultStay,addDays,fmtDate,daysBetween,iso,monthRuns,score,lanes,LANE_META,tripCost,
           isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,icon,facilitiesFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

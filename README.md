@@ -109,6 +109,11 @@ leaving the page — adds a gallery, the full facilities, a map, and the room ty
 and room options are derived from the property record (star rating, board, area) rather than
 authored, so they stay consistent across all 96 hotels.
 
+**Every price says what it is based on.** A strip above the hotels carries the check-in and
+check-out dates, party size and room count, with a line reading it back — *6 nights · 8 Nov 2026
+to 14 Nov 2026 · 2 adults, 1 room*. Change any of it and the room rates, stay totals and the
+trip total on the flights page all reprice. Check-in is seeded from the month in the brief.
+
 Party size sits as a **quiet inline strip** above the hotels — *pricing for 2 adults, 0
 children, 1 room* — rather than a section of its own; it is a pricing control, not a step. It
 reprices everything live, and a family of four is shown that one family room beats two doubles

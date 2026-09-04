@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=26">
+<link rel="stylesheet" href="assets/tt.css?v=28">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -248,6 +248,32 @@
   .sheet-foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:30px;padding-top:22px;border-top:1px solid var(--line-2);}
   .sheet-foot .spacer{flex:1;}
 
+  /* ---- one shape for every section ----
+     A kicker in the left rail, then the heading and everything under it in a
+     single aligned column. ---- */
+  .dsec{
+    display:grid;grid-template-columns:190px 1fr;gap:30px;
+    border-top:1px solid var(--line);padding:46px 0 46px;
+  }
+  .dsec:first-of-type{border-top:0;padding-top:10px;}
+  .dsec-k{padding-top:6px;}                    /* sit the kicker on the heading */
+  .dsec-k .lab{margin:0;display:flex;align-items:center;gap:8px;line-height:1.5;}
+  .dsec-k .lab .ic{width:17px;height:17px;color:var(--ink-3);flex:0 0 auto;}
+  .dsec-c > h3{margin:0 0 20px;font-size:1.34rem;letter-spacing:-.018em;line-height:1.25;}
+  .dsec-c > * + *{margin-top:16px;}            /* one rhythm between every block */
+  .dsec-c > h3 + *{margin-top:0;}
+  .dsec-c p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
+  @media(max-width:900px){
+    .dsec{grid-template-columns:1fr;gap:14px;padding:34px 0 34px;}
+    .dsec-k{padding-top:0;}
+    .dsec-c > h3{font-size:1.18rem;}
+  }
+
+  .temps{
+    display:inline-block;border:1px solid var(--line);
+    padding:7px 13px;font-size:.84rem;color:var(--ink-2);
+  }
+
   /* ---- icons ---- */
   .ic{width:20px;height:20px;flex:0 0 auto;display:inline-block;vertical-align:-4px;}
   .ic-lg{width:26px;height:26px;}
@@ -313,12 +339,23 @@
     .srow .shot{height:76px;}
   }
 
-  /* ---- pricing strip: quiet, above the hotels ---- */
+  /* ---- what the prices are based on ---- */
   .pricing{
-    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
-    border:1px solid var(--line-2);background:var(--panel-2);padding:12px 16px;margin-bottom:18px;
+    border:1px solid var(--line);background:var(--panel-2);padding:16px 18px;
   }
-  .pricing .pl{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  .pricing .pl{font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  .pricing-row{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;margin-top:12px;}
+  .dfield{display:flex;flex-direction:column;gap:6px;}
+  .dfield .dl{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
+  .dfield input{
+    border:1px solid var(--line);background:#fff;padding:9px 12px;font:inherit;font-size:.92rem;
+    color:var(--ink);outline:none;min-width:150px;
+  }
+  .dfield input:focus{border-color:var(--ink);}
+  .pricing .sep{width:1px;align-self:stretch;background:var(--line);}
+  .pricing-note{margin-top:12px;font-size:.83rem;color:var(--ink-3);}
+  .pricing-note b{color:var(--ink-2);}
+  @media(max-width:620px){.pricing .sep{display:none;}.pricing-row{gap:16px;}}
   .mini{display:flex;align-items:center;gap:7px;}
   .mini .ml{font-size:.85rem;color:var(--ink-2);}
   .mini button{
@@ -774,8 +811,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=26"></script>
-<script src="assets/core.js?v=26"></script>
+<script src="assets/data.js?v=28"></script>
+<script src="assets/core.js?v=28"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -787,6 +824,7 @@ const TIERS = [['low','Spend less'],['mid','Our pick'],['high','Upgrade']];
 let poolExhausted = false;
 
 function hrs(n){ return n + ' hour' + (n === 1 ? '' : 's'); }
+function nts(n){ return n + ' night' + (n === 1 ? '' : 's'); }
 
 function stateFor(id){
   if(!ui[id]) ui[id] = {flight:1, tier:'mid'};
@@ -987,7 +1025,7 @@ function partyFor(id){
 function drawSheet(){
   const d = sheetItem.d;
   const st = partyFor(d.id);
-  const nights = TT.nights();
+  const nights = TT.nights(brief);
   const I = TT.icon;
 
   document.getElementById('sheetIn').innerHTML =
@@ -1026,13 +1064,7 @@ function drawSheet(){
 
     /* ---- where to stay ---- */
     sec('Where to stay', 'room', 'Somewhere to base yourself',
-      '<div class="pricing">' +
-        '<span class="pl">Pricing for</span>' +
-        mini('adults', 'adults', st.adults, 1, 12) +
-        mini('children', 'children', st.children, 0, 8) +
-        mini('rooms', 'rooms', st.rooms, 1, 6) +
-        '<span class="pl" style="margin-left:auto;">' + nights + ' nights</span>' +
-      '</div>' +
+      pricingStrip(st, nights) +
       '<div class="tiers">' + TIERS.map(([k,l])=>
         '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
       '</div>' +
@@ -1176,6 +1208,27 @@ function sightsBlock(d, st){
       : '');
 }
 
+function pricingStrip(st, nights){
+  const stay = TT.stayOf(brief);
+  const out = TT.addDays(stay.from, nights);
+  return '<div class="pricing">' +
+    '<span class="pl">Every price here is based on</span>' +
+    '<div class="pricing-row">' +
+      '<label class="dfield"><span class="dl">Check in</span>' +
+        '<input type="date" id="dateIn" value="' + stay.from + '"></label>' +
+      '<label class="dfield"><span class="dl">Check out</span>' +
+        '<input type="date" id="dateOut" value="' + out + '"></label>' +
+      '<span class="sep"></span>' +
+      mini('adults', 'adults', st.adults, 1, 12) +
+      mini('children', 'children', st.children, 0, 8) +
+      mini('rooms', 'rooms', st.rooms, 1, 6) +
+    '</div>' +
+    '<div class="pricing-note"><b>' + nights + ' night' + (nights===1?'':'s') + '</b> · ' +
+      TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' · ' + travellers(st) +
+      '. Change any of it and everything below reprices.</div>' +
+  '</div>';
+}
+
 function sec(kicker, ic, heading, body){
   return '<section class="dsec">' +
       '<div class="dsec-k"><span class="lab">' + (ic ? TT.icon(ic) : '') + TT.esc(kicker) + '</span></div>' +
@@ -1311,6 +1364,20 @@ function wireSheet(d, st, nights){
       drawSheet();
     });
   });
+  const dIn = inEl.querySelector('#dateIn'), dOut = inEl.querySelector('#dateOut');
+  if(dIn) dIn.addEventListener('change', ()=>{
+    const stay = TT.stayOf(brief);
+    stay.from = dIn.value || stay.from;
+    if(TT.daysBetween(stay.from, dOut.value) < 1) stay.nights = 1;
+    TT.save(brief); drawSheet();
+  });
+  if(dOut) dOut.addEventListener('change', ()=>{
+    const stay = TT.stayOf(brief);
+    const n = TT.daysBetween(stay.from, dOut.value);
+    stay.nights = n >= 1 ? Math.min(n, 60) : 1;    /* a check-out before check-in is not a stay */
+    TT.save(brief); drawSheet();
+  });
+
   inEl.querySelectorAll('[data-tier]').forEach(el=>{
     el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; st.hotel = null; drawSheet(); });
   });
@@ -1335,6 +1402,7 @@ function wireSheet(d, st, nights){
   inEl.querySelector('#toFlights').addEventListener('click', ()=>{
     brief.trip = {
       dest: d.id,
+      from: TT.stayOf(brief).from, nights: TT.nights(brief),
       adults: st.adults, children: st.children, rooms: st.rooms,
       tier: st.tier, hotel: st.hotel, room: st.room
     };
@@ -1521,12 +1589,12 @@ const BAND_WORD  = {1:'Easy on the wallet', 2:'Mid-range', 3:'Premium'};
 
 function tripTotal(d){
   const st = stateFor(d.id);
-  return d.flights[st.flight].price + d.hotels[st.tier][0].night * TT.nights();
+  return d.flights[st.flight].price + d.hotels[st.tier][0].night * TT.nights(brief);
 }
 
 function drawCompare(){
   const cols = cmpCols;
-  const nights = TT.nights();
+  const nights = TT.nights(brief);
 
   /* Mark the winner on the rows where "best" is objective. */
   const minHours = Math.min.apply(null, cols.map(c=>c.d.hours));
