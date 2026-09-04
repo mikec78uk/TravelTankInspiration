@@ -101,10 +101,13 @@ panel with a per-person-per-day range scaled to the destination.
 
 **Do not miss** is a list of six, three shown with a *View all 6* rather than a grid.
 
-**Hotels are an accordion** — open one without leaving the page and get a picture gallery,
-facilities as icon chips, a map showing roughly where it sits, and the room types. Facilities
-and room options are both derived from the property record (star rating, board, area) rather
-than authored, so they stay consistent across all 96 hotels.
+**Hotels are cards, not a list.** Each carries a large image, a badge where the record supports
+one (*On the beach*, *Lowest rate here*, *Five star*), star rating and board, the property's own
+line pulled out as the hook, facility chips, and both the nightly rate and what the stay
+actually costs. A tier note says why we would put you in that band at all. Opening one — without
+leaving the page — adds a gallery, the full facilities, a map, and the room types. Facilities
+and room options are derived from the property record (star rating, board, area) rather than
+authored, so they stay consistent across all 96 hotels.
 
 Party size sits as a **quiet inline strip** above the hotels — *pricing for 2 adults, 0
 children, 1 room* — rather than a section of its own; it is a pricing control, not a step. It

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=25">
+<link rel="stylesheet" href="assets/tt.css?v=26">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -329,17 +329,75 @@
   .mini button[disabled]{opacity:.3;cursor:default;}
   .mini .n{min-width:16px;text-align:center;font-size:.9rem;font-weight:600;}
 
-  /* ---- hotel panel ---- */
-  .hgal{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;height:200px;margin-bottom:22px;}
+  /* ---- hotels: a card each, not a row in a list ---- */
+  .tier-note{font-size:.94rem;color:var(--ink-3);line-height:1.6;}
+  .hcard{border:1px solid var(--line);background:#fff;margin-bottom:14px;}
+  .hcard:last-child{margin-bottom:0;}
+  .hcard.on{border-color:var(--ink);}
+  .hbtn{
+    display:grid;grid-template-columns:220px 1fr auto;gap:24px;align-items:stretch;
+    width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer;
+  }
+  .hbtn:hover .hname{text-decoration:underline;text-underline-offset:3px;}
+  .hbtn .shotwrap{position:relative;}
+  .hbtn .shot{height:100%;min-height:172px;}
+  .hbtn .badge{
+    position:absolute;top:12px;left:12px;background:var(--ink);color:#fff;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:4px 9px;
+  }
+  .hmid{padding:20px 0 20px 0;min-width:0;}
+  .hstars{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .hstars .st{font-size:.82rem;color:var(--ink);letter-spacing:2px;}
+  .hstars .bd{
+    font-size:.65rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-3);border:1px solid var(--line);padding:3px 8px;
+  }
+  .hname{font-size:1.32rem;font-weight:600;letter-spacing:-.015em;margin-top:9px;line-height:1.2;}
+  .hwhere{display:flex;align-items:center;gap:6px;font-size:.86rem;color:var(--ink-3);margin-top:6px;}
+  .hwhere .ic{width:15px;height:15px;}
+  .hhook{
+    font-size:1rem;line-height:1.6;color:var(--ink-2);margin-top:12px;
+    padding-left:14px;border-left:2px solid var(--line);max-width:52ch;
+  }
+  .hchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+  .hchip{
+    display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);
+    background:var(--panel-2);padding:5px 10px;font-size:.78rem;color:var(--ink-3);
+  }
+  .hchip .ic{width:14px;height:14px;}
+  .hright{
+    padding:20px 24px 20px 0;display:flex;flex-direction:column;align-items:flex-end;
+    justify-content:space-between;text-align:right;white-space:nowrap;
+  }
+  .hright .amt{font-size:1.32rem;font-weight:600;letter-spacing:-.02em;}
+  .hright .per{font-size:.76rem;color:var(--ink-3);margin-top:3px;}
+  .hright .stay{font-size:.82rem;color:var(--ink-2);margin-top:10px;}
+  .hright .cta{
+    font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-2);display:flex;align-items:center;gap:6px;
+  }
+  .hcard.on .hright .cta{color:var(--ink);}
+  .hright .caret{transition:transform .15s;display:inline-block;}
+  .hcard.on .caret{transform:rotate(90deg);}
+  @media(max-width:860px){
+    .hbtn{grid-template-columns:1fr;gap:0;}
+    .hbtn .shot{min-height:180px;}
+    .hmid{padding:18px 20px 0;}
+    .hright{padding:16px 20px 20px;align-items:flex-start;text-align:left;
+      flex-direction:row;justify-content:space-between;align-items:flex-end;width:100%;}
+  }
+
+  .hpanel{padding:6px 24px 24px;border-top:1px solid var(--line-2);margin-top:20px;}
+  .hpanel .lab{display:block;margin-bottom:10px;}
+  .hgal{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:210px;margin:20px 0 22px;}
   .hgal .ph:first-child{grid-row:1 / span 2;}
-  .hgal{grid-template-rows:1fr 1fr;}
-  @media(max-width:700px){.hgal{grid-template-columns:1fr 1fr;height:230px;}.hgal .ph:first-child{grid-column:1 / -1;grid-row:auto;}}
-  .hsplit{display:grid;grid-template-columns:1fr 300px;gap:26px;margin-bottom:22px;}
+  @media(max-width:700px){.hgal{grid-template-columns:1fr 1fr;height:240px;}.hgal .ph:first-child{grid-column:1 / -1;grid-row:auto;}}
+  .hsplit{display:grid;grid-template-columns:1fr 300px;gap:30px;margin-bottom:24px;}
   @media(max-width:820px){.hsplit{grid-template-columns:1fr;}}
-  .facs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .facs{display:flex;flex-wrap:wrap;gap:8px;}
   .fac{
     display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);
-    padding:7px 12px;font-size:.84rem;color:var(--ink-2);background:#fff;
+    padding:8px 13px;font-size:.85rem;color:var(--ink-2);background:#fff;
   }
   .fac .ic{width:16px;height:16px;color:var(--ink-3);}
   .map{
@@ -352,61 +410,15 @@
   .map::before,.map::after{content:'';position:absolute;background:#fff;}
   .map::before{left:0;right:0;top:58%;height:12px;box-shadow:0 0 0 1px var(--line-2);}
   .map::after{top:0;bottom:0;left:34%;width:10px;box-shadow:0 0 0 1px var(--line-2);}
-  .map .pin{
-    position:absolute;left:34%;top:58%;transform:translate(-50%,-100%);
-    color:var(--ink);z-index:2;
-  }
+  .map .pin{position:absolute;left:34%;top:58%;transform:translate(-50%,-100%);color:var(--ink);z-index:2;}
   .map .pin .ic{width:30px;height:30px;filter:drop-shadow(0 1px 2px rgba(255,255,255,.9));}
   .map-cap{margin-top:9px;font-size:.83rem;color:var(--ink-3);}
   .map-cap b{color:var(--ink-2);}
 
-  /* ---- destination detail sections ---- */
-  /* One shape for every section: a kicker in the left rail, then the heading and
-     everything under it in a single aligned column. */
-  .dsec{
-    display:grid;grid-template-columns:190px 1fr;gap:30px;
-    border-top:1px solid var(--line);padding:36px 0 40px;
-  }
-  .dsec:first-of-type{border-top:0;padding-top:4px;}
-  .dsec-k .lab{margin:0;display:flex;align-items:center;gap:8px;line-height:1.5;}
-  .dsec-k .lab .ic{width:17px;height:17px;color:var(--ink-3);}
-  .dsec-c > h3{margin:0 0 18px;font-size:1.34rem;letter-spacing:-.018em;line-height:1.25;}
-  .dsec-c > * + *{margin-top:16px;}            /* one rhythm between every block */
-  .dsec-c > h3 + *{margin-top:0;}
-  .dsec-c p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
-  @media(max-width:820px){
-    .dsec{grid-template-columns:1fr;gap:14px;padding:28px 0 32px;}
-    .dsec-c > h3{font-size:1.18rem;}
-  }
-  .temps{
-    display:inline-block;margin-bottom:12px;border:1px solid var(--line);
-    padding:7px 13px;font-size:.84rem;color:var(--ink-2);
-  }
-
-  /* ---- hotels as an accordion ---- */
-  .hlist{border-top:1px solid var(--line-2);}
-  .hrow{border-bottom:1px solid var(--line-2);}
-  .hbtn{
-    display:grid;grid-template-columns:118px 1fr auto;gap:20px;align-items:center;
-    width:100%;text-align:left;background:none;border:0;padding:16px 0;cursor:pointer;
-  }
-  .hbtn:hover{background:var(--panel-2);}
-  .hrow.on .hbtn{background:var(--panel-2);}
-  .hbtn .thumb{height:80px;}
-  .hbtn .nm{font-size:1.05rem;font-weight:600;color:var(--ink);}
-  .hbtn .ar{font-size:.85rem;color:var(--ink-3);margin-top:3px;}
-  .hbtn .meta{font-size:.82rem;color:var(--ink-2);margin-top:6px;}
-  .hbtn .pr{text-align:right;white-space:nowrap;}
-  .hbtn .pr b{font-size:1.08rem;}
-  .hbtn .pr span{display:block;font-size:.76rem;color:var(--ink-3);margin-top:2px;}
-  .hbtn .caret{color:var(--ink-3);transition:transform .15s;display:inline-block;margin-left:10px;}
-  .hrow.on .caret{transform:rotate(90deg);}
-  .hpanel{padding:4px 0 22px;}
-  .hpanel .nte{font-size:.94rem;color:var(--ink-2);margin:0 0 16px;max-width:70ch;}
   .rooms{display:grid;gap:2px;}
   .room{
     display:grid;grid-template-columns:24px 1fr auto;gap:16px;align-items:center;
-    border:1px solid var(--line);padding:14px 18px;margin-bottom:-1px;cursor:pointer;
+    border:1px solid var(--line);padding:15px 18px;margin-bottom:-1px;cursor:pointer;
     background:#fff;text-align:left;width:100%;
   }
   .room:hover{background:var(--panel-2);}
@@ -420,13 +432,12 @@
     display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2);
   }
-  .hsel .sum{font-size:.92rem;color:var(--ink-2);}
-  .hsel .sum b{color:var(--ink);}
+  .hsel .sum{font-size:.95rem;color:var(--ink-2);}
+  .hsel .sum b{color:var(--ink);font-size:1.05rem;}
   @media(max-width:700px){
-    .hbtn{grid-template-columns:80px 1fr;row-gap:10px;}
-    .hbtn .pr{grid-column:2;text-align:left;}
     .room{grid-template-columns:24px 1fr;row-gap:8px;}
     .room .rp{grid-column:2;text-align:left;}
+    .hpanel{padding:6px 20px 22px;}
   }
 
   .stage{
@@ -763,8 +774,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=25"></script>
-<script src="assets/core.js?v=25"></script>
+<script src="assets/data.js?v=26"></script>
+<script src="assets/core.js?v=26"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1025,7 +1036,8 @@ function drawSheet(){
       '<div class="tiers">' + TIERS.map(([k,l])=>
         '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
       '</div>' +
-      '<div class="hlist">' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>') +
+      '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
+      '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>') +
 
     /* ---- on to the logistics ---- */
     '<div class="stage">' +
@@ -1194,24 +1206,60 @@ function mini(key, label, val, min, max){
     '<span class="ml">' + label + '</span></span>';
 }
 
+const TIER_NOTE = {
+  low:  'Cheap without being grim. We would still put our own people in these.',
+  mid:  'Where we would actually book you — the balance of location and comfort.',
+  high: 'Worth it if the trip is the occasion rather than just the week off.'
+};
+
+function stars(n){ return '★'.repeat(n) + '☆'.repeat(Math.max(0, 5 - n)); }
+
+/* Only badge a card where there is a real signal in the record to badge it with. */
+function hotelBadge(h, i, list){
+  const cheapest = list.reduce((a,b)=>a.night <= b.night ? a : b);
+  const where = (h.area + ' ' + h.note).toLowerCase();
+  if(/beachfront|on the beach|beach,/.test(where)) return 'On the beach';
+  if(h === cheapest && list.length > 1)            return 'Lowest rate here';
+  if(h.stars === 5)                                return 'Five star';
+  return null;
+}
+
 function hotelRow(h, i, st, nights, d){
-  const open = st.hotel === i;
-  const rooms = TT.roomsFor(h);
+  const open   = st.hotel === i;
+  const list   = d.hotels[st.tier];
+  const rooms  = TT.roomsFor(h);
   const chosen = rooms.find(r=>r.id === st.room) || rooms[0];
   const needed = Math.max(st.rooms, TT.roomsNeeded(chosen, st.adults, st.children));
   const stayTotal = chosen.night * needed * nights;
-  const facs = TT.facilitiesFor(h, d);
+  const facs   = TT.facilitiesFor(h, d);
+  const badge  = hotelBadge(h, i, list);
 
-  return '<div class="hrow' + (open ? ' on' : '') + '">' +
+  return '<div class="hcard' + (open ? ' on' : '') + '">' +
     '<button type="button" class="hbtn" data-hotel="' + i + '" aria-expanded="' + open + '">' +
-      '<div class="thumb ph ph-sm"></div>' +
-      '<div>' +
-        '<div class="nm">' + TT.esc(h.n) + '</div>' +
-        '<div class="ar">' + TT.icon('pin') + ' ' + TT.esc(h.area) + '</div>' +
-        '<div class="meta">' + h.stars + '-star &middot; ' + TT.esc(h.board) + '</div>' +
+      '<div class="shotwrap">' +
+        '<div class="shot ph' + (i % 2 ? ' ph-sm' : '') + '"></div>' +
+        (badge ? '<span class="badge">' + TT.esc(badge) + '</span>' : '') +
       '</div>' +
-      '<div class="pr"><b>' + TT.money(h.night) + '</b><span>per night, from' +
-        '<span class="caret">&rsaquo;</span></span></div>' +
+      '<div class="hmid">' +
+        '<div class="hstars"><span class="st">' + stars(h.stars) + '</span>' +
+          '<span class="bd">' + TT.esc(h.board) + '</span></div>' +
+        '<div class="hname">' + TT.esc(h.n) + '</div>' +
+        '<div class="hwhere">' + TT.icon('pin') + TT.esc(h.area) + '</div>' +
+        '<div class="hhook">' + TT.esc(h.note) + '</div>' +
+        '<div class="hchips">' +
+          facs.slice(0,4).map(f=>'<span class="hchip">' + TT.icon(f.i) + TT.esc(f.t) + '</span>').join('') +
+          (facs.length > 4 ? '<span class="hchip">+' + (facs.length - 4) + ' more</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="hright">' +
+        '<div>' +
+          '<div class="amt">' + TT.money(h.night) + '</div>' +
+          '<div class="per">per room, per night</div>' +
+          '<div class="stay">' + TT.money(chosen.night * needed * nights) + ' for ' + nights + ' nights</div>' +
+        '</div>' +
+        '<span class="cta">' + (open ? 'Hide details' : 'View this hotel') +
+          '<span class="caret">&rsaquo;</span></span>' +
+      '</div>' +
     '</button>' +
     (open
       ? '<div class="hpanel">' +
@@ -1221,19 +1269,18 @@ function hotelRow(h, i, st, nights, d){
           '</div>' +
           '<div class="hsplit">' +
             '<div>' +
-              '<p class="nte">' + TT.esc(h.note) + '</p>' +
               '<span class="lab">Facilities</span>' +
               '<div class="facs">' + facs.map(f=>
                 '<span class="fac">' + TT.icon(f.i) + TT.esc(f.t) + '</span>').join('') + '</div>' +
             '</div>' +
             '<div>' +
               '<span class="lab">Where it is</span>' +
-              '<div class="map" style="margin-top:10px;"><span class="pin">' + TT.icon('pin') + '</span></div>' +
+              '<div class="map"><span class="pin">' + TT.icon('pin') + '</span></div>' +
               '<div class="map-cap"><b>' + TT.esc(h.area) + '</b> &middot; ' + TT.esc(d.name) + '</div>' +
             '</div>' +
           '</div>' +
-          '<span class="lab">Room type</span>' +
-          '<div class="rooms" style="margin-top:10px;">' +
+          '<span class="lab">Choose a room</span>' +
+          '<div class="rooms">' +
             rooms.map(r=>{
               const n = Math.max(st.rooms, TT.roomsNeeded(r, st.adults, st.children));
               return '<button type="button" class="room' + (r.id===st.room?' on':'') + '" data-room="' + r.id + '">' +
