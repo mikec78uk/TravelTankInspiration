@@ -82,10 +82,18 @@ locked while it is open and returns to where it was on close. It runs: overview 
 weather with a temperature band, what to wear, what you will be eating, four sights not to miss,
 your party, and where to stay.
 
-**Hotels are an accordion** — open one without leaving the page and pick a room type. Room
-options are derived from the property's nightly rate and star rating rather than authored, and
-**Who is coming** (adults, children, rooms) reprices as you change it. A family of four often
-finds one family room beats two doubles, which the page shows rather than states.
+It opens on a row of **key facts with icons** — flight time, climate, best months, entry, price
+band — and the four sights are **image cards** rather than a list.
+
+**Hotels are an accordion** — open one without leaving the page and get a picture gallery,
+facilities as icon chips, a map showing roughly where it sits, and the room types. Facilities
+and room options are both derived from the property record (star rating, board, area) rather
+than authored, so they stay consistent across all 96 hotels.
+
+Party size sits as a **quiet inline strip** above the hotels — *pricing for 2 adults, 0
+children, 1 room* — rather than a section of its own; it is a pricing control, not a step. It
+reprices everything live, and a family of four is shown that one family room beats two doubles
+rather than being told it.
 
 The **flights are a separate page** — the hotel is still part of the inspiration, the flight is
 logistics. It carries the party and hotel across, suggests one flight with the reasoning shown,

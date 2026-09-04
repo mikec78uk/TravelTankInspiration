@@ -266,6 +266,60 @@ const TT = (function(){
   /* An itemised account of how a destination measures against the brief — every
      point the customer actually stated, and whether this place meets it. Misses
      are reported as misses; a recommendation that only lists hits is marketing. */
+  /* A small stroke-icon set, drawn to one grid so they sit together. */
+  const ICONS = {
+    plane:'M2 14l19-7-7 19-2.5-7.5L2 14z',
+    sun:'M12 4.5v-2M12 21.5v-2M4.5 12h-2M21.5 12h-2M6.7 6.7L5.3 5.3M18.7 18.7l-1.4-1.4M6.7 17.3l-1.4 1.4M18.7 5.3l-1.4 1.4M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z',
+    passport:'M5 3h11a3 3 0 013 3v15H8a3 3 0 01-3-3V3zM5 18h14M12 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM9.5 15h5',
+    calendar:'M4 6h16v15H4zM4 10h16M8.5 3v5M15.5 3v5',
+    wallet:'M3 7h15a2 2 0 012 2v9a2 2 0 01-2 2H3zM3 7V5.5A1.5 1.5 0 014.5 4H16M16.5 13.5h1.5',
+    clock:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v5.5l3.5 2',
+    wifi:'M2.5 9a14 14 0 0119 0M6 12.5a9 9 0 0112 0M9.5 16a4.5 4.5 0 015 0M12 19.5h.01',
+    pool:'M3 17.5c1.8 0 1.8 1.5 3.6 1.5s1.8-1.5 3.6-1.5 1.8 1.5 3.6 1.5 1.8-1.5 3.6-1.5 1.8 1.5 3.6 1.5M7 15V6a2 2 0 014 0v9M13 15V6a2 2 0 014 0v9M7 9.5h4M13 9.5h4',
+    food:'M6 3v8a2.5 2.5 0 005 0V3M8.5 11v10M17 3c-1.5 1.5-2 3-2 5.5S16 12 17 12v9',
+    spa:'M12 21c0-5 3.5-8.5 8-9-.5 4.5-4 8-8 9zM12 21c0-5-3.5-8.5-8-9 .5 4.5 4 8 8 9zM12 21V11a6 6 0 010-8 6 6 0 010 8',
+    gym:'M4 9v6M7 6.5v11M17 6.5v11M20 9v6M7 12h10',
+    beach:'M3 20h18M6 20c0-6 3-10 7-10s7 4 7 10M13 10V4M4.5 9.5c2-3 6-4 8.5-2.5M21 12c-1.5-3-5-4.5-8-3.5',
+    parking:'M4 3h16v18H4zM9.5 17V8h3.5a2.75 2.75 0 010 5.5H9.5',
+    bar:'M4 4h16l-8 8v7M8 19h8M14.5 8.5l4-4',
+    concierge:'M3 18h18M5 18a7 7 0 0114 0M12 8V6M10.5 6h3',
+    room:'M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5M3 18v2M21 18v2M6 11V8a1.5 1.5 0 011.5-1.5h9A1.5 1.5 0 0118 8v3',
+    pin:'M12 22s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12zM12 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
+  };
+  function icon(name, cls){
+    const d = ICONS[name];
+    if(!d) return '';
+    return '<svg class="ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" ' +
+      'aria-hidden="true"><path d="' + d + '"/></svg>';
+  }
+
+  /* Facilities are read off the property record — star rating, board and where it is —
+     rather than authored per hotel, so they stay consistent across all of them. */
+  function facilitiesFor(h, d){
+    const out = [{i:'wifi', t:'Wi-Fi throughout'}];
+    const where = (h.area + ' ' + h.note).toLowerCase();
+
+    if(/breakfast/i.test(h.board))      out.push({i:'food', t:'Breakfast included'});
+    if(/half board/i.test(h.board))     out.push({i:'food', t:'Half board'});
+    if(/all inclusive/i.test(h.board))  out.push({i:'bar',  t:'All inclusive'});
+    if(/full board/i.test(h.board))     out.push({i:'food', t:'Full board'});
+
+    if(h.stars >= 3) out.push({i:'pool', t:'Pool'});
+    if(h.stars >= 4) out.push({i:'food', t:'Restaurant on site'});
+    if(h.stars >= 4) out.push({i:'parking', t:'Parking'});
+    if(h.stars >= 5) out.push({i:'spa',  t:'Spa'});
+    if(h.stars >= 5) out.push({i:'gym',  t:'Gym'});
+    if(h.stars >= 5) out.push({i:'concierge', t:'Concierge'});
+
+    if(/beach|beachfront|coast|lagoon|sea/.test(where)) out.push({i:'beach', t:'Beach access'});
+    if(d && d.vibes.indexOf('family') !== -1)           out.push({i:'room',  t:'Family rooms'});
+
+    /* de-duplicate by label */
+    const seen = {};
+    return out.filter(x=>{ if(seen[x.t]) return false; seen[x.t] = 1; return true; });
+  }
+
   /* Room options are derived from the hotel's nightly rate and star rating rather
      than authored per property — enough to price a party realistically in a
      wireframe, and consistent across all of them. */
@@ -482,6 +536,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,icon,facilitiesFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();
