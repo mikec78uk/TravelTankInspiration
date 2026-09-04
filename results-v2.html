@@ -18,10 +18,17 @@
   .intro .hint{margin:0 0 0 auto;}
 
   /* ================= the three recommendations ================= */
-  .rec{border-top:1px solid var(--ink);padding:34px 0 40px;}
-  .rec + .rec{border-top:1px solid var(--line);}
+  /* Each recommendation is its own card — the three were running together as one
+     document, which made them read as a list of content rather than three picks. */
+  .rec{
+    border:1px solid var(--line);background:#fff;margin-bottom:30px;
+    box-shadow:0 1px 3px rgba(17,19,21,.05);
+  }
+  .rec:first-child{border-top:3px solid var(--ink);}   /* the lead pick */
+  .rec > *{padding-left:34px;padding-right:34px;}
+  .rec > .mosaic{padding-left:0;padding-right:0;}      /* imagery runs to the edges */
 
-  .rec-head{display:flex;align-items:flex-start;gap:24px;margin-bottom:22px;}
+  .rec-head{display:flex;align-items:flex-start;gap:24px;padding-top:30px;margin-bottom:22px;}
   .rec-kicker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
   .rec-tag{
     font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
@@ -41,7 +48,7 @@
   .fav:hover{border-color:var(--ink-3);color:var(--ink);}
   .fav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
 
-  .mosaic{display:grid;gap:10px;margin-bottom:26px;}
+  .mosaic{display:grid;gap:10px;margin-bottom:26px;background:#fff;}
   .mosaic.big{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:420px;}
   .mosaic.big .lead{grid-row:1 / span 2;}
   .mosaic.small{grid-template-columns:1fr 1fr 1fr;height:230px;}
@@ -67,13 +74,13 @@
 
   .conf{border-top:1px solid var(--line-2);}
   .conf summary{
-    list-style:none;cursor:pointer;padding:18px 0;display:flex;align-items:center;gap:10px;
+    list-style:none;cursor:pointer;padding:18px 0;margin:0 -34px;padding-left:34px;padding-right:34px;display:flex;align-items:center;gap:10px;
     font-size:.8rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
   }
   .conf summary::-webkit-details-marker{display:none;}
   .conf summary::after{content:'\203A';margin-left:2px;transition:transform .15s;display:inline-block;color:var(--ink-3);}
   .conf[open] summary::after{transform:rotate(90deg);}
-  .conf-in{padding:0 0 22px;display:grid;grid-template-columns:150px 1fr;gap:26px;}
+  .conf-in{padding-bottom:22px;display:grid;grid-template-columns:150px 1fr;gap:26px;}
   .conf-score{font-size:.95rem;color:var(--ink-2);margin:0 0 14px;}
   .conf-score b{color:var(--ink);}
   .marks{list-style:none;margin:0 0 18px;padding:0;columns:2;column-gap:26px;}
@@ -88,10 +95,13 @@
   .evid{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--line-2);}
   .evid li{font-size:.88rem;color:var(--ink-3);margin-bottom:7px;}
 
-  .rec-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-2);padding-top:22px;}
+  .rec-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-2);padding-top:22px;padding-bottom:28px;}
   .rec-foot .spacer{flex:1;}
 
   @media(max-width:860px){
+    .rec > *{padding-left:20px;padding-right:20px;}
+    .rec > .mosaic{padding-left:0;padding-right:0;}
+    .conf summary{margin:0 -20px;padding-left:20px;padding-right:20px;}
     .rec-name{font-size:2.1rem;}
     .mosaic.big{grid-template-columns:1fr;grid-template-rows:210px 100px 100px;height:auto;}
     .mosaic.big .lead{grid-row:auto;}
@@ -425,6 +435,8 @@ const LANE_KEYS = ['best','premium','offbeat'];
 const TIERS = [['low','Spend less'],['mid','Our pick'],['high','Upgrade']];
 let poolExhausted = false;
 
+function hrs(n){ return n + ' hour' + (n === 1 ? '' : 's'); }
+
 function stateFor(id){
   if(!ui[id]) ui[id] = {flight:1, tier:'mid'};
   return ui[id];
@@ -484,7 +496,7 @@ function recHtml(item, meta, lead, laneKey){
   }
 
   const facts = [
-    d.hours + ' hours from Lagos',
+    hrs(d.hours) + ' from Lagos',
     VISA_LABEL[d.visa],
     'Best ' + TT.monthRuns(d),
     'from <b>' + TT.money(d.flights[0].price) + '</b>'
@@ -630,7 +642,7 @@ function drawSheet(){
     '<div class="tip"><span class="lab" style="margin:0;">Shark tip</span><p>' + TT.esc(d.tip) + '</p></div>' +
 
     '<div class="facts">' +
-      '<div><span class="lab">Flight from Lagos</span><div class="v">' + d.hours + ' hours</div></div>' +
+      '<div><span class="lab">Flight from Lagos</span><div class="v">' + hrs(d.hours) + '</div></div>' +
       '<div><span class="lab">Best months</span><div class="v">' + TT.monthRuns(d) + '</div></div>' +
       '<div><span class="lab">Entry</span><div class="v">' + VISA_LABEL[d.visa] + '</div></div>' +
       '<div><span class="lab">Flights from</span><div class="v"><strong>' + TT.money(d.flights[0].price) + '</strong></div></div>' +

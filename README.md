@@ -67,7 +67,8 @@ layout CSS and script inline, so editing one leaves the other alone; they do sha
 The original page reads as a way of navigating destination content. v2 is built to read as a
 recommendation, and to show its working.
 
-All three are on the page at once as editorial entries rather than tabs you toggle. Each one
+All three are on the page at once as separate cards rather than tabs you toggle — bordered,
+spaced apart, imagery running to the card edges, with a heavier top rule on the lead pick. Each one
 carries a **TravelTank verdict**, **Why it fits you**, **The trade-off** — a real downside,
 written per destination — and an expandable **Why we're confident**.
 
