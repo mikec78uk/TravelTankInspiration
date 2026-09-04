@@ -11,7 +11,8 @@ const TT = (function(){
   function blank(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
-      maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[], lane:'best'
+      maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
+      dismissed:[], lane:'best'
     };
   }
   function load(){
@@ -92,7 +93,7 @@ const TT = (function(){
     if(b.maxHours){
       if(d.hours <= b.maxHours){
         s += 12;
-        if(b.maxHours <= 6) why.push('Only ' + d.hours + ' hours in the air from ' + b.origin);
+        if(b.maxHours <= 6) why.push('Only ' + d.hours + ' hour' + (d.hours===1?'':'s') + ' in the air from ' + b.origin);
       } else if(d.hours <= b.maxHours + 2){ s -= 4; }
       else { s -= 22; }
     }
@@ -246,6 +247,45 @@ const TT = (function(){
   /* One field of the brief on its own, as a standalone sentence. Needed where an
      answer has to be added to wording the customer has already written, so we add
      only the new fact instead of restating — and contradicting — the whole brief. */
+  /* An itemised account of how a destination measures against the brief — every
+     point the customer actually stated, and whether this place meets it. Misses
+     are reported as misses; a recommendation that only lists hits is marketing. */
+  function matchReport(d, b){
+    const checks = [];
+    const add = (label, ok) => checks.push({label:label, ok:!!ok});
+
+    if(b.who){
+      const w = WHO.find(x=>x.id===b.who);
+      add('Works for ' + w.label.toLowerCase(), d.who.indexOf(b.who) !== -1);
+    }
+    b.vibes.forEach(v=>{
+      const lbl = (VIBES.find(x=>x.id===v)||{label:v}).label;
+      add(lbl, d.vibes.indexOf(v) !== -1);
+    });
+    if(b.month) add(MONTHS_FULL[b.month-1] + ' is a good time to go', d.months.indexOf(b.month) !== -1);
+    if(b.budget) add('Within your ' + BUDGETS[b.budget-1].label.toLowerCase() + ' band', d.budget <= b.budget);
+    if(b.maxHours){
+      add(b.maxHours === 99 ? 'Any flight length' : 'Under ' + b.maxHours + ' hours from ' + b.origin,
+          d.hours <= b.maxHours);
+    }
+    if(b.visa === 'free')     add('Nothing to arrange before you fly', d.visa === 'free' || d.visa === 'on-arrival');
+    if(b.visa === 'required') add('You were happy to sort a visa', true);
+    if(b.heat === 'hot')      add('Reliably hot', d.heat === 'hot');
+    if(b.quieter)             add('Away from the crowds', !!d.offbeat || d.pace <= 2);
+
+    const hit = checks.filter(c=>c.ok).length;
+    const total = checks.length;
+    const pct = total ? hit / total : null;
+
+    let level;
+    if(!total)            level = 'Broad crowd-pleaser';
+    else if(pct >= 0.85)  level = 'Excellent match';
+    else if(pct >= 0.6)   level = 'Strong match';
+    else                  level = 'Partial match';
+
+    return {checks:checks, hit:hit, total:total, pct:pct, level:level};
+  }
+
   function promptFragment(b, key){
     const cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
     switch(key){
@@ -404,6 +444,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

@@ -62,9 +62,30 @@ wireframe nav, and all four entry points still open the original. Each page carr
 layout CSS and script inline, so editing one leaves the other alone; they do share
 `assets/tt.css`, `core.js` and `data.js`, and a change there lands on both.
 
-**Differences in v2 so far:** *Nudge it* is no longer above the recommendation. It docks to the
-bottom of the window and only appears once the customer has scrolled the card up to the top of
-the screen — offering it on arrival asks them to change a result they have not read yet.
+### What v2 does differently
+
+The original page reads as a way of navigating destination content. v2 is built to read as a
+recommendation, and to show its working.
+
+All three are on the page at once as editorial entries rather than tabs you toggle. Each one
+carries a **TravelTank verdict**, **Why it fits you**, **The trade-off** — a real downside,
+written per destination — and an expandable **Why we're confident**.
+
+*Why we're confident* is itemised against the brief and **reports misses as misses**: the
+premium option is routinely labelled a *Partial match* with crosses against the budget, the
+flight cap or the visa. A recommendation that only ever lists hits is an advert.
+
+Selecting a destination opens a **full-screen sheet from the bottom** holding the detail —
+description, shark tip, flights, hotels, trip total. The page behind it is locked while it is
+open and returns to where it was on close.
+
+**Human handoff** sits at the foot of the page: *Like the direction but want a little more
+help?* opens a form that names what is already being passed to a Travel Shark, asks what you
+want help with, and takes a free-text note.
+
+*Nudge it* docks to the bottom of the window and only appears once the customer has scrolled
+into the recommendations — offering it on arrival asks them to change a result they have not
+read yet. **Edit brief** is unchanged.
 
 Three destinations the customer toggles between:
 
