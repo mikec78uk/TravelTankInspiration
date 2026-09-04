@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=18">
+<link rel="stylesheet" href="assets/tt.css?v=19">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -247,6 +247,103 @@
   .total .bd{font-size:.85rem;color:var(--ink-3);}
   .sheet-foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:30px;padding-top:22px;border-top:1px solid var(--line-2);}
   .sheet-foot .spacer{flex:1;}
+
+  /* ---- destination detail sections ---- */
+  .dsec{border-top:1px solid var(--line);padding:30px 0 6px;}
+  .dsec:first-child{border-top:0;padding-top:6px;}
+  .dsec-hd{display:grid;grid-template-columns:190px 1fr;gap:26px;align-items:baseline;}
+  .dsec-hd h3{margin:0;font-size:1.28rem;letter-spacing:-.015em;}
+  .dsec-body{display:grid;grid-template-columns:190px 1fr;gap:26px;margin-top:14px;}
+  .dsec-body > .lab{margin:0;}
+  .dsec p{margin:0 0 14px;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
+  .dsec p:last-child{margin-bottom:0;}
+  .dcols{display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+  @media(max-width:820px){
+    .dsec-hd,.dsec-body{grid-template-columns:1fr;gap:10px;}
+    .dcols{grid-template-columns:1fr;gap:22px;}
+  }
+  .temps{
+    display:inline-block;margin-bottom:12px;border:1px solid var(--line);
+    padding:7px 13px;font-size:.84rem;color:var(--ink-2);
+  }
+  .sights{list-style:none;margin:0;padding:0;}
+  .sights li{border-top:1px solid var(--line-2);padding:15px 0;display:grid;grid-template-columns:30px 1fr;gap:14px;}
+  .sights li:first-child{border-top:0;padding-top:0;}
+  .sights .no{
+    font-size:.78rem;color:var(--ink-3);font-weight:600;border:1px solid var(--line);
+    width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  }
+  .sights .sn{font-size:1rem;font-weight:600;color:var(--ink);}
+  .sights .sd{font-size:.93rem;color:var(--ink-3);margin-top:4px;line-height:1.55;}
+
+  /* ---- party ---- */
+  .party{border:1px solid var(--ink);padding:22px 26px;margin-top:8px;}
+  .party-row{display:flex;gap:30px;flex-wrap:wrap;align-items:flex-end;}
+  .stepper{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .stepper button{
+    width:34px;height:34px;border:1px solid var(--line);background:#fff;cursor:pointer;
+    font-size:1rem;color:var(--ink-2);border-radius:50%;line-height:1;
+  }
+  .stepper button:hover:not([disabled]){border-color:var(--ink);color:var(--ink);}
+  .stepper button[disabled]{opacity:.3;cursor:default;}
+  .stepper .n{min-width:26px;text-align:center;font-size:1.1rem;font-weight:600;}
+  .party-note{margin:14px 0 0;font-size:.86rem;color:var(--ink-3);}
+
+  /* ---- hotels as an accordion ---- */
+  .hlist{border-top:1px solid var(--line-2);}
+  .hrow{border-bottom:1px solid var(--line-2);}
+  .hbtn{
+    display:grid;grid-template-columns:118px 1fr auto;gap:20px;align-items:center;
+    width:100%;text-align:left;background:none;border:0;padding:16px 0;cursor:pointer;
+  }
+  .hbtn:hover{background:var(--panel-2);}
+  .hrow.on .hbtn{background:var(--panel-2);}
+  .hbtn .thumb{height:80px;}
+  .hbtn .nm{font-size:1.05rem;font-weight:600;color:var(--ink);}
+  .hbtn .ar{font-size:.85rem;color:var(--ink-3);margin-top:3px;}
+  .hbtn .meta{font-size:.82rem;color:var(--ink-2);margin-top:6px;}
+  .hbtn .pr{text-align:right;white-space:nowrap;}
+  .hbtn .pr b{font-size:1.08rem;}
+  .hbtn .pr span{display:block;font-size:.76rem;color:var(--ink-3);margin-top:2px;}
+  .hbtn .caret{color:var(--ink-3);transition:transform .15s;display:inline-block;margin-left:10px;}
+  .hrow.on .caret{transform:rotate(90deg);}
+  .hpanel{padding:4px 0 22px;}
+  .hpanel .nte{font-size:.94rem;color:var(--ink-2);margin:0 0 16px;max-width:70ch;}
+  .rooms{display:grid;gap:2px;}
+  .room{
+    display:grid;grid-template-columns:24px 1fr auto;gap:16px;align-items:center;
+    border:1px solid var(--line);padding:14px 18px;margin-bottom:-1px;cursor:pointer;
+    background:#fff;text-align:left;width:100%;
+  }
+  .room:hover{background:var(--panel-2);}
+  .room.on{border-color:var(--ink);position:relative;z-index:1;}
+  .room .rn{font-size:.97rem;font-weight:600;}
+  .room .rs{font-size:.82rem;color:var(--ink-3);margin-top:2px;}
+  .room .rp{text-align:right;white-space:nowrap;}
+  .room .rp b{font-size:1.02rem;}
+  .room .rp span{display:block;font-size:.76rem;color:var(--ink-3);margin-top:2px;}
+  .hsel{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2);
+  }
+  .hsel .sum{font-size:.92rem;color:var(--ink-2);}
+  .hsel .sum b{color:var(--ink);}
+  @media(max-width:700px){
+    .hbtn{grid-template-columns:80px 1fr;row-gap:10px;}
+    .hbtn .pr{grid-column:2;text-align:left;}
+    .room{grid-template-columns:24px 1fr;row-gap:8px;}
+    .room .rp{grid-column:2;text-align:left;}
+  }
+
+  .stage{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    border:1px solid var(--ink);background:var(--ink);color:#fff;padding:20px 26px;margin-top:30px;
+  }
+  .stage .t{font-size:1.05rem;font-weight:600;}
+  .stage .s{font-size:.88rem;color:rgba(255,255,255,.72);margin-top:3px;}
+  .stage .btn{margin-left:auto;background:#fff;border-color:#fff;color:var(--ink);}
+  .stage .btn:hover{background:var(--panel);border-color:var(--panel);}
+  @media(max-width:620px){.stage .btn{margin-left:0;}}
 
   /* ================= compare ================= */
   .cmp{
@@ -572,8 +669,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=18"></script>
-<script src="assets/core.js?v=18"></script>
+<script src="assets/data.js?v=19"></script>
+<script src="assets/core.js?v=19"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -775,95 +872,213 @@ function closeSheet(){
   sheetItem = null;
 }
 
+function partyFor(id){
+  if(!ui[id]) stateFor(id);
+  const st = ui[id];
+  if(st.adults === undefined){ st.adults = 2; st.children = 0; st.rooms = 1; st.hotel = null; st.room = 'std'; }
+  return st;
+}
+
 function drawSheet(){
   const d = sheetItem.d;
-  const st = stateFor(d.id);
-  const flight = d.flights[st.flight];
-  const hotels = d.hotels[st.tier];
+  const st = partyFor(d.id);
   const nights = TT.nights();
-  const total = flight.price + hotels[0].night * nights;
 
   document.getElementById('sheetIn').innerHTML =
-    '<div class="mosaic big" style="margin-bottom:28px;">' +
+    '<div class="mosaic big" style="margin-bottom:30px;">' +
       '<div class="ph lead"></div><div class="ph ph-sm"></div><div class="ph ph-sm"></div>' +
     '</div>' +
 
-    '<p class="blurb">' + TT.esc(d.blurb) + '</p>' +
-
-    '<div class="tip"><span class="lab" style="margin:0;">Shark tip</span><p>' + TT.esc(d.tip) + '</p></div>' +
-
-    '<div class="facts">' +
-      '<div><span class="lab">Flight from Lagos</span><div class="v">' + hrs(d.hours) + '</div></div>' +
-      '<div><span class="lab">Best months</span><div class="v">' + TT.monthRuns(d) + '</div></div>' +
-      '<div><span class="lab">Entry</span><div class="v">' + VISA_LABEL[d.visa] + '</div></div>' +
-      '<div><span class="lab">Flights from</span><div class="v"><strong>' + TT.money(d.flights[0].price) + '</strong></div></div>' +
-    '</div>' +
-
-    '<div class="sec">' +
-      '<div class="sec-hd"><h3>Getting there</h3><span class="hint">Return from Lagos · economy · indicative</span></div>' +
-      d.flights.map((f,i)=>
-        '<button type="button" class="fl' + (i===st.flight?' on':'') + '" data-fl="' + i + '">' +
-          '<span class="radio"></span>' +
-          '<span><span class="car">' + TT.esc(f.carrier) + '</span><span class="rt">' + TT.esc(f.route) + '</span></span>' +
-          '<span class="dur-col"><span class="dur">' + f.dur + '</span><span class="stp"> · ' + f.stops + '</span></span>' +
-          '<span class="note-col"><span class="nt">' + TT.esc(f.note) + '</span></span>' +
-          '<span class="pr">' + TT.money(f.price) + '<small>per person</small></span>' +
-        '</button>').join('') +
-    '</div>' +
-
-    '<div class="sec">' +
-      '<div class="sec-hd"><h3>Where to stay</h3>' +
-        '<div class="tiers">' + TIERS.map(([k,l])=>
-          '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
+    /* ---- overview ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-body">' +
+        '<span class="lab">Overview</span>' +
+        '<div><p>' + TT.esc(d.blurb) + '</p>' +
+          '<div class="tip" style="margin-top:4px;"><span class="lab" style="margin:0;">Shark tip</span>' +
+            '<p>' + TT.esc(d.tip) + '</p></div>' +
         '</div>' +
-        '<span class="hint">Per room, per night</span>' +
-      '</div>' +
-      '<div class="hotels">' +
-        hotels.map(h=>
-          '<div class="hot">' +
-            '<div class="thumb ph ph-sm"></div>' +
-            '<div class="in">' +
-              '<div class="nm">' + TT.esc(h.n) + '</div>' +
-              '<div class="ar">' + TT.esc(h.area) + '</div>' +
-              '<div class="meta">' + h.stars + '-star · ' + TT.esc(h.board) + '</div>' +
-              '<div class="nte">' + TT.esc(h.note) + '</div>' +
-              '<div class="pr"><b>' + TT.money(h.night) + '</b><span>per night</span>' +
-                '<span class="tot">' + TT.money(h.night*nights) + ' for ' + nights + ' nights</span></div>' +
-            '</div>' +
-          '</div>').join('') +
       '</div>' +
     '</div>' +
 
-    '<div class="total">' +
-      '<div><span class="lab">Indicative trip total</span>' +
-        '<div class="big">' + TT.money(total) + '</div>' +
-        '<div class="bd">' + nights + ' nights · ' + TT.esc(flight.carrier) + ' · ' + TT.esc(hotels[0].n) + '</div>' +
+    /* ---- weather + what to wear ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-hd"><span class="lab">Before you go</span><h3>Weather, and what to pack</h3></div>' +
+      '<div class="dsec-body"><span></span>' +
+        '<div class="dcols">' +
+          '<div>' +
+            '<span class="lab">The weather</span>' +
+            '<div class="temps">' + TT.esc(d.temps) + '</div>' +
+            '<p>' + TT.esc(d.weather) + '</p>' +
+          '</div>' +
+          '<div>' +
+            '<span class="lab">What to wear</span>' +
+            '<p style="margin-top:12px;">' + TT.esc(d.wear) + '</p>' +
+          '</div>' +
+        '</div>' +
       '</div>' +
-      '<div style="margin-left:auto;text-align:right;">' +
-        '<div class="bd">Flights ' + TT.money(flight.price) + ' &nbsp;+&nbsp; Hotel ' + TT.money(hotels[0].night*nights) + '</div>' +
-        '<div class="bd">Change the flight or hotel tier above to reprice</div>' +
+    '</div>' +
+
+    /* ---- food ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-hd"><span class="lab">Eating</span><h3>What you will be eating</h3></div>' +
+      '<div class="dsec-body"><span></span><p>' + TT.esc(d.food) + '</p></div>' +
+    '</div>' +
+
+    /* ---- sights ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-hd"><span class="lab">Do not miss</span><h3>The four we would not skip</h3></div>' +
+      '<div class="dsec-body"><span></span>' +
+        '<ul class="sights">' + d.sights.map((x,i)=>
+          '<li><span class="no">' + (i+1) + '</span>' +
+            '<div><div class="sn">' + TT.esc(x.n) + '</div>' +
+              '<div class="sd">' + TT.esc(x.d) + '</div></div></li>').join('') +
+        '</ul>' +
       '</div>' +
+    '</div>' +
+
+    /* ---- who is coming ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-hd"><span class="lab">Your party</span><h3>Who is coming?</h3></div>' +
+      '<div class="dsec-body"><span></span>' +
+        '<div class="party">' +
+          '<div class="party-row">' +
+            stepper('adults', 'Adults', st.adults, 1, 12) +
+            stepper('children', 'Children', st.children, 0, 8) +
+            stepper('rooms', 'Rooms', st.rooms, 1, 6) +
+          '</div>' +
+          '<p class="party-note">Prices below update as you change this. ' + nights + ' nights, room only unless the board says otherwise.</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    /* ---- hotels ---- */
+    '<div class="dsec">' +
+      '<div class="dsec-hd"><span class="lab">Where to stay</span><h3>Somewhere to base yourself</h3></div>' +
+      '<div class="dsec-body"><span></span>' +
+        '<div>' +
+          '<div class="tiers" style="margin-bottom:16px;">' + TIERS.map(([k,l])=>
+            '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
+          '</div>' +
+          '<div class="hlist">' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights)).join('') + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    /* ---- on to the logistics ---- */
+    '<div class="stage">' +
+      '<div><div class="t">' + (st.hotel !== null ? 'Hotel chosen' : 'Happy with the destination?') + '</div>' +
+        '<div class="s">' + (st.hotel !== null
+          ? 'Next: flights from Lagos for ' + travellers(st) + '.'
+          : 'Pick somewhere to stay, or go straight to the flights.') + '</div></div>' +
+      '<button class="btn" id="sheetAsk">Ask a Travel Shark</button>' +
+      '<button class="btn btn-primary" id="toFlights">See flights from Lagos &rarr;</button>' +
     '</div>' +
 
     '<div class="sheet-foot">' +
       '<button class="btn" id="sheetNotFor">Not for me</button>' +
       '<button class="btn" id="sheetCmp">Compare</button>' +
       '<span class="spacer"></span>' +
-      '<button class="btn" id="sheetAsk">Ask a Travel Shark about this</button>' +
-      '<button class="btn btn-primary" id="sheetClose2">Back to the three</button>' +
+      '<button class="btn" id="sheetClose2">Back to the three</button>' +
     '</div>';
 
+  wireSheet(d, st, nights);
+}
+
+function travellers(st){
+  const bits = [st.adults + ' adult' + (st.adults===1?'':'s')];
+  if(st.children) bits.push(st.children + ' child' + (st.children===1?'':'ren'));
+  return bits.join(' and ') + ', ' + st.rooms + ' room' + (st.rooms===1?'':'s');
+}
+
+function stepper(key, label, val, min, max){
+  return '<div><span class="lab">' + label + '</span>' +
+    '<div class="stepper">' +
+      '<button type="button" data-step="' + key + '" data-dir="-1"' + (val<=min?' disabled':'') + ' aria-label="Fewer ' + label.toLowerCase() + '">&minus;</button>' +
+      '<span class="n">' + val + '</span>' +
+      '<button type="button" data-step="' + key + '" data-dir="1"' + (val>=max?' disabled':'') + ' aria-label="More ' + label.toLowerCase() + '">+</button>' +
+    '</div></div>';
+}
+
+function hotelRow(h, i, st, nights){
+  const open = st.hotel === i;
+  const rooms = TT.roomsFor(h);
+  const chosen = rooms.find(r=>r.id === st.room) || rooms[0];
+  const needed = Math.max(st.rooms, TT.roomsNeeded(chosen, st.adults, st.children));
+  const stayTotal = chosen.night * needed * nights;
+
+  return '<div class="hrow' + (open ? ' on' : '') + '">' +
+    '<button type="button" class="hbtn" data-hotel="' + i + '" aria-expanded="' + open + '">' +
+      '<div class="thumb ph ph-sm"></div>' +
+      '<div>' +
+        '<div class="nm">' + TT.esc(h.n) + '</div>' +
+        '<div class="ar">' + TT.esc(h.area) + '</div>' +
+        '<div class="meta">' + h.stars + '-star &middot; ' + TT.esc(h.board) + '</div>' +
+      '</div>' +
+      '<div class="pr"><b>' + TT.money(h.night) + '</b><span>per night, from' +
+        '<span class="caret">&rsaquo;</span></span></div>' +
+    '</button>' +
+    (open
+      ? '<div class="hpanel">' +
+          '<p class="nte">' + TT.esc(h.note) + '</p>' +
+          '<span class="lab">Room type</span>' +
+          '<div class="rooms" style="margin-top:10px;">' +
+            rooms.map(r=>{
+              const n = Math.max(st.rooms, TT.roomsNeeded(r, st.adults, st.children));
+              return '<button type="button" class="room' + (r.id===st.room?' on':'') + '" data-room="' + r.id + '">' +
+                '<span class="radio"></span>' +
+                '<span><span class="rn">' + TT.esc(r.name) + '</span>' +
+                  '<span class="rs">Sleeps ' + r.sleeps + ' &middot; ' + n + ' room' + (n===1?'':'s') + ' for your party</span></span>' +
+                '<span class="rp"><b>' + TT.money(r.night) + '</b><span>per room, per night</span></span>' +
+              '</button>';
+            }).join('') +
+          '</div>' +
+          '<div class="hsel">' +
+            '<span class="sum"><b>' + TT.money(stayTotal) + '</b> for ' + nights + ' nights &middot; ' +
+              needed + ' &times; ' + TT.esc(chosen.name).toLowerCase() + '</span>' +
+          '</div>' +
+        '</div>'
+      : '') +
+  '</div>';
+}
+
+function wireSheet(d, st, nights){
   const inEl = document.getElementById('sheetIn');
-  inEl.querySelectorAll('[data-fl]').forEach(el=>{
-    el.addEventListener('click', ()=>{ st.flight = +el.dataset.fl; drawSheet(); });
+
+  inEl.querySelectorAll('[data-step]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const k = b.dataset.step, dir = +b.dataset.dir;
+      const lim = {adults:[1,12], children:[0,8], rooms:[1,6]}[k];
+      st[k] = Math.min(lim[1], Math.max(lim[0], st[k] + dir));
+      drawSheet();
+    });
   });
   inEl.querySelectorAll('[data-tier]').forEach(el=>{
-    el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; drawSheet(); });
+    el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; st.hotel = null; drawSheet(); });
   });
+  inEl.querySelectorAll('[data-hotel]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const i = +el.dataset.hotel;
+      st.hotel = (st.hotel === i) ? null : i;
+      drawSheet();
+    });
+  });
+  inEl.querySelectorAll('[data-room]').forEach(el=>{
+    el.addEventListener('click', ()=>{ st.room = el.dataset.room; drawSheet(); });
+  });
+
   inEl.querySelector('#sheetClose2').addEventListener('click', closeSheet);
   inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d; closeSheet(); openWhy(x); });
   inEl.querySelector('#sheetAsk').addEventListener('click', ()=>{ closeSheet(); openShark(); });
   inEl.querySelector('#sheetCmp').addEventListener('click', ()=>{ closeSheet(); openCompare(); });
+  inEl.querySelector('#toFlights').addEventListener('click', ()=>{
+    brief.trip = {
+      dest: d.id,
+      adults: st.adults, children: st.children, rooms: st.rooms,
+      tier: st.tier, hotel: st.hotel, room: st.room
+    };
+    TT.save(brief);
+    location.href = 'flights.html';
+  });
 }
 
 document.getElementById('sheetX').addEventListener('click', closeSheet);

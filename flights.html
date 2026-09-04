@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache">
+<title>Flights — the logistics · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css?v=19">
+<style>
+  .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
+  .shell{padding-bottom:80px;}
+
+  .crumb{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:30px 0 10px;font-weight:600;}
+  .crumb b{color:var(--ink);}
+
+  .trip{border:1px solid var(--line);background:var(--panel-2);padding:22px 26px;margin:22px 0 34px;}
+  .trip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .trip-grid .v{font-size:1rem;color:var(--ink);margin-top:4px;}
+  .trip-grid .v small{display:block;font-size:.8rem;color:var(--ink-3);margin-top:2px;font-weight:400;}
+  @media(max-width:760px){.trip-grid{grid-template-columns:1fr 1fr;}}
+
+  .sec{margin-top:38px;}
+  .sec-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
+  .sec-hd h2{margin:0;font-size:1.5rem;letter-spacing:-.02em;}
+  .sec-hd .hint{margin-left:auto;}
+  .sec-sub{margin:0 0 18px;font-size:.95rem;color:var(--ink-3);max-width:70ch;}
+
+  .pick{border:1px solid var(--ink);padding:0;margin-bottom:26px;}
+  .pick-hd{
+    background:var(--ink);color:#fff;padding:9px 18px;
+    font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+  }
+  .fl{
+    display:grid;grid-template-columns:24px 1.5fr 1fr 1fr auto;gap:18px;align-items:center;
+    border:1px solid var(--line);padding:17px 20px;margin-bottom:-1px;cursor:pointer;background:#fff;
+    text-align:left;width:100%;
+  }
+  .pick .fl{border:0;margin:0;}
+  .fl:hover{background:var(--panel-2);}
+  .fl.on{border-color:var(--ink);position:relative;z-index:1;}
+  .radio{width:16px;height:16px;border:1px solid var(--ink-3);border-radius:50%;display:inline-block;}
+  .fl.on .radio{border:5px solid var(--ink);}
+  .fl .car{font-weight:600;font-size:.98rem;display:block;}
+  .fl .rt{font-size:.83rem;color:var(--ink-3);margin-top:3px;display:block;}
+  .fl .dur{font-size:.95rem;color:var(--ink);}
+  .fl .stp{font-size:.8rem;color:var(--ink-3);display:block;margin-top:3px;}
+  .fl .nt{font-size:.83rem;color:var(--ink-3);}
+  .fl .pr{text-align:right;white-space:nowrap;}
+  .fl .pr b{font-size:1.1rem;}
+  .fl .pr span{display:block;font-size:.76rem;color:var(--ink-3);margin-top:2px;}
+  @media(max-width:820px){
+    .fl{grid-template-columns:24px 1fr auto;row-gap:8px;}
+    .fl .note-col{display:none;}
+    .fl .dur-col{grid-column:2 / -1;}
+  }
+
+  .total{border:1px solid var(--ink);padding:26px 30px;margin-top:34px;}
+  .total-top{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;}
+  .total .big{font-size:2.2rem;font-weight:600;letter-spacing:-.025em;line-height:1;}
+  .total .bd{font-size:.88rem;color:var(--ink-3);}
+  .breakdown{
+    display:grid;grid-template-columns:1fr auto;gap:9px 24px;
+    margin-top:22px;padding-top:18px;border-top:1px solid var(--line-2);
+    font-size:.92rem;color:var(--ink-2);max-width:520px;
+  }
+  .breakdown .amt{text-align:right;white-space:nowrap;}
+  .breakdown .tot{font-weight:600;color:var(--ink);border-top:1px solid var(--line-2);padding-top:9px;}
+  .btn-row{margin-top:26px;}
+  .disclaim{margin-top:16px;font-size:.82rem;color:var(--ink-3);max-width:70ch;}
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <div class="top-actions">
+    <button class="btn btn-cap" id="back">&lsaquo; Back to the destination</button>
+    <button class="btn btn-cap" id="startAgain">Start again</button>
+  </div>
+
+  <div id="page"></div>
+</main>
+
+<script src="assets/data.js?v=19"></script>
+<script src="assets/core.js?v=19"></script>
+<script>
+TT.mount('flights.html');
+
+const brief = TT.load();
+const trip = brief.trip;
+const page = document.getElementById('page');
+
+document.getElementById('startAgain').addEventListener('click', ()=>{
+  TT.clear();
+  location.href = brief.source ? brief.source + '.html' : 'index.html';
+});
+document.getElementById('back').addEventListener('click', ()=>{ location.href = 'results-v2.html'; });
+
+if(!trip || !DEST.find(d=>d.id === trip.dest)){
+  page.innerHTML =
+    '<h1>Nothing chosen yet</h1>' +
+    '<p class="lede">Pick a destination first and we will price the flights for your party.</p>' +
+    '<div class="btn-row"><a class="btn btn-primary" href="results-v2.html" style="text-decoration:none;">Back to the recommendations</a></div>';
+} else {
+  render();
+}
+
+function render(){
+  const d = DEST.find(x=>x.id === trip.dest);
+  const nights = TT.nights();
+  const people = trip.adults + trip.children;
+
+  /* The hotel side is already settled — this page only moves the flight. */
+  const hotel = trip.hotel !== null && trip.hotel !== undefined ? d.hotels[trip.tier][trip.hotel] : null;
+  const room  = hotel ? (TT.roomsFor(hotel).find(r=>r.id === trip.room) || TT.roomsFor(hotel)[0]) : null;
+  const roomsNeeded = hotel ? Math.max(trip.rooms, TT.roomsNeeded(room, trip.adults, trip.children)) : 0;
+  const stay = hotel ? room.night * roomsNeeded * nights : 0;
+
+  if(trip.flight === undefined) trip.flight = suggestFlight(d);
+  const flight = d.flights[trip.flight];
+  const air = flight.price * people;
+
+  const others = d.flights.map((f,i)=>({f:f, i:i})).filter(x=>x.i !== trip.flight);
+
+  page.innerHTML =
+    '<div class="crumb">Step 2 of 2 &middot; <b>' + TT.esc(d.name) + '</b> &middot; the logistics</div>' +
+    '<h1>Getting you there</h1>' +
+    '<p class="lede">The inspiration is settled. This part is just picking the flight that suits you — ' +
+      'we have suggested one, but the rest of the route is here.</p>' +
+
+    '<div class="trip">' +
+      '<div class="trip-grid">' +
+        '<div><span class="lab">Destination</span><div class="v">' + TT.esc(d.name) +
+          '<small>' + TT.esc(d.country) + '</small></div></div>' +
+        '<div><span class="lab">Travelling</span><div class="v">' + people + ' &middot; ' + nights + ' nights' +
+          '<small>' + trip.adults + ' adult' + (trip.adults===1?'':'s') +
+            (trip.children ? ', ' + trip.children + ' child' + (trip.children===1?'':'ren') : '') + '</small></div></div>' +
+        '<div><span class="lab">Staying at</span><div class="v">' + (hotel ? TT.esc(hotel.n) : 'Not chosen') +
+          '<small>' + (hotel ? roomsNeeded + ' &times; ' + TT.esc(room.name).toLowerCase() : 'You can add this later') + '</small></div></div>' +
+        '<div><span class="lab">Entry</span><div class="v">' + VISA_LABEL[d.visa] +
+          '<small>on a Nigerian passport</small></div></div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<div class="sec-hd"><h2>The one we would book</h2>' +
+        '<span class="hint">Return from Lagos &middot; economy &middot; indicative</span></div>' +
+      '<p class="sec-sub">' + TT.esc(suggestReason(d, trip.flight)) + '</p>' +
+      '<div class="pick">' +
+        '<div class="pick-hd">Our suggestion</div>' +
+        flightRow(d.flights[suggestFlight(d)], suggestFlight(d), people, trip.flight === suggestFlight(d)) +
+      '</div>' +
+    '</div>' +
+
+    '<div class="sec">' +
+      '<div class="sec-hd"><h2>Everything else on the route</h2></div>' +
+      '<p class="sec-sub">Same dates, same cabin. Cheaper usually means a longer layover.</p>' +
+      others.filter(x=>x.i !== suggestFlight(d))
+            .map(x=>flightRow(x.f, x.i, people, trip.flight === x.i)).join('') +
+    '</div>' +
+
+    '<div class="total">' +
+      '<div class="total-top">' +
+        '<div><span class="lab">Indicative trip total</span>' +
+          '<div class="big">' + TT.money(air + stay) + '</div>' +
+          '<div class="bd">' + people + ' travelling &middot; ' + nights + ' nights</div></div>' +
+      '</div>' +
+      '<div class="breakdown">' +
+        '<div>Flights &mdash; ' + TT.esc(flight.carrier) + ', ' + people + ' &times; ' + TT.money(flight.price) + '</div>' +
+        '<div class="amt">' + TT.money(air) + '</div>' +
+        (hotel
+          ? '<div>Hotel &mdash; ' + TT.esc(hotel.n) + ', ' + roomsNeeded + ' room' + (roomsNeeded===1?'':'s') +
+              ' &times; ' + nights + ' nights</div><div class="amt">' + TT.money(stay) + '</div>'
+          : '<div>Hotel &mdash; not chosen yet</div><div class="amt">&mdash;</div>') +
+        '<div class="tot">Total</div><div class="amt tot">' + TT.money(air + stay) + '</div>' +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="hold">Hold this trip</button>' +
+        '<button class="btn" id="shark">Ask a Travel Shark to finish it</button>' +
+      '</div>' +
+      '<p class="disclaim">Indicative only — fares and rates move. A Travel Shark confirms the real price before anything is booked.</p>' +
+    '</div>';
+
+  page.querySelectorAll('[data-fl]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      trip.flight = +el.dataset.fl;
+      brief.trip = trip;
+      TT.save(brief);
+      render();
+    });
+  });
+  page.querySelector('#hold').addEventListener('click', e=>{
+    e.currentTarget.textContent = 'Held for 24 hours';
+    e.currentTarget.disabled = true;
+  });
+  page.querySelector('#shark').addEventListener('click', ()=>{ location.href = 'results-v2.html'; });
+}
+
+function flightRow(f, i, people, on){
+  return '<button type="button" class="fl' + (on?' on':'') + '" data-fl="' + i + '">' +
+    '<span class="radio"></span>' +
+    '<span><span class="car">' + TT.esc(f.carrier) + '</span><span class="rt">' + TT.esc(f.route) + '</span></span>' +
+    '<span class="dur-col"><span class="dur">' + f.dur + '</span><span class="stp">' + f.stops + '</span></span>' +
+    '<span class="note-col"><span class="nt">' + TT.esc(f.note) + '</span></span>' +
+    '<span class="pr"><b>' + TT.money(f.price * people) + '</b><span>' + people + ' &times; ' + TT.money(f.price) + '</span></span>' +
+  '</button>';
+}
+
+/* Best value, not cheapest. A stripped fare is heavily penalised — recommending
+   hand-baggage-only to a family for a week is bad advice however cheap it is. */
+function stripped(f){ return /hand baggage|no bag|carry-on only/i.test(f.note); }
+
+function suggestFlight(d){
+  const cheapest = d.flights.reduce((a,b)=>a.price<=b.price?a:b);
+  let best = 0, bestScore = -Infinity;
+  d.flights.forEach((f,i)=>{
+    let sc = -mins(f.dur)/60;
+    if(stripped(f)) sc -= 8;
+    if(/direct/i.test(f.stops)) sc += 2;
+    sc -= (f.price - cheapest.price) / 150000;
+    if(sc > bestScore){ bestScore = sc; best = i; }
+  });
+  return best;
+}
+function mins(dur){
+  const m = dur.match(/(\d+)h\s*(\d+)?/);
+  return m ? (+m[1])*60 + (+(m[2]||0)) : 9999;
+}
+function suggestReason(d, i){
+  const f = d.flights[i];
+  const cheapest = d.flights.reduce((a,b)=>a.price<=b.price?a:b);
+  const quickest = d.flights.reduce((a,b)=>mins(a.dur)<=mins(b.dur)?a:b);
+  const saveHrs = Math.round((mins(cheapest.dur) - mins(f.dur)) / 6) / 10;
+
+  if(f !== cheapest && stripped(cheapest)){
+    return 'The cheaper ' + cheapest.carrier + ' fare is hand baggage only, which does not work for a week away. ' +
+      'This is the next one up and it carries a proper bag' +
+      (saveHrs > 0.4 ? ', and gets you there ' + saveHrs + ' hours sooner' : '') + '.';
+  }
+  if(f === cheapest && f === quickest) return 'Cheapest and quickest on the route, with a normal baggage allowance — nothing to weigh up.';
+  if(f === quickest) return 'The quickest way there. ' + TT.money(f.price - cheapest.price) +
+    ' per person more than the cheapest, to save ' + saveHrs + ' hours each way.';
+  if(f === cheapest) return 'The cheapest on the route, and the journey is no worse than the alternatives.';
+  return 'The best balance on the route — ' + f.dur + ' without paying for the top fare.';
+}
+</script>
+</body>
+</html>

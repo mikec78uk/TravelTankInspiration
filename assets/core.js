@@ -266,6 +266,27 @@ const TT = (function(){
   /* An itemised account of how a destination measures against the brief — every
      point the customer actually stated, and whether this place meets it. Misses
      are reported as misses; a recommendation that only lists hits is marketing. */
+  /* Room options are derived from the hotel's nightly rate and star rating rather
+     than authored per property — enough to price a party realistically in a
+     wireframe, and consistent across all of them. */
+  function roomsFor(h){
+    const round = n => Math.round(n / 1000) * 1000;
+    const lux = h.stars >= 5, mid = h.stars >= 4;
+    return [
+      {id:'std',  name: lux ? 'Deluxe room' : (mid ? 'Standard double' : 'Standard room'),
+       sleeps:2, night: round(h.night)},
+      {id:'sup',  name: lux ? 'Junior suite' : (mid ? 'Superior, better view' : 'Larger room'),
+       sleeps:2, night: round(h.night * 1.28)},
+      {id:'fam',  name: mid ? 'Family room' : 'Twin or family room',
+       sleeps:4, night: round(h.night * 1.62)}
+    ];
+  }
+
+  /* How many of a given room a party needs. */
+  function roomsNeeded(room, adults, children){
+    return Math.max(1, Math.ceil((adults + children) / room.sleeps));
+  }
+
   function matchReport(d, b){
     const checks = [];
     const add = (label, ok) => checks.push({label:label, ok:!!ok});
@@ -427,7 +448,8 @@ const TT = (function(){
       ['concept-3.html','3 · Conversation'],
       ['concept-4.html','4 · Stepped prompt'],
       ['results.html','Results'],
-      ['results-v2.html','Results v2']
+      ['results-v2.html','Results v2'],
+      ['flights.html','Flights']
     ];
     return '<div class="wf-bar"><div class="wf-bar-in">' +
       '<span class="wf-tag">Wireframe</span>' +
@@ -460,6 +482,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

@@ -19,6 +19,7 @@ recommendation engine, all leading to a shared results page.
 | [`concept-4.html`](concept-4.html) | **Entry point 4** — stepped questions on the page, writing into the prompt |
 | [`results.html`](results.html) | Shared results — three destinations, flights, hotels, editable brief |
 | [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
+| [`flights.html`](flights.html) | Step 2 — the logistics, once the destination and hotel are settled |
 
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
 flights, hotels) and `core.js` (brief state, matching logic, page chrome).
@@ -76,9 +77,19 @@ written per destination — and an expandable **Why we're confident**.
 premium option is routinely labelled a *Partial match* with crosses against the budget, the
 flight cap or the visa. A recommendation that only ever lists hits is an advert.
 
-Selecting a destination opens a **full-screen sheet from the bottom** holding the detail —
-description, shark tip, flights, hotels, trip total. The page behind it is locked while it is
-open and returns to where it was on close.
+Selecting a destination opens a **full-screen sheet from the bottom**. The page behind it is
+locked while it is open and returns to where it was on close. It runs: overview and shark tip,
+weather with a temperature band, what to wear, what you will be eating, four sights not to miss,
+your party, and where to stay.
+
+**Hotels are an accordion** — open one without leaving the page and pick a room type. Room
+options are derived from the property's nightly rate and star rating rather than authored, and
+**Who is coming** (adults, children, rooms) reprices as you change it. A family of four often
+finds one family room beats two doubles, which the page shows rather than states.
+
+The **flights are a separate page** — the hotel is still part of the inspiration, the flight is
+logistics. It carries the party and hotel across, suggests one flight with the reasoning shown,
+lists the rest of the route, and totals the trip.
 
 **Compare** opens a side-by-side sheet: ten rows — match against the brief, *Choose this if*,
 flight, entry, season, price band, indicative total, what it is good for, pace and *Main
