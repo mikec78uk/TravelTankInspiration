@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], pinned:null, stay:null, lane:'best'
+      dismissed:[], pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
     };
   }
   function load(){
@@ -180,42 +180,109 @@ const TT = (function(){
        quietly handing back something they already rejected. */
     let recycled = false;
     if(pool.length < 3){ pool = DEST; recycled = true; }
+
     const scored = pool.map(d=>{
       const r = score(d,b);
       return {d:d, score:r.score, why:r.why};
     }).sort((x,y)=>y.score-x.score);
 
-    /* A destination the customer has told us to build around leads, whatever the
-       score says — otherwise "rebuild around X" is a button that does not do it. */
-    let best = scored[0];
-    let pinned = false;
-    if(b.pinned){
-      const forced = scored.find(x=>x.d.id === b.pinned) ||
-                     (function(){ const d = DEST.find(x=>x.id === b.pinned);
-                                  if(!d) return null;
-                                  const r = score(d,b);
-                                  return {d:d, score:r.score, why:r.why}; })();
-      if(forced){ best = forced; pinned = true; }
-    }
-
     /* Premium: same brief, but re-scored as if money were no object, so the
        customer's own budget cap does not penalise the very upgrade we are offering. */
     const richBrief = Object.assign({}, b, {budget:3});
-    const premium = pool
-      .filter(d=>d.id!==best.d.id)
-      .map(d=>{
-        const r = score(d, richBrief);
-        return {d:d, score:r.score, why:r.why, lift:r.score + d.budget*16};
-      })
-      .sort((a,b2)=>b2.lift-a.lift)[0];
+    const premiumRank = pool.map(d=>{
+      const r = score(d, richBrief);
+      return {d:d, score:r.score, why:r.why, lift:r.score + d.budget*16};
+    }).sort((a,c)=>c.lift-a.lift);
 
     /* Off the beaten track: the brief still applies, but obscurity is worth a lot. */
-    const offbeat = scored
-      .filter(x=>x.d.id!==best.d.id && x.d.id!==premium.d.id)
-      .map(x=>({...x, lift:x.score + (x.d.offbeat?40:0)}))
-      .sort((a,b2)=>b2.lift-a.lift)[0];
+    const offbeatRank = scored.map(x=>({d:x.d, score:x.score, why:x.why,
+      lift:x.score + (x.d.offbeat?40:0)})).sort((a,c)=>c.lift-a.lift);
 
-    return {best:best, premium:premium, offbeat:offbeat, recycled:recycled, pinned:pinned};
+    const swap = b.swap || {};
+    const used = [];
+    const out = {recycled:recycled, pinned:false};
+
+    /* A lane the customer has fixed — pinned from a comparison, or swapped by
+       nudging that card — leads whatever the score says. */
+    function forced(key){
+      const id = (key === 'best' && b.pinned) ? b.pinned : swap[key];
+      if(!id || used.indexOf(id) !== -1) return null;
+      if(dropped.indexOf(id) !== -1) return null;
+      const d = DEST.find(x=>x.id === id);
+      if(!d) return null;
+      const r = score(d, b);
+      if(key === 'best' && b.pinned) out.pinned = true;
+      return {d:d, score:r.score, why:r.why, swapped:!!swap[key]};
+    }
+    function pick(key, rank){
+      const f = forced(key);
+      if(f){ used.push(f.d.id); return f; }
+      const hit = rank.find(x=>used.indexOf(x.d.id) === -1) || rank[0];
+      if(hit) used.push(hit.d.id);
+      return hit;
+    }
+
+    out.best    = pick('best', scored);
+    out.premium = pick('premium', premiumRank);
+    out.offbeat = pick('offbeat', offbeatRank);
+    return out;
+  }
+
+  /* ---- "like this, but…" ----
+     Nudges hang off a single card and swap only that card. We work out the
+     replacement first and only offer the ones we can actually deliver, so a chip
+     never leads nowhere. */
+  const CARD_NUDGES = [
+    {id:'cheaper', label:'Cheaper',          applies:d=>d.budget > 1,
+     ok:(x,d)=>x.budget < d.budget},
+    {id:'shorter', label:'Shorter flight',   applies:d=>d.hours > 3,
+     ok:(x,d)=>x.hours < d.hours},
+    {id:'hotter',  label:'Hotter',           applies:d=>d.heat !== 'hot',
+     ok:x=>x.heat === 'hot'},
+    {id:'quieter', label:'Less touristy',    applies:d=>!d.offbeat,
+     ok:x=>!!x.offbeat},
+    {id:'visa',    label:'No visa to sort',  applies:d=>d.visa !== 'free' && d.visa !== 'on-arrival',
+     ok:x=>x.visa === 'free' || x.visa === 'on-arrival'},
+    {id:'beach',   label:'More beach',       applies:d=>d.vibes.indexOf('beach') === -1,
+     ok:x=>x.vibes.indexOf('beach') !== -1},
+    {id:'wilder',  label:'More adventurous', applies:d=>d.vibes.indexOf('adventure') === -1,
+     ok:x=>x.vibes.indexOf('adventure') !== -1},
+    {id:'special', label:'Something special', applies:d=>d.budget < 3,
+     ok:(x,d)=>x.budget > d.budget}
+  ];
+
+  /* How close a candidate is to the one being replaced — a nudge should give you
+     the same trip with one thing changed, not an unrelated destination. */
+  function similarity(x, d){
+    let s = 0;
+    d.vibes.forEach(v=>{ if(x.vibes.indexOf(v) !== -1) s += 3; });
+    if(x.heat === d.heat) s += 1;
+    if(Math.abs(x.pace - d.pace) <= 1) s += 1;
+    return s;
+  }
+
+  function nudgeOptionsFor(d, b, exclude){
+    const dropped = b.dismissed || [];
+    const pool = DEST.filter(x=>x.id !== d.id &&
+      (exclude || []).indexOf(x.id) === -1 && dropped.indexOf(x.id) === -1);
+    const out = [], taken = [];
+    CARD_NUDGES.forEach(n=>{
+      if(!n.applies(d)) return;
+      /* A nudge has to return the same trip with one thing changed. Something with
+         nothing in common is a different holiday, not a cheaper version of this one. */
+      const cands = pool.filter(x=>n.ok(x, d) &&
+        x.vibes.some(v=>d.vibes.indexOf(v) !== -1) &&
+        taken.indexOf(x.id) === -1);
+      if(!cands.length) return;
+      cands.sort((a,c)=>{
+        const sim = similarity(c, d) - similarity(a, d);
+        if(sim) return sim;
+        return score(c, b).score - score(a, b).score;
+      });
+      taken.push(cands[0].id);          /* two chips landing on the same place is one chip */
+      out.push({id:n.id, label:n.label, to:cands[0]});
+    });
+    return out.slice(0, 4);
   }
 
   const LANE_META = {
@@ -661,6 +728,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,stayOf,defaultStay,addDays,fmtDate,daysBetween,iso,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,icon,facilitiesFor,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,nudgeOptionsFor,roomsFor,roomsNeeded,icon,facilitiesFor,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();

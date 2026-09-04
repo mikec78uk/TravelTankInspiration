@@ -151,9 +151,13 @@ which. A chip on the brief undoes it.
 that names what is already being passed to a Travel Shark, asks what you want help with, and
 takes a free-text note.
 
-*Nudge it* docks to the bottom of the window and only appears once the customer has scrolled
-into the recommendations — offering it on arrival asks them to change a result they have not
-read yet. **Edit brief** is unchanged.
+**Nudging is per destination, not per shortlist.** Under each card's buttons sits a *Like this,
+but…* row offering only what that destination could be traded for — *Cheaper*, *Shorter flight*,
+*Hotter*, *Less touristy*, *No visa to sort*. Each chip swaps **that card alone**; the other two
+hold. The replacement is worked out before the chip is drawn, so an option is never offered
+that cannot be delivered, and a candidate has to share something with what it replaces —
+cheaper should give you the same trip for less, not a different holiday. A swapped card is
+labelled as yours and carries an undo. **Edit brief** is unchanged.
 
 Three destinations the customer toggles between:
 

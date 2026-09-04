@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=35">
+<link rel="stylesheet" href="assets/tt.css?v=37">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
-  .shell{padding-bottom:130px;}
+  .shell{padding-bottom:80px;}
   .note{
     border:1px solid var(--line);background:var(--panel-2);padding:12px 18px;
     font-size:.88rem;color:var(--ink-2);margin-bottom:26px;
@@ -127,22 +127,24 @@
   .handoff .btn-row{margin-top:22px;}
   @media(max-width:620px){.handoff{padding:24px 20px;}.handoff h2{font-size:1.3rem;}}
 
-  /* ================= "Nudge it" bottom bar ================= */
-  .nudge-bar{
-    position:fixed;left:0;right:0;bottom:0;z-index:40;
-    background:#fff;border-top:1px solid var(--line);
-    box-shadow:0 -6px 18px rgba(17,19,21,.06);
-    transform:translateY(100%);transition:transform .26s ease,left .24s ease;
+  /* ---- "like this, but…" — a nudge on the card, not the whole shortlist ---- */
+  .rec-nudge{
+    border-top:1px solid var(--line-2);padding-top:20px;padding-bottom:6px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
   }
-  .nudge-bar.on{transform:translateY(0);}
-  body.rail-open .nudge-bar{left:360px;}
-  .nudge-in{max-width:1180px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:16px;}
-  .nudge-in .lab{margin:0;flex:0 0 auto;}
-  .nudge-in .chip-set{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin:0;padding:2px 0;flex:1;}
-  .nudge-in .chip{white-space:nowrap;flex:0 0 auto;}
-  @media(max-width:620px){
-    .nudge-in{padding:11px 16px;gap:10px;flex-direction:column;align-items:flex-start;}
-    .nudge-in .chip-set{width:100%;}
+  .rec-nudge .nl{
+    font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-3);white-space:nowrap;
+  }
+  .rec-nudge .chip{font-size:.85rem;padding:8px 16px;}
+  .rec-nudge .undo{
+    background:none;border:0;padding:0;cursor:pointer;font:inherit;
+    font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .rec-nudge .undo:hover{color:var(--ink);text-decoration:underline;}
+  .swapped-tag{
+    display:inline-block;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;
+    font-weight:700;border:1px solid var(--ink);padding:4px 9px;color:var(--ink);
   }
 
   /* ================= full-screen destination sheet ================= */
@@ -682,7 +684,6 @@
     body.rail-open{padding-left:0;}
     .rail{width:min(360px,88vw);}
     .scrim.on{display:block;}
-    body.rail-open .nudge-bar{left:0;}
   }
 </style>
 </head>
@@ -776,13 +777,6 @@
 
 </div>
 
-<div class="nudge-bar" id="nudgeBar">
-  <div class="nudge-in">
-    <span class="lab">Nudge it</span>
-    <div class="chip-set" id="nudgeSet"></div>
-  </div>
-</div>
-
 <!-- ============ full-screen destination sheet ============ -->
 <div class="sheet-scrim" id="sheetScrim"></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName" inert>
@@ -811,8 +805,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=35"></script>
-<script src="assets/core.js?v=35"></script>
+<script src="assets/data.js?v=37"></script>
+<script src="assets/core.js?v=37"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -848,20 +842,6 @@ function render(noteText){
     n.hidden = false; n.textContent = noteText;
   } else n.hidden = true;
 
-  /* nudges */
-  const ns = document.getElementById('nudgeSet');
-  ns.innerHTML = '';
-  NUDGES.forEach(x=>{
-    const b = document.createElement('button');
-    b.type='button'; b.className='chip'; b.textContent = x.label;
-    b.addEventListener('click', ()=>{
-      const said = TT.nudge(brief, x.id);
-      render('We ' + said + ' and picked again.');
-      window.scrollTo({top:0, behavior:'smooth'});
-    });
-    ns.appendChild(b);
-  });
-
   const host = document.getElementById('recs');
   host.innerHTML = LANE_KEYS.map((k,i)=>{
     /* If the lead slot is there because the customer pinned it, say so rather than
@@ -876,7 +856,27 @@ function render(noteText){
 
   renderDrawerBrief();
   renderIncluded();
-  syncNudgeBar();
+}
+
+/* Only chips we can actually deliver — nudgeOptionsFor works out the replacement
+   before we offer the option. */
+function nudgeRow(d, laneKey){
+  const L = TT.lanes(brief);
+  const shown = LANE_KEYS.map(k=>L[k].d.id);
+  const opts = TT.nudgeOptionsFor(d, brief, shown);
+  const from = (brief.swapFrom || {})[laneKey];
+  const orig = from ? DEST.find(x=>x.id === from) : null;
+
+  if(!opts.length && !orig) return '';
+
+  return '<div class="rec-nudge">' +
+    '<span class="nl">Like this, but&hellip;</span>' +
+    opts.map(o=>'<button type="button" class="chip" data-nudge="' + o.id +
+      '" data-lane="' + laneKey + '" data-to="' + o.to.id + '" ' +
+      'title="Swap in ' + TT.esc(o.to.name) + '">' + TT.esc(o.label) + '</button>').join('') +
+    (orig ? '<button type="button" class="undo" data-unswap="' + laneKey + '">' +
+      '&lsaquo; Put ' + TT.esc(orig.name) + ' back</button>' : '') +
+  '</div>';
 }
 
 function recHtml(item, meta, lead, laneKey){
@@ -906,6 +906,7 @@ function recHtml(item, meta, lead, laneKey){
         '<div class="rec-kicker">' +
           '<span class="rec-tag">' + meta.label + '</span>' +
           '<span class="rec-level">' + rep.level + '</span>' +
+          (item.swapped ? '<span class="swapped-tag">You swapped this in</span>' : '') +
         '</div>' +
         '<h2 class="rec-name">' + TT.esc(d.name) + '</h2>' +
         '<div class="rec-sub">' + TT.esc(d.country) + ' &nbsp;·&nbsp; ' + facts + '</div>' +
@@ -949,6 +950,7 @@ function recHtml(item, meta, lead, laneKey){
         ? '<button class="btn" data-notfor disabled>Nothing left to swap in</button>'
         : '<button class="btn" data-notfor>Not for me</button>') +
     '</div>' +
+    nudgeRow(d, laneKey) +
   '</article>';
 }
 
@@ -984,6 +986,26 @@ function wireRec(el, item, meta){
   el.querySelector('[data-cmp]').addEventListener('click', openCompare);
   const nf = el.querySelector('[data-notfor]');
   if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
+
+  el.querySelectorAll('[data-nudge]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const lane = b.dataset.lane, to = DEST.find(x=>x.id === b.dataset.to);
+      if(!to) return;
+      brief.swap = brief.swap || {};
+      brief.swapFrom = brief.swapFrom || {};
+      if(!brief.swapFrom[lane]) brief.swapFrom[lane] = d.id;   /* remember the original, once */
+      brief.swap[lane] = to.id;
+      render('Swapped ' + d.name + ' for ' + to.name + ' — ' + b.textContent.toLowerCase() + '.');
+    });
+  });
+  const un = el.querySelector('[data-unswap]');
+  if(un) un.addEventListener('click', ()=>{
+    const lane = un.dataset.unswap;
+    const back = (brief.swapFrom || {})[lane];
+    delete brief.swap[lane];
+    delete brief.swapFrom[lane];
+    render(back ? DEST.find(x=>x.id === back).name + ' is back.' : 'Put back.');
+  });
 }
 
 /* ================= the destination sheet ================= */
@@ -1413,18 +1435,6 @@ function wireSheet(d, st, nights){
 
 document.getElementById('sheetX').addEventListener('click', closeSheet);
 sheetScrim.addEventListener('click', closeSheet);
-
-/* ================= the nudge bar reveals itself ================= */
-const nudgeBar = document.getElementById('nudgeBar');
-function syncNudgeBar(){
-  if(sheetItem){ nudgeBar.classList.remove('on'); return; }
-  const recs = document.getElementById('recs');
-  if(!recs || !recs.firstChild){ nudgeBar.classList.remove('on'); return; }
-  const top = recs.getBoundingClientRect().top;
-  nudgeBar.classList.toggle('on', window.scrollY > 80 && top < window.innerHeight * 0.18);
-}
-window.addEventListener('scroll', syncNudgeBar, {passive:true});
-window.addEventListener('resize', syncNudgeBar);
 
 /* ================= "Not for me" ================= */
 const WHY = [
