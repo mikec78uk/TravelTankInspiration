@@ -85,7 +85,10 @@ flight, entry, season, price band, indicative total, what it is good for, pace a
 compromise* — with the objectively best cell in a row marked (Shortest, Cheapest). Row labels
 stay pinned while the columns scroll.
 
-**Add your own** puts a destination the customer was already considering into a fourth column,
+**Challenge our pick** is a free-text field with autocomplete — type, and matching destinations
+appear with the matched letters marked, navigable by arrow keys and Enter. Type something we do
+not have and it says so and offers to put it to a Travel Shark, carrying what you typed into the
+note. Choosing one puts it into a fourth column,
 and **TravelTank's call** gives a straight answer on it. The verdict is computed from the same
 points shown beneath it, so it flips to *"Honestly? X is the better call"* when their pick
 genuinely wins. **Rebuild around X** then pins it as the lead recommendation — labelled *Your

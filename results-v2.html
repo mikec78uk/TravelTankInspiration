@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=13">
+<link rel="stylesheet" href="assets/tt.css?v=17">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -277,6 +277,8 @@
     border-right:1px solid var(--line-2);
   }
   .cmp-grid thead .rl{z-index:3;}
+  /* above the sticky row-label column, so the dropdown is not painted over */
+  .cmp-grid thead th.cmp-addcol{z-index:6;}
   .cmp-grid tbody tr:hover td{background:var(--panel-2);}
   .cmp-grid tbody tr:hover .rl{background:var(--panel-2);}
   .cmp-col{width:calc((100% - 180px)/var(--cols,3));}
@@ -306,19 +308,38 @@
   .cmp-warn{color:var(--ink-2);font-size:.92rem;line-height:1.55;}
   .cmp-warn::before{content:'\26A0';margin-right:8px;color:var(--ink-3);}
 
-  /* add your own */
-  .cmp-add{
-    border:1px dashed var(--line);background:var(--panel-2);
-    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-    padding:20px;cursor:pointer;width:100%;text-align:left;min-height:150px;justify-content:center;
+  /* challenge our pick — free text with autocomplete */
+  .ac{position:relative;margin-top:14px;}
+  .ac-in{
+    width:100%;border:1px solid var(--ink-3);background:#fff;padding:13px 15px;
+    font:inherit;font-size:1rem;color:var(--ink);outline:none;
   }
-  .cmp-add:hover{border-color:var(--ink-3);background:var(--panel);}
-  .cmp-add .plus{
-    width:34px;height:34px;border:1px solid var(--ink-3);border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ink-2);
+  .ac-in:focus{border-color:var(--ink);}
+  .ac-in::placeholder{color:var(--ink-3);font-size:.95rem;}
+  .ac-hint{margin-top:9px;font-size:.82rem;color:var(--ink-3);line-height:1.45;}
+  .ac-list{
+    position:absolute;top:calc(100% + 4px);right:0;left:auto;z-index:9;
+    list-style:none;margin:0;padding:0;background:#fff;
+    border:1px solid var(--ink);box-shadow:0 10px 26px rgba(17,19,21,.13);
+    max-height:300px;overflow:auto;min-width:min(280px,72vw);
   }
-  .cmp-add .t{font-size:1rem;font-weight:600;color:var(--ink);}
-  .cmp-add .s{font-size:.84rem;color:var(--ink-3);}
+  .ac-list li{border-bottom:1px solid var(--line-2);}
+  .ac-list li:last-child{border-bottom:0;}
+  .ac-list button{
+    display:block;width:100%;text-align:left;border:0;background:none;cursor:pointer;
+    padding:11px 15px;font:inherit;
+  }
+  .ac-list button:hover,.ac-list li.cur button{background:var(--panel);}
+  .ac-list .n{display:block;font-size:.95rem;font-weight:600;color:var(--ink);line-height:1.3;}
+  .ac-list .n b{background:var(--ink);color:#fff;font-weight:600;padding:0 2px;}
+  .ac-list .m{display:block;font-size:.8rem;color:var(--ink-3);margin-top:3px;}
+  .ac-none{padding:14px 15px;font-size:.88rem;color:var(--ink-3);line-height:1.5;}
+  .ac-none button{
+    display:block;margin-top:10px;background:none;border:0;padding:0;cursor:pointer;
+    font:inherit;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;
+    font-weight:600;color:var(--accent);
+  }
+  .ac-none button:hover{text-decoration:underline;}
 
   /* our call on the customer's own pick */
   .cmp-call{border:1px solid var(--ink);padding:26px 30px;margin-top:30px;}
@@ -390,12 +411,6 @@
   .opts button.on{border-color:var(--ink);background:var(--panel-2);color:var(--ink);}
   .opts .bx{flex:0 0 auto;width:18px;height:18px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;}
   .opts button.on .bx{background:var(--ink);border-color:var(--ink);}
-  .pick-search{
-    width:100%;border:1px solid var(--line);padding:12px 14px;font:inherit;font-size:.95rem;
-    outline:none;color:var(--ink);
-  }
-  .pick-search:focus{border-color:var(--ink-3);}
-  .pick-empty{padding:16px 2px;font-size:.9rem;color:var(--ink-3);}
   .modal-note{margin:16px 0 0;}
   .modal-note textarea{
     width:100%;border:1px solid var(--line);padding:12px 14px;font:inherit;font-size:.92rem;
@@ -540,24 +555,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<!-- ============ pick your own to compare ============ -->
-<div class="modal" id="pickModal" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
-  <div class="modal-hd">
-    <h3 id="pickTitle">Add your own</h3>
-    <p>Somewhere you were already considering? Put it up against ours and we will tell you straight which we would book.</p>
-  </div>
-  <div class="modal-bd">
-    <input id="pickSearch" class="pick-search" autocomplete="off" placeholder="Search destinations…">
-    <ul class="opts" id="pickList" style="margin-top:12px;"></ul>
-  </div>
-  <div class="modal-ft">
-    <button class="btn" id="pickCancel">Cancel</button>
-    <span class="spacer"></span>
-  </div>
-</div>
-
-<script src="assets/data.js?v=13"></script>
-<script src="assets/core.js?v=13"></script>
+<script src="assets/data.js?v=17"></script>
+<script src="assets/core.js?v=17"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -985,7 +984,6 @@ document.getElementById('sharkSend').addEventListener('click', ()=>{
 /* ================= compare ================= */
 const cmp = document.getElementById('cmp');
 const cmpScrim = document.getElementById('cmpScrim');
-const pickModal = document.getElementById('pickModal');
 let cmpCols = [];          // [{d, role, mine}]
 let cmpSavedY = 0;
 
@@ -1050,9 +1048,15 @@ function drawCompare(){
       (cols.length > 2 ? '<button type="button" class="cmp-drop" data-drop="' + c.d.id + '">Remove</button>' : '') +
     '</th>').join('') +
     (cols.length < 4
-      ? '<th class="cmp-col"><button type="button" class="cmp-add" id="cmpAdd">' +
-          '<span class="plus">+</span><span class="t">Add your own</span>' +
-          '<span class="s">Somewhere you were already thinking about</span></button></th>'
+      ? '<th class="cmp-col cmp-addcol">' +
+          '<span class="cmp-role mine">Challenge our pick</span>' +
+          '<div class="ac">' +
+            '<input id="acIn" class="ac-in" autocomplete="off" spellcheck="false" ' +
+              'placeholder="Type a destination\u2026" aria-label="Add your own destination">' +
+            '<ul class="ac-list" id="acList" hidden></ul>' +
+          '</div>' +
+          '<div class="ac-hint">Somewhere you were already thinking about. We will tell you straight which we would book.</div>' +
+        '</th>'
       : '');
 
   function row(label, fn){
@@ -1098,8 +1102,7 @@ function drawCompare(){
     '</table></div>' +
     (cmpCols.some(c=>c.mine) ? ourCall() : '');
 
-  const add = document.getElementById('cmpAdd');
-  if(add) add.addEventListener('click', openPick);
+  wireAutocomplete();
   document.querySelectorAll('[data-drop]').forEach(b=>{
     b.addEventListener('click', ()=>{
       cmpCols = cmpCols.filter(c=>c.d.id !== b.dataset.drop);
@@ -1204,44 +1207,91 @@ function ourCall(){
   '</div>';
 }
 
-/* --- pick your own --- */
-function openPick(){
-  document.getElementById('pickSearch').value = '';
-  drawPick('');
-  mscrim.classList.add('on');
-  pickModal.classList.add('on');
-  setTimeout(()=>document.getElementById('pickSearch').focus(), 30);
+/* --- challenge our pick: free text with autocomplete --- */
+let acHits = [], acCursor = -1;
+
+function acHighlight(name, term){
+  if(!term) return TT.esc(name);
+  const i = name.toLowerCase().indexOf(term);
+  if(i === -1) return TT.esc(name);
+  return TT.esc(name.slice(0,i)) + '<b>' + TT.esc(name.slice(i, i+term.length)) + '</b>' + TT.esc(name.slice(i+term.length));
 }
-function closePick(){ mscrim.classList.remove('on'); pickModal.classList.remove('on'); }
-function drawPick(q){
-  const shown = cmpCols.map(c=>c.d.id);
+
+function acRender(q){
+  const list = document.getElementById('acList');
+  if(!list) return;
   const term = q.trim().toLowerCase();
-  const hits = DEST.filter(d=>shown.indexOf(d.id) === -1)
-    .filter(d=>!term || (d.name + ' ' + d.country).toLowerCase().indexOf(term) !== -1);
-  const ul = document.getElementById('pickList');
-  ul.innerHTML = '';
-  if(!hits.length){
-    ul.innerHTML = '<li class="pick-empty">Nothing of ours matches &ldquo;' + TT.esc(q) +
-      '&rdquo;. A Travel Shark can look into it — close this and use <b>Ask a Travel Shark</b> at the foot of the page.</li>';
+  if(!term){ list.hidden = true; acHits = []; acCursor = -1; return; }
+
+  const shown = cmpCols.map(c=>c.d.id);
+  acHits = DEST.filter(d=>shown.indexOf(d.id) === -1)
+               .filter(d=>(d.name + ' ' + d.country).toLowerCase().indexOf(term) !== -1)
+               .slice(0,6);
+  acCursor = acHits.length ? 0 : -1;
+  list.hidden = false;
+
+  if(!acHits.length){
+    list.innerHTML = '<li class="ac-none">Nothing of ours matches &ldquo;' + TT.esc(q.trim()) + '&rdquo;.' +
+      '<button type="button" id="acAsk">Ask a Travel Shark about it &rarr;</button></li>';
+    const ask = document.getElementById('acAsk');
+    ask.addEventListener('mousedown', e=>e.preventDefault());
+    ask.addEventListener('click', ()=>{
+      const wanted = q.trim();
+      closeCompare();
+      openShark();
+      const note = document.getElementById('sharkNote');
+      note.value = 'We were also thinking about ' + wanted + ' — is it worth it on this brief?';
+    });
     return;
   }
-  hits.forEach(d=>{
-    const li = document.createElement('li');
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.innerHTML = '<span class="bx"></span><span><b>' + TT.esc(d.name) + '</b> &nbsp;<span style="color:var(--ink-3);">' +
-                  TT.esc(d.country) + ' · ' + hrs(d.hours) + ' · from ' + TT.money(d.flights[0].price) + '</span></span>';
-    b.addEventListener('click', ()=>{
-      cmpCols = cmpCols.filter(c=>!c.mine).concat([{d:d, role:'Your pick', mine:true}]);
-      closePick();
-      drawCompare();
-      document.querySelector('.cmp-call').scrollIntoView({behavior:'smooth', block:'center'});
-    });
-    li.appendChild(b); ul.appendChild(li);
+
+  list.innerHTML = acHits.map((d,i)=>
+    '<li class="' + (i===acCursor?'cur':'') + '"><button type="button" data-ac="' + i + '">' +
+      '<span class="n">' + acHighlight(d.name, term) + '</span>' +
+      '<span class="m">' + TT.esc(d.country) + ' &middot; ' + hrs(d.hours) +
+        ' &middot; from ' + TT.money(d.flights[0].price) + '</span>' +
+    '</button></li>').join('');
+
+  list.querySelectorAll('[data-ac]').forEach(b=>{
+    b.addEventListener('mousedown', e=>e.preventDefault());   // keep focus off the blur handler
+    b.addEventListener('click', ()=>acChoose(+b.dataset.ac));
   });
 }
-document.getElementById('pickSearch').addEventListener('input', e=>drawPick(e.target.value));
-document.getElementById('pickCancel').addEventListener('click', closePick);
+
+function acPaint(){
+  const list = document.getElementById('acList');
+  if(!list) return;
+  [...list.children].forEach((li,i)=>li.classList.toggle('cur', i===acCursor));
+}
+
+function acChoose(i){
+  const d = acHits[i];
+  if(!d) return;
+  cmpCols = cmpCols.filter(c=>!c.mine).concat([{d:d, role:'Your pick', mine:true}]);
+  acHits = []; acCursor = -1;
+  drawCompare();
+  const call = document.querySelector('.cmp-call');
+  if(call) call.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function wireAutocomplete(){
+  const inp = document.getElementById('acIn');
+  if(!inp) return;
+  inp.addEventListener('input', e=>acRender(e.target.value));
+  inp.addEventListener('focus', e=>{ if(e.target.value.trim()) acRender(e.target.value); });
+  inp.addEventListener('blur', ()=>setTimeout(()=>{
+    const l = document.getElementById('acList'); if(l) l.hidden = true;
+  }, 120));
+  inp.addEventListener('keydown', e=>{
+    const list = document.getElementById('acList');
+    if(e.key === 'Escape'){ e.stopPropagation(); inp.value=''; if(list) list.hidden = true; return; }
+    if(!acHits.length || (list && list.hidden)) return;
+    if(e.key === 'ArrowDown'){ e.preventDefault(); acCursor = (acCursor+1) % acHits.length; acPaint(); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); acCursor = (acCursor-1+acHits.length) % acHits.length; acPaint(); }
+    else if(e.key === 'Enter'){ e.preventDefault(); acChoose(acCursor); }
+  });
+}
+
 document.getElementById('cmpX').addEventListener('click', closeCompare);
 cmpScrim.addEventListener('click', closeCompare);
 
@@ -1303,14 +1353,13 @@ scrim.addEventListener('click', closeRail);
 
 document.addEventListener('keydown', e=>{
   if(e.key !== 'Escape') return;
-  if(pickModal.classList.contains('on')) closePick();
-  else if(cmp.classList.contains('on')) closeCompare();
+  if(cmp.classList.contains('on')) closeCompare();
   else if(sheet.classList.contains('on')) closeSheet();
   else if(whyModal.classList.contains('on')) closeWhy();
   else if(sharkModal.classList.contains('on')) closeShark();
   else closeRail();
 });
-mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); closePick(); });
+mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); });
 
 function drSubmit(){
   const t = drInput.value.trim();
