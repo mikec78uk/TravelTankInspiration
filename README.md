@@ -83,7 +83,8 @@ weather with a temperature band, what to wear, what you will be eating, four sig
 your party, and where to stay.
 
 It opens on a row of **key facts with icons** — flight time, climate, best months, entry, price
-band — then runs as separate sections.
+band — then runs as separate sections on one template: a kicker in a fixed left rail, and the
+heading and everything beneath it in a single aligned column, with one rhythm between blocks.
 
 **Weather** leads with a verdict on the customer's own month (*February falls inside its best
 window*, or *Not its strongest month*), six suitability tiles, *What this means for your trip*,
