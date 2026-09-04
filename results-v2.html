@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=17">
+<link rel="stylesheet" href="assets/tt.css?v=18">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -277,8 +277,6 @@
     border-right:1px solid var(--line-2);
   }
   .cmp-grid thead .rl{z-index:3;}
-  /* above the sticky row-label column, so the dropdown is not painted over */
-  .cmp-grid thead th.cmp-addcol{z-index:6;}
   .cmp-grid tbody tr:hover td{background:var(--panel-2);}
   .cmp-grid tbody tr:hover .rl{background:var(--panel-2);}
   .cmp-col{width:calc((100% - 180px)/var(--cols,3));}
@@ -308,8 +306,27 @@
   .cmp-warn{color:var(--ink-2);font-size:.92rem;line-height:1.55;}
   .cmp-warn::before{content:'\26A0';margin-right:8px;color:var(--ink-3);}
 
-  /* challenge our pick — free text with autocomplete */
-  .ac{position:relative;margin-top:14px;}
+  /* challenge our pick — its own strip under the table, not a column in it */
+  .chal{
+    display:flex;align-items:flex-start;gap:34px;flex-wrap:wrap;
+    border:1px solid var(--line);background:var(--panel-2);
+    padding:24px 28px;margin-top:26px;
+  }
+  .chal-l{flex:1 1 340px;min-width:0;}
+  .chal-l p{margin:9px 0 0;font-size:.94rem;line-height:1.55;color:var(--ink-3);max-width:56ch;}
+  .chal-l p b{color:var(--ink);}
+  .chal-r{flex:0 1 340px;min-width:260px;}
+  .chal-clear{
+    margin-top:10px;background:none;border:0;padding:0;cursor:pointer;
+    font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .chal-clear:hover{color:var(--ink);text-decoration:underline;}
+  @media(max-width:620px){
+    .chal{padding:20px;gap:18px;}
+    .chal-r{flex:1 1 100%;min-width:0;}
+  }
+
+  .ac{position:relative;}
   .ac-in{
     width:100%;border:1px solid var(--ink-3);background:#fff;padding:13px 15px;
     font:inherit;font-size:1rem;color:var(--ink);outline:none;
@@ -318,10 +335,10 @@
   .ac-in::placeholder{color:var(--ink-3);font-size:.95rem;}
   .ac-hint{margin-top:9px;font-size:.82rem;color:var(--ink-3);line-height:1.45;}
   .ac-list{
-    position:absolute;top:calc(100% + 4px);right:0;left:auto;z-index:9;
+    position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:9;
     list-style:none;margin:0;padding:0;background:#fff;
     border:1px solid var(--ink);box-shadow:0 10px 26px rgba(17,19,21,.13);
-    max-height:300px;overflow:auto;min-width:min(280px,72vw);
+    max-height:320px;overflow:auto;
   }
   .ac-list li{border-bottom:1px solid var(--line-2);}
   .ac-list li:last-child{border-bottom:0;}
@@ -555,8 +572,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=17"></script>
-<script src="assets/core.js?v=17"></script>
+<script src="assets/data.js?v=18"></script>
+<script src="assets/core.js?v=18"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1047,26 +1064,15 @@ function drawCompare(){
       '<div class="cmp-cty">' + TT.esc(c.d.country) + '</div>' +
       (cols.length > 2 ? '<button type="button" class="cmp-drop" data-drop="' + c.d.id + '">Remove</button>' : '') +
     '</th>').join('') +
-    (cols.length < 4
-      ? '<th class="cmp-col cmp-addcol">' +
-          '<span class="cmp-role mine">Challenge our pick</span>' +
-          '<div class="ac">' +
-            '<input id="acIn" class="ac-in" autocomplete="off" spellcheck="false" ' +
-              'placeholder="Type a destination\u2026" aria-label="Add your own destination">' +
-            '<ul class="ac-list" id="acList" hidden></ul>' +
-          '</div>' +
-          '<div class="ac-hint">Somewhere you were already thinking about. We will tell you straight which we would book.</div>' +
-        '</th>'
-      : '');
+    '';
 
   function row(label, fn){
     return '<tr><td class="rl">' + label + '</td>' +
-      cols.map(c=>'<td class="cmp-col">' + fn(c) + '</td>').join('') +
-      (cols.length < 4 ? '<td class="cmp-col"></td>' : '') + '</tr>';
+      cols.map(c=>'<td class="cmp-col">' + fn(c) + '</td>').join('') + '</tr>';
   }
 
   document.getElementById('cmpIn').innerHTML =
-    '<div class="cmp-scroll"><table class="cmp-grid" style="--cols:' + (cols.length + (cols.length<4?1:0)) + ';">' +
+    '<div class="cmp-scroll"><table class="cmp-grid" style="--cols:' + cols.length + ';">' +
       '<thead><tr><th class="rl"></th>' + head + '</tr></thead>' +
       '<tbody>' +
         row('Against your brief', c=>{
@@ -1100,9 +1106,12 @@ function drawCompare(){
         row('Main compromise', c=>'<div class="cmp-warn">' + TT.esc(c.d.tradeoff) + '</div>') +
       '</tbody>' +
     '</table></div>' +
+    challengeStrip() +
     (cmpCols.some(c=>c.mine) ? ourCall() : '');
 
   wireAutocomplete();
+  const clr = document.getElementById('chalClear');
+  if(clr) clr.addEventListener('click', ()=>{ cmpCols = cmpCols.filter(c=>!c.mine); drawCompare(); });
   document.querySelectorAll('[data-drop]').forEach(b=>{
     b.addEventListener('click', ()=>{
       cmpCols = cmpCols.filter(c=>c.d.id !== b.dataset.drop);
@@ -1203,6 +1212,28 @@ function ourCall(){
     '<div class="btn-row">' +
       '<button class="btn btn-primary" id="cmpRebuild">Rebuild around ' + TT.esc(mine.name) + '</button>' +
       '<button class="btn" id="cmpStick">Stick with our pick</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function challengeStrip(){
+  const mine = cmpCols.find(c=>c.mine);
+  return '<div class="chal">' +
+    '<div class="chal-l">' +
+      '<span class="lab">Challenge our pick</span>' +
+      '<p>' + (mine
+        ? 'You put <b>' + TT.esc(mine.d.name) + '</b> up against ours. Our call is below.'
+        : 'Somewhere you were already thinking about? Put it up against ours and we will tell you straight which we would book.') +
+      '</p>' +
+    '</div>' +
+    '<div class="chal-r">' +
+      '<div class="ac">' +
+        '<input id="acIn" class="ac-in" autocomplete="off" spellcheck="false" ' +
+          'placeholder="' + (mine ? 'Try a different one\u2026' : 'Type a destination\u2026') + '" ' +
+          'aria-label="Add your own destination to the comparison">' +
+        '<ul class="ac-list" id="acList" hidden></ul>' +
+      '</div>' +
+      (mine ? '<button type="button" class="chal-clear" id="chalClear">Remove ' + TT.esc(mine.d.name) + '</button>' : '') +
     '</div>' +
   '</div>';
 }
