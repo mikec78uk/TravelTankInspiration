@@ -125,9 +125,11 @@ shown, lists the rest of the route, and totals the trip.
 
 **Cabin** switches between Economy, Premium economy, Business and First — First only appears on
 routes long enough to plausibly carry one — and every fare on the page reprices. **View flight
-details** opens outbound and return legs with flight numbers, aircraft, times, duration and any
-connection, alongside a fare breakdown: cabin, hand baggage, checked bag, total and the fare
-rules. All of it derived from the flight record we already hold, so every route has it.
+details** opens Outbound and Inbound as a vertical timeline, following the live site: carrier
+and flight number, the duration in the rail, departure and arrival against full airport names,
+the aircraft boxed on the line, any connection named, and a closing *Arrives: 9 Aug 2027 |
+Journey duration: 15h 10m*. Beside it, a fare breakdown: cabin, hand baggage, checked bag,
+total and the fare rules. All of it derived from the flight record we already hold, so every route has it.
 
 **Compare** opens a side-by-side sheet: ten rows — match against the brief, *Choose this if*,
 flight, entry, season, price band, indicative total, what it is good for, pace and *Main

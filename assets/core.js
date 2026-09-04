@@ -370,7 +370,7 @@ const TT = (function(){
     const arr  = dep + mins;
     return {
       from: from, to: to, via: out ? via : via.slice().reverse(),
-      no: flightNumber(f, d, leg), aircraft: aircraftFor(f),
+      no: flightNumber(f, d, leg), carrier: f.carrier, aircraft: aircraftFor(f),
       dep: hhmm(dep), arr: hhmm(arr), plusDay: Math.floor(arr / 1440),
       dur: f.dur, stops: f.stops
     };

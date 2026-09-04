@@ -42,6 +42,21 @@ const VISA_CHOICES = [
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+/* Full airport names, so the flight detail reads like a ticket rather than a code. */
+const AIRPORTS = {
+  ABJ:'Abidjan Félix-Houphouët-Boigny', ACC:'Accra Kotoka', ADD:'Addis Ababa Bole',
+  BVC:'Boa Vista Rabil', CAI:'Cairo International', CBQ:'Calabar Margaret Ekpo',
+  CDG:'Paris Charles de Gaulle', CMN:'Casablanca Mohammed V', CPT:'Cape Town International',
+  DOH:'Doha Hamad', DSS:'Dakar Blaise Diagne', DXB:'Dubai International',
+  IST:'Istanbul Airport', JNB:'Johannesburg O.R. Tambo', KGL:'Kigali International',
+  LFW:'Lomé Gnassingbé Eyadéma', LIS:'Lisbon Humberto Delgado', LOS:'Lagos Murtala Muhammed',
+  LVI:'Livingstone Harry Mwaanga Nkumbula', MRU:'Mauritius Sir Seewoosagur Ramgoolam',
+  NBO:'Nairobi Jomo Kenyatta', QUO:'Uyo Akwa Ibom', RAK:'Marrakesh Menara',
+  SEZ:'Seychelles International', SID:'Sal Amílcar Cabral', VFA:'Victoria Falls',
+  ZNZ:'Zanzibar Abeid Amani Karume'
+};
+
 const VISA_LABEL = {free:'Visa-free','on-arrival':'Visa on arrival',easy:'Easy e-visa',required:'Visa required'};
 
 /* ---------------------------------------------------------

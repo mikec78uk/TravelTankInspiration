@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Flights — the logistics · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=33">
+<link rel="stylesheet" href="assets/tt.css?v=34">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -70,29 +70,53 @@
   .fdet{border-top:1px solid var(--line-2);padding:22px 20px 24px;background:var(--panel-2);}
   .fdet-grid{display:grid;grid-template-columns:1fr 320px;gap:34px;}
   @media(max-width:900px){.fdet-grid{grid-template-columns:1fr;gap:24px;}}
-  .leg + .leg{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);}
-  .leg-hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
-  .leg-hd .lg{font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink);}
-  .leg-hd .no{font-size:.85rem;color:var(--ink-2);font-weight:600;}
-  .leg-hd .ac{font-size:.82rem;color:var(--ink-3);}
-  .leg-line{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;}
-  .leg-pt .t{font-size:1.24rem;font-weight:600;letter-spacing:-.02em;}
-  .leg-pt .p{font-size:.82rem;color:var(--ink-3);margin-top:3px;}
-  .leg-pt.arr{text-align:right;}
-  .leg-mid{text-align:center;}
-  .leg-mid .bar{height:1px;background:var(--line);position:relative;margin:8px 0;}
-  .leg-mid .bar::before,.leg-mid .bar::after{
-    content:'';position:absolute;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--ink);
+  .leg + .leg{margin-top:26px;padding-top:24px;border-top:1px solid var(--line);}
+  .leg-hd{font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink);}
+  .leg-car{display:flex;align-items:center;gap:12px;margin-top:12px;}
+  .leg-car .mark{
+    width:38px;height:24px;border:1px solid var(--line);background:#fff;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.62rem;font-weight:700;letter-spacing:.06em;color:var(--ink-2);
   }
-  .leg-mid .bar::before{left:0;}
-  .leg-mid .bar::after{right:0;}
-  .leg-mid .dot{
-    position:absolute;top:-3px;left:50%;margin-left:-3.5px;width:7px;height:7px;
-    border-radius:50%;background:#fff;border:1px solid var(--ink);
+  .leg-car .nm{font-size:.95rem;color:var(--ink);font-weight:600;}
+
+  /* the timeline: duration in the rail, points down the line */
+  .tl{display:grid;grid-template-columns:74px 14px 1fr;gap:0 14px;margin-top:16px;}
+  .tl-dur{
+    grid-column:1;grid-row:1 / span 3;align-self:center;
+    font-size:.86rem;font-weight:600;color:var(--ink-2);
   }
-  .leg-mid .d{font-size:.82rem;color:var(--ink-2);}
-  .leg-mid .s{font-size:.78rem;color:var(--ink-3);margin-top:2px;}
-  .plus{font-size:.72rem;color:var(--ink-3);vertical-align:super;margin-left:2px;}
+  .tl-line{grid-column:2;grid-row:1 / span 3;position:relative;}
+  .tl-line::before{
+    content:'';position:absolute;left:50%;top:7px;bottom:7px;width:1px;
+    background:var(--line);transform:translateX(-50%);
+  }
+  .tl-dot{
+    position:absolute;left:50%;width:9px;height:9px;border-radius:50%;
+    background:var(--ink);transform:translateX(-50%);
+  }
+  .tl-dot.a{top:4px;}
+  .tl-dot.b{bottom:4px;}
+  .tl-dot.mid{top:50%;margin-top:-4.5px;background:#fff;border:1px solid var(--ink);}
+  .tl-pt{grid-column:3;display:flex;gap:14px;align-items:baseline;}
+  .tl-pt .t{font-size:1rem;font-weight:600;min-width:48px;}
+  .tl-pt .p{font-size:.93rem;color:var(--ink-2);}
+  .tl-pt .p .cd{color:var(--ink-3);font-weight:600;margin-right:5px;}
+  .tl-mid{grid-column:3;padding:12px 0;}
+  .tl-mid .craft{
+    display:inline-block;border:1px solid var(--line);background:#fff;
+    padding:7px 13px;font-size:.85rem;color:var(--ink-2);
+  }
+  .tl-mid .via{display:block;margin-top:8px;font-size:.82rem;color:var(--ink-3);}
+  .leg-foot{
+    margin-top:16px;padding-top:12px;border-top:1px solid var(--line-2);
+    font-size:.86rem;color:var(--ink-2);font-weight:600;
+  }
+  .leg-foot span{color:var(--ink-3);font-weight:400;}
+  @media(max-width:620px){
+    .tl{grid-template-columns:56px 14px 1fr;}
+    .tl-pt{flex-direction:column;gap:2px;}
+  }
 
   .fare{border:1px solid var(--line);background:#fff;padding:18px 20px;}
   .fare .frow{
@@ -144,8 +168,8 @@
   <div id="page"></div>
 </main>
 
-<script src="assets/data.js?v=33"></script>
-<script src="assets/core.js?v=33"></script>
+<script src="assets/data.js?v=34"></script>
+<script src="assets/core.js?v=34"></script>
 <script>
 TT.mount('flights.html');
 
@@ -291,6 +315,8 @@ function render(){
 
 function nts(n){ return n + ' night' + (n === 1 ? '' : 's'); }
 
+function nightsOf(){ return trip.nights || TT.nights(brief); }
+
 function flightRow(f, i, people, on, d){
   const open = trip.open === i;
   const fare = TT.farePrice(f, trip.cabin);
@@ -304,33 +330,52 @@ function flightRow(f, i, people, on, d){
     '</button>' +
     '<button type="button" class="fmore" data-more="' + i + '">' +
       (open ? 'Hide flight details' : 'View flight details') + '<span class="caret">&rsaquo;</span></button>' +
-    (open ? flightDetail(f, d, people, fare) : '') +
+    (open ? flightDetail(f, d, people, fare, nightsOf()) : '') +
   '</div>';
 }
 
-function legBlock(g, label){
+function airport(code){
+  return '<span class="cd">' + TT.esc(code) + '</span>' + TT.esc(AIRPORTS[code] || code);
+}
+
+function legBlock(g, label, dateISO){
+  const arrives = TT.addDays(dateISO, g.plusDay);
   return '<div class="leg">' +
-    '<div class="leg-hd"><span class="lg">' + label + '</span>' +
-      '<span class="no">' + TT.esc(g.no) + '</span>' +
-      '<span class="ac">' + TT.esc(g.aircraft) + '</span></div>' +
-    '<div class="leg-line">' +
-      '<div class="leg-pt"><div class="t">' + g.dep + '</div><div class="p">' + TT.esc(g.from) + '</div></div>' +
-      '<div class="leg-mid"><div class="d">' + g.dur + '</div>' +
-        '<div class="bar">' + (g.via.length ? '<span class="dot"></span>' : '') + '</div>' +
-        '<div class="s">' + TT.esc(g.stops) + (g.via.length ? ' via ' + TT.esc(g.via.join(', ')) : '') + '</div></div>' +
-      '<div class="leg-pt arr"><div class="t">' + g.arr +
-        (g.plusDay ? '<span class="plus">+' + g.plusDay + '</span>' : '') + '</div>' +
-        '<div class="p">' + TT.esc(g.to) + '</div></div>' +
+    '<div class="leg-hd">' + label + '</div>' +
+    '<div class="leg-car">' +
+      '<span class="mark">' + TT.esc(g.no.split(' ')[0]) + '</span>' +
+      '<span class="nm">' + TT.esc(g.carrier) + ' ' + TT.esc(g.no) + '</span>' +
     '</div>' +
+    '<div class="tl">' +
+      '<div class="tl-dur">' + g.dur + '</div>' +
+      '<div class="tl-line">' +
+        '<span class="tl-dot a"></span>' +
+        (g.via.length ? '<span class="tl-dot mid"></span>' : '') +
+        '<span class="tl-dot b"></span>' +
+      '</div>' +
+      '<div class="tl-pt"><span class="t">' + g.dep + '</span><span class="p">' + airport(g.from) + '</span></div>' +
+      '<div class="tl-mid">' +
+        '<span class="craft">' + TT.esc(g.aircraft) + '</span>' +
+        (g.via.length
+          ? '<span class="via">' + TT.esc(g.stops) + ' — connects at ' +
+              g.via.map(v=>TT.esc(AIRPORTS[v] || v)).join(', ') + '</span>'
+          : '<span class="via">Direct</span>') +
+      '</div>' +
+      '<div class="tl-pt"><span class="t">' + g.arr +
+        (g.plusDay ? '<span class="plus">+' + g.plusDay + '</span>' : '') + '</span>' +
+        '<span class="p">' + airport(g.to) + '</span></div>' +
+    '</div>' +
+    '<div class="leg-foot">Arrives: ' + TT.fmtDate(arrives) +
+      ' <span>|</span> Journey duration: ' + g.dur + '</div>' +
   '</div>';
 }
 
-function flightDetail(f, d, people, fare){
+function flightDetail(f, d, people, fare, nights){
   const bags = TT.baggageFor(f, trip.cabin);
   return '<div class="fdet"><div class="fdet-grid">' +
     '<div>' +
-      legBlock(TT.legOf(f, d, 'out'), 'Outbound') +
-      legBlock(TT.legOf(f, d, 'in'),  'Return') +
+      legBlock(TT.legOf(f, d, 'out'), 'Outbound', trip.from) +
+      legBlock(TT.legOf(f, d, 'in'),  'Inbound',  TT.addDays(trip.from, nights)) +
     '</div>' +
     '<div>' +
       '<div class="fare">' +
