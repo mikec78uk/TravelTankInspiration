@@ -12,16 +12,18 @@ recommendation engine, all leading to a shared results page.
 
 | Page | What it is |
 |---|---|
-| [`index.html`](index.html) | Overview — the three entry points side by side |
+| [`index.html`](index.html) | Overview — the four entry points side by side |
 | [`concept-1.html`](concept-1.html) | **Entry point 1** — guided brief (structured questions) |
 | [`concept-2.html`](concept-2.html) | **Entry point 2** — open prompt with suggestions and a *Need help?* modal |
 | [`concept-3.html`](concept-3.html) | **Entry point 3** — conversational, asks up to three follow-ups |
+| [`concept-4.html`](concept-4.html) | **Entry point 4** — stepped questions on the page, writing into the prompt |
 | [`results.html`](results.html) | Shared results — three destinations, flights, hotels, editable brief |
+| [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
 
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
 flights, hotels) and `core.js` (brief state, matching logic, page chrome).
 
-## The three entry points
+## The four entry points
 
 **1 — Guided brief.** The Figma frame, built out. Six groups of chips plus a free-text field.
 Every field is optional; submitting an empty form still returns a recommendation.
@@ -53,6 +55,12 @@ questioning outright and goes with whatever it has. Interests are multi-select �
 toggle, and `esc` means done rather than discard once anything is picked.
 
 ## The results page
+
+`results.html` is the version already shown to the client. `results-v2.html` is a duplicate of
+it, kept as a working copy so changes can be made without losing the original — both are in the
+wireframe nav, and all four entry points still open the original. Each page carries its own
+layout CSS and script inline, so editing one leaves the other alone; they do share
+`assets/tt.css`, `core.js` and `data.js`, and a change there lands on both.
 
 Three destinations the customer toggles between:
 
