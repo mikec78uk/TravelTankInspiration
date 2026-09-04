@@ -56,11 +56,15 @@ toggle, and `esc` means done rather than discard once anything is picked.
 
 ## The results page
 
-`results.html` is the version already shown to the client. `results-v2.html` is a duplicate of
-it, kept as a working copy so changes can be made without losing the original — both are in the
+`results.html` is the version already shown to the client. `results-v2.html` is the working
+copy where changes are made, so the original survives — both are in the
 wireframe nav, and all four entry points still open the original. Each page carries its own
 layout CSS and script inline, so editing one leaves the other alone; they do share
 `assets/tt.css`, `core.js` and `data.js`, and a change there lands on both.
+
+**Differences in v2 so far:** *Nudge it* is no longer above the recommendation. It docks to the
+bottom of the window and only appears once the customer has scrolled the card up to the top of
+the screen — offering it on arrival asks them to change a result they have not read yet.
 
 Three destinations the customer toggles between:
 
