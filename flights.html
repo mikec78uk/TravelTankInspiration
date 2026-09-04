@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Flights — the logistics · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=30">
+<link rel="stylesheet" href="assets/tt.css?v=32">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -54,6 +54,70 @@
     .fl .dur-col{grid-column:2 / -1;}
   }
 
+  /* ---- cabin switcher ---- */
+  .cabins{display:flex;gap:2px;flex-wrap:wrap;margin:0 0 22px;}
+  .cabin{
+    border:1px solid var(--line);background:var(--panel-2);padding:11px 20px;cursor:pointer;
+    font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .cabin.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .cabin-note{font-size:.86rem;color:var(--ink-3);margin:-12px 0 22px;}
+
+  /* ---- flight detail ---- */
+  .fwrap{border:1px solid var(--line);margin-bottom:-1px;background:#fff;}
+  .fwrap.on{border-color:var(--ink);position:relative;z-index:1;}
+  .pick .fwrap{border:0;margin:0;}
+  .fdet{border-top:1px solid var(--line-2);padding:22px 20px 24px;background:var(--panel-2);}
+  .fdet-grid{display:grid;grid-template-columns:1fr 320px;gap:34px;}
+  @media(max-width:900px){.fdet-grid{grid-template-columns:1fr;gap:24px;}}
+  .leg + .leg{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);}
+  .leg-hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .leg-hd .lg{font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--ink);}
+  .leg-hd .no{font-size:.85rem;color:var(--ink-2);font-weight:600;}
+  .leg-hd .ac{font-size:.82rem;color:var(--ink-3);}
+  .leg-line{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;}
+  .leg-pt .t{font-size:1.24rem;font-weight:600;letter-spacing:-.02em;}
+  .leg-pt .p{font-size:.82rem;color:var(--ink-3);margin-top:3px;}
+  .leg-pt.arr{text-align:right;}
+  .leg-mid{text-align:center;}
+  .leg-mid .bar{height:1px;background:var(--line);position:relative;margin:8px 0;}
+  .leg-mid .bar::before,.leg-mid .bar::after{
+    content:'';position:absolute;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--ink);
+  }
+  .leg-mid .bar::before{left:0;}
+  .leg-mid .bar::after{right:0;}
+  .leg-mid .dot{
+    position:absolute;top:-3px;left:50%;margin-left:-3.5px;width:7px;height:7px;
+    border-radius:50%;background:#fff;border:1px solid var(--ink);
+  }
+  .leg-mid .d{font-size:.82rem;color:var(--ink-2);}
+  .leg-mid .s{font-size:.78rem;color:var(--ink-3);margin-top:2px;}
+  .plus{font-size:.72rem;color:var(--ink-3);vertical-align:super;margin-left:2px;}
+
+  .fare{border:1px solid var(--line);background:#fff;padding:18px 20px;}
+  .fare .frow{
+    display:flex;justify-content:space-between;gap:14px;padding:9px 0;
+    font-size:.9rem;color:var(--ink-2);border-bottom:1px solid var(--line-2);
+  }
+  .fare .frow b{color:var(--ink);}
+  .fare .ftot{
+    display:flex;justify-content:space-between;gap:14px;align-items:baseline;
+    margin-top:14px;padding-top:14px;border-top:1px solid var(--ink);
+  }
+  .fare .ftot .k{font-size:.72rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-3);}
+  .fare .ftot .v{font-size:1.32rem;font-weight:600;letter-spacing:-.02em;}
+  .fare .rules{margin-top:12px;font-size:.82rem;color:var(--ink-3);}
+  .fare .warn{margin-top:10px;font-size:.83rem;color:var(--ink-2);border-left:2px solid var(--line);padding-left:12px;}
+
+  .fmore{
+    display:flex;align-items:center;gap:7px;background:none;border:0;padding:12px 20px;
+    cursor:pointer;font:inherit;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-3);width:100%;border-top:1px solid var(--line-2);
+  }
+  .fmore:hover{color:var(--ink);background:var(--panel-2);}
+  .fmore .caret{transition:transform .15s;display:inline-block;}
+  .fwrap.on .fmore .caret{transform:rotate(90deg);}
+
   .total{border:1px solid var(--ink);padding:26px 30px;margin-top:34px;}
   .total-top{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;}
   .total .big{font-size:2.2rem;font-weight:600;letter-spacing:-.025em;line-height:1;}
@@ -80,8 +144,8 @@
   <div id="page"></div>
 </main>
 
-<script src="assets/data.js?v=30"></script>
-<script src="assets/core.js?v=30"></script>
+<script src="assets/data.js?v=32"></script>
+<script src="assets/core.js?v=32"></script>
 <script>
 TT.mount('flights.html');
 
@@ -116,10 +180,15 @@ function render(){
   const stay = hotel ? room.night * roomsNeeded * nights : 0;
 
   if(trip.flight === undefined) trip.flight = suggestFlight(d);
+  const cabins = TT.cabinsFor(d);
+  if(!trip.cabin || !cabins.some(c=>c.id === trip.cabin)) trip.cabin = 'eco';
   const flight = d.flights[trip.flight];
-  const air = flight.price * people;
+  const fare = TT.farePrice(flight, trip.cabin);
+  const air = fare * people;
 
-  const others = d.flights.map((f,i)=>({f:f, i:i})).filter(x=>x.i !== trip.flight);
+  /* Everything except the one we are recommending above. Filtering out the
+     *selected* flight too would make it vanish the moment you picked it. */
+  const others = d.flights.map((f,i)=>({f:f, i:i})).filter(x=>x.i !== suggestFlight(d));
 
   page.innerHTML =
     '<div class="crumb">Step 2 of 2 &middot; <b>' + TT.esc(d.name) + '</b> &middot; the logistics</div>' +
@@ -142,20 +211,29 @@ function render(){
     '</div>' +
 
     '<div class="sec">' +
+      '<div class="sec-hd"><h2>Cabin</h2></div>' +
+      '<div class="cabins">' + cabins.map(c=>
+        '<button type="button" class="cabin' + (c.id===trip.cabin?' on':'') + '" data-cabin="' + c.id + '">' +
+          TT.esc(c.label) + '</button>').join('') + '</div>' +
+      '<p class="cabin-note">' + (trip.cabin === 'eco'
+        ? 'Economy. Switch cabin and every fare below reprices.'
+        : TT.cabinOf(trip.cabin).label + ' — ' + TT.fareRules(trip.cabin).toLowerCase() + '.') + '</p>' +
+    '</div>' +
+
+    '<div class="sec">' +
       '<div class="sec-hd"><h2>The one we would book</h2>' +
         '<span class="hint">Return from Lagos &middot; economy &middot; indicative</span></div>' +
       '<p class="sec-sub">' + TT.esc(suggestReason(d, trip.flight)) + '</p>' +
       '<div class="pick">' +
         '<div class="pick-hd">Our suggestion</div>' +
-        flightRow(d.flights[suggestFlight(d)], suggestFlight(d), people, trip.flight === suggestFlight(d)) +
+        flightRow(d.flights[suggestFlight(d)], suggestFlight(d), people, trip.flight === suggestFlight(d), d) +
       '</div>' +
     '</div>' +
 
     '<div class="sec">' +
       '<div class="sec-hd"><h2>Everything else on the route</h2></div>' +
       '<p class="sec-sub">Same dates, same cabin. Cheaper usually means a longer layover.</p>' +
-      others.filter(x=>x.i !== suggestFlight(d))
-            .map(x=>flightRow(x.f, x.i, people, trip.flight === x.i)).join('') +
+      others.map(x=>flightRow(x.f, x.i, people, trip.flight === x.i, d)).join('') +
     '</div>' +
 
     '<div class="total">' +
@@ -165,7 +243,8 @@ function render(){
           '<div class="bd">' + people + ' travelling &middot; ' + nights + ' nights</div></div>' +
       '</div>' +
       '<div class="breakdown">' +
-        '<div>Flights &mdash; ' + TT.esc(flight.carrier) + ', ' + people + ' &times; ' + TT.money(flight.price) + '</div>' +
+        '<div>Flights &mdash; ' + TT.esc(flight.carrier) + ', ' + TT.cabinOf(trip.cabin).label.toLowerCase() +
+          ', ' + people + ' &times; ' + TT.money(fare) + '</div>' +
         '<div class="amt">' + TT.money(air) + '</div>' +
         (hotel
           ? '<div>Hotel &mdash; ' + TT.esc(hotel.n) + ', ' + roomsNeeded + ' room' + (roomsNeeded===1?'':'s') +
@@ -183,9 +262,20 @@ function render(){
   page.querySelectorAll('[data-fl]').forEach(el=>{
     el.addEventListener('click', ()=>{
       trip.flight = +el.dataset.fl;
-      brief.trip = trip;
-      TT.save(brief);
-      render();
+      brief.trip = trip; TT.save(brief); render();
+    });
+  });
+  page.querySelectorAll('[data-more]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const i = +el.dataset.more;
+      trip.open = (trip.open === i) ? null : i;
+      brief.trip = trip; TT.save(brief); render();
+    });
+  });
+  page.querySelectorAll('[data-cabin]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      trip.cabin = el.dataset.cabin;
+      brief.trip = trip; TT.save(brief); render();
     });
   });
   page.querySelector('#book').addEventListener('click', e=>{
@@ -201,14 +291,62 @@ function render(){
 
 function nts(n){ return n + ' night' + (n === 1 ? '' : 's'); }
 
-function flightRow(f, i, people, on){
-  return '<button type="button" class="fl' + (on?' on':'') + '" data-fl="' + i + '">' +
-    '<span class="radio"></span>' +
-    '<span><span class="car">' + TT.esc(f.carrier) + '</span><span class="rt">' + TT.esc(f.route) + '</span></span>' +
-    '<span class="dur-col"><span class="dur">' + f.dur + '</span><span class="stp">' + f.stops + '</span></span>' +
-    '<span class="note-col"><span class="nt">' + TT.esc(f.note) + '</span></span>' +
-    '<span class="pr"><b>' + TT.money(f.price * people) + '</b><span>' + people + ' &times; ' + TT.money(f.price) + '</span></span>' +
-  '</button>';
+function flightRow(f, i, people, on, d){
+  const open = trip.open === i;
+  const fare = TT.farePrice(f, trip.cabin);
+  return '<div class="fwrap' + (open ? ' on' : '') + '">' +
+    '<button type="button" class="fl' + (on?' on':'') + '" data-fl="' + i + '">' +
+      '<span class="radio"></span>' +
+      '<span><span class="car">' + TT.esc(f.carrier) + '</span><span class="rt">' + TT.esc(f.route) + '</span></span>' +
+      '<span class="dur-col"><span class="dur">' + f.dur + '</span><span class="stp">' + f.stops + '</span></span>' +
+      '<span class="note-col"><span class="nt">' + TT.esc(f.note) + '</span></span>' +
+      '<span class="pr"><b>' + TT.money(fare * people) + '</b><span>' + people + ' &times; ' + TT.money(fare) + '</span></span>' +
+    '</button>' +
+    '<button type="button" class="fmore" data-more="' + i + '">' +
+      (open ? 'Hide flight details' : 'View flight details') + '<span class="caret">&rsaquo;</span></button>' +
+    (open ? flightDetail(f, d, people, fare) : '') +
+  '</div>';
+}
+
+function legBlock(g, label){
+  return '<div class="leg">' +
+    '<div class="leg-hd"><span class="lg">' + label + '</span>' +
+      '<span class="no">' + TT.esc(g.no) + '</span>' +
+      '<span class="ac">' + TT.esc(g.aircraft) + '</span></div>' +
+    '<div class="leg-line">' +
+      '<div class="leg-pt"><div class="t">' + g.dep + '</div><div class="p">' + TT.esc(g.from) + '</div></div>' +
+      '<div class="leg-mid"><div class="d">' + g.dur + '</div>' +
+        '<div class="bar">' + (g.via.length ? '<span class="dot"></span>' : '') + '</div>' +
+        '<div class="s">' + TT.esc(g.stops) + (g.via.length ? ' via ' + TT.esc(g.via.join(', ')) : '') + '</div></div>' +
+      '<div class="leg-pt arr"><div class="t">' + g.arr +
+        (g.plusDay ? '<span class="plus">+' + g.plusDay + '</span>' : '') + '</div>' +
+        '<div class="p">' + TT.esc(g.to) + '</div></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function flightDetail(f, d, people, fare){
+  const bags = TT.baggageFor(f, trip.cabin);
+  return '<div class="fdet"><div class="fdet-grid">' +
+    '<div>' +
+      legBlock(TT.legOf(f, d, 'out'), 'Outbound') +
+      legBlock(TT.legOf(f, d, 'in'),  'Return') +
+    '</div>' +
+    '<div>' +
+      '<div class="fare">' +
+        '<span class="lab">Fare breakdown</span>' +
+        '<div class="frow" style="margin-top:10px;"><span>Cabin</span><b>' + TT.cabinOf(trip.cabin).label + '</b></div>' +
+        '<div class="frow"><span>Hand baggage</span><b>' + bags.hand + '</b></div>' +
+        '<div class="frow"><span>Checked bag</span><b>' + bags.checked + '</b></div>' +
+        '<div class="frow"><span>Travellers</span><b>' + people + ' &times; ' + TT.money(fare) + '</b></div>' +
+        '<div class="ftot"><span class="k">Total</span><span class="v">' + TT.money(fare * people) + '</span></div>' +
+        '<div class="rules">' + TT.fareRules(trip.cabin) + '</div>' +
+        (bags.stripped
+          ? '<div class="warn">This fare has no hold luggage. For a week away that is usually the wrong saving.</div>'
+          : '') +
+      '</div>' +
+    '</div>' +
+  '</div></div>';
 }
 
 /* Best value, not cheapest. A stripped fare is heavily penalised — recommending

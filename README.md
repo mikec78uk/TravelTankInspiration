@@ -120,8 +120,14 @@ reprices everything live, and a family of four is shown that one family room bea
 rather than being told it.
 
 The **flights are a separate page** — the hotel is still part of the inspiration, the flight is
-logistics. It carries the party and hotel across, suggests one flight with the reasoning shown,
-lists the rest of the route, and totals the trip.
+logistics. It carries the party, dates and hotel across, suggests one flight with the reasoning
+shown, lists the rest of the route, and totals the trip.
+
+**Cabin** switches between Economy, Premium economy, Business and First — First only appears on
+routes long enough to plausibly carry one — and every fare on the page reprices. **View flight
+details** opens outbound and return legs with flight numbers, aircraft, times, duration and any
+connection, alongside a fare breakdown: cabin, hand baggage, checked bag, total and the fare
+rules. All of it derived from the flight record we already hold, so every route has it.
 
 **Compare** opens a side-by-side sheet: ten rows — match against the brief, *Choose this if*,
 flight, entry, season, price band, indicative total, what it is good for, pace and *Main

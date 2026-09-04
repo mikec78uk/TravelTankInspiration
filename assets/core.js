@@ -303,6 +303,94 @@ const TT = (function(){
   /* An itemised account of how a destination measures against the brief — every
      point the customer actually stated, and whether this place meets it. Misses
      are reported as misses; a recommendation that only lists hits is marketing. */
+  /* ---- flights: cabins, and the detail a fare page is expected to show ----
+     Everything below is derived from the flight record we already hold, so all
+     16 destinations get it without inventing a schedule per route. */
+  const CABINS = [
+    {id:'eco',   label:'Economy',         mult:1,    hand:'1 x 7kg'},
+    {id:'prem',  label:'Premium economy', mult:1.8,  hand:'1 x 10kg'},
+    {id:'biz',   label:'Business',        mult:3.4,  hand:'2 x 10kg'},
+    {id:'first', label:'First',           mult:6.0,  hand:'2 x 12kg', minHours:8}
+  ];
+  const CARRIER_CODE = {
+    'Air Peace':'P4','Africa World Airlines':'AW','Arik Air':'W3','ASKY Airlines':'KP',
+    'Qatar Airways':'QR','Emirates':'EK','Royal Air Maroc':'AT','EgyptAir':'MS',
+    'Kenya Airways':'KQ','Ethiopian Airlines':'ET','RwandAir':'WB','South African Airways':'SA',
+    'Turkish Airlines':'TK','Air Côte d’Ivoire':'HF','TAP Air Portugal':'TP','Air Senegal':'HC',
+    'British Airways':'BA','Virgin Atlantic':'VS'
+  };
+  const AIRCRAFT_SHORT = ['Boeing 737-800','Airbus A320neo','Embraer E195'];
+  const AIRCRAFT_MID   = ['Airbus A330-300','Boeing 787-8','Airbus A321neo'];
+  const AIRCRAFT_LONG  = ['Boeing 787-9','Airbus A350-900','Boeing 777-300ER'];
+
+  function hashOf(str){
+    let h = 0;
+    for(let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return h;
+  }
+  function cabinsFor(d){
+    return CABINS.filter(c=>!c.minHours || d.hours >= c.minHours);
+  }
+  function cabinOf(id){ return CABINS.find(c=>c.id === id) || CABINS[0]; }
+  function farePrice(f, cabinId){
+    return Math.round(f.price * cabinOf(cabinId).mult / 1000) * 1000;
+  }
+  function durMins(dur){
+    const m = dur.match(/(\d+)h\s*(\d+)?/);
+    return m ? (+m[1]) * 60 + (+(m[2] || 0)) : 0;
+  }
+  function hhmm(mins){
+    const h = Math.floor(((mins % 1440) + 1440) % 1440 / 60), m = Math.round(mins) % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  }
+  function aircraftFor(f){
+    const mins = durMins(f.dur);
+    const pool = mins < 200 ? AIRCRAFT_SHORT : (mins < 480 ? AIRCRAFT_MID : AIRCRAFT_LONG);
+    return pool[hashOf(f.carrier + f.route) % pool.length];
+  }
+  function flightNumber(f, d, leg){
+    const code = CARRIER_CODE[f.carrier] || f.carrier.slice(0,2).toUpperCase();
+    return code + ' ' + (100 + hashOf(f.carrier + d.id) % 800 + (leg === 'in' ? 1 : 0));
+  }
+
+  /* One leg, with a plausible departure derived from the record and an arrival
+     computed from the stated duration. */
+  function legOf(f, d, leg){
+    const out = leg === 'out';
+    /* Routes read "LOS → CPT" or "LOS → NBO → CPT" — the last stop is the
+       destination, anything between is the connection. */
+    const parts = f.route.split('→').map(x=>x.trim()).filter(Boolean);
+    const dest = parts[parts.length - 1];
+    const via  = parts.length > 2 ? parts.slice(1, -1) : [];
+    const from = out ? 'LOS' : dest;
+    const to   = out ? dest : 'LOS';
+    const dep  = ((out ? 7 : 11) + hashOf(f.carrier + d.id + leg) % 13) * 60
+                 + [0,15,25,40,50][hashOf(f.route + leg) % 5];
+    const mins = durMins(f.dur);
+    const arr  = dep + mins;
+    return {
+      from: from, to: to, via: out ? via : via.slice().reverse(),
+      no: flightNumber(f, d, leg), aircraft: aircraftFor(f),
+      dep: hhmm(dep), arr: hhmm(arr), plusDay: Math.floor(arr / 1440),
+      dur: f.dur, stops: f.stops
+    };
+  }
+
+  /* Baggage follows the cabin, except that a stripped economy fare says so. */
+  function baggageFor(f, cabinId){
+    const c = cabinOf(cabinId);
+    const stripped = /hand baggage|no bag|carry-on only/i.test(f.note);
+    const checked = cabinId === 'eco' ? (stripped ? 'Not included' : '1 x 23kg')
+                  : cabinId === 'prem' ? '2 x 23kg'
+                  : cabinId === 'biz'  ? '2 x 32kg' : '3 x 32kg';
+    return {hand: c.hand, checked: checked, stripped: stripped && cabinId === 'eco'};
+  }
+  function fareRules(cabinId){
+    return cabinId === 'eco'  ? 'Non-refundable · changes for a fee'
+         : cabinId === 'prem' ? 'Changeable for a fee · non-refundable'
+         : 'Flexible · changes and refunds permitted';
+  }
+
   /* A small stroke-icon set, drawn to one grid so they sit together. */
   const ICONS = {
     plane:'M2 14l19-7-7 19-2.5-7.5L2 14z',
@@ -573,6 +661,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,stayOf,defaultStay,addDays,fmtDate,daysBetween,iso,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,icon,facilitiesFor,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,roomsFor,roomsNeeded,icon,facilitiesFor,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();
