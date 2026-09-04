@@ -58,6 +58,7 @@ const DEST = [
   why:'Accra is the lowest-friction trip on this list. You are in the air barely an hour, the passport does nothing, and a long weekend genuinely works. The city carries a night out, and Cape Coast gives the trip something to remember it by.',
   tip:'Do Cape Coast as an overnight, not a day trip — the road back to Accra after dark is the one part of this trip nobody enjoys.',
   tradeoff:'Accra is not a beach holiday. The city is the point, the coast is the side trip, and the traffic between the two can eat half a day.',
+  chooseIf:'you want a first trip abroad that needs almost no planning',
   flights:[
     {carrier:'Africa World Airlines', route:'LOS → ACC', dur:'1h 05m', stops:'Direct', price:186000, note:'Cheapest — hand baggage only'},
     {carrier:'Air Peace',             route:'LOS → ACC', dur:'1h 10m', stops:'Direct', price:224000, note:'Best value — 23kg included'},
@@ -79,6 +80,7 @@ const DEST = [
   why:'Somewhere most people you know have not been, without being difficult. Visa-free, three hours in the air, and the mix of a real city plus a genuine beach week is unusual at this distance.',
   tip:'Take the first ferry to Gorée. By eleven the day-trippers land and the whole island changes character.',
   tradeoff:'The Atlantic here is cold and the surf is real — this is not a float-in-the-shallows beach. Dakar itself is busy and takes a day to find your feet.',
+  chooseIf:'you want a real city and a real beach in the same week',
   flights:[
     {carrier:'ASKY Airlines',      route:'LOS → LFW → DSS', dur:'7h 40m', stops:'1 stop', price:312000, note:'Cheapest — long layover in Lomé'},
     {carrier:'Air Côte d’Ivoire', route:'LOS → ABJ → DSS', dur:'6h 15m', stops:'1 stop', price:398000, note:'Best value'},
@@ -100,6 +102,7 @@ const DEST = [
   why:'Doha rewards a short, focused trip. The Museum of Islamic Art is genuinely world-class, Souq Waqif is atmospheric in a way Gulf malls are not, and the inland sea is an easy half-day. Calmer, cheaper and far less exhausting than Dubai — three or four nights rather than a fortnight.',
   tip:'For an amazing view head to the Museum of Islamic Art at dusk, with the whole skyline lit up behind it.',
   tradeoff:'It is small. Three or four nights is right; a fortnight would run out of things to do, and there is very little in the way of a night out.',
+  chooseIf:'you have three or four nights and want them to feel expensive',
   flights:[
     {carrier:'Qatar Airways', route:'LOS → DOH', dur:'6h 55m', stops:'Direct', price:420000, note:'Cheapest — overnight outbound'},
     {carrier:'Qatar Airways', route:'LOS → DOH', dur:'6h 55m', stops:'Direct', price:512000, note:'Best value — daytime, 30kg'},
@@ -121,6 +124,7 @@ const DEST = [
   why:'The contrast is the entire appeal — chaos and calm inside the same fifteen seconds. Four nights feels like a week, the flight is manageable, and it is the cheapest way to feel genuinely far from home.',
   tip:'Book a guide for your first walk through the souk and then go back alone the next day. You need one to learn the shape of it and the other to enjoy it.',
   tradeoff:'The medina is relentless — brilliant for two days, wearing by the fourth. Expect to be hustled, and expect to haggle for everything.',
+  chooseIf:'you want somewhere that looks nothing like home, cheaply',
   flights:[
     {carrier:'Royal Air Maroc', route:'LOS → CMN → RAK', dur:'9h 05m', stops:'1 stop', price:472000, note:'Cheapest — short Casablanca connection'},
     {carrier:'Royal Air Maroc', route:'LOS → CMN → RAK', dur:'7h 30m', stops:'1 stop', price:558000, note:'Best value — fastest connection, 23kg'},
@@ -142,6 +146,7 @@ const DEST = [
   why:'Nowhere else gives you this much history for the money. A week splits neatly: three nights in Cairo for the museum and Giza, then the Nile leg where somebody else does the driving.',
   tip:'Give the Grand Egyptian Museum a full day and go on your first morning, before Giza. Everything you then see at the pyramids makes far more sense.',
   tradeoff:'The sites are extraordinary and the crowds and touts around them are the price of admission. Cairo traffic and air quality are genuinely hard work.',
+  chooseIf:'you want the trip to be about what you saw, not where you stayed',
   flights:[
     {carrier:'EgyptAir',        route:'LOS → CAI', dur:'5h 45m', stops:'Direct', price:438000, note:'Cheapest — direct, hand baggage only'},
     {carrier:'EgyptAir',        route:'LOS → CAI', dur:'5h 45m', stops:'Direct', price:524000, note:'Best value — direct with 23kg'},
@@ -163,6 +168,7 @@ const DEST = [
   why:'The Atlantic beach week almost nobody from Lagos has done. Same latitude band, similar water, a fraction of the Indian Ocean’s flight time and cost — and it is genuinely quiet outside European half-term.',
   tip:'Boa Vista is the emptier of the two islands. If you want a beach with nobody on it, go there and skip Sal entirely.',
   tradeoff:'Sal is windy and mostly resort — if you want street life and culture you will be hunting for it. Island-hopping adds both cost and faff.',
+  chooseIf:'you want guaranteed sun and no thinking',
   flights:[
     {carrier:'TAP Air Portugal',route:'LOS → LIS → SID', dur:'14h 20m', stops:'1 stop', price:516000, note:'Cheapest — overnight in transit'},
     {carrier:'Royal Air Maroc', route:'LOS → CMN → SID', dur:'11h 45m', stops:'1 stop', price:598000, note:'Best value — shortest routing'},
@@ -184,6 +190,7 @@ const DEST = [
   why:'Zanzibar does what most beach destinations only promise — genuinely restful without being dull. Two days of Stone Town, then five of doing nothing. And it costs meaningfully less than Mauritius or the Seychelles for the same water.',
   tip:'Stay north at Nungwi or Kendwa. Almost everywhere else on the island, the tide goes out far enough that you cannot swim for half the day.',
   tradeoff:'Stone Town is atmospheric but tight and hot, and the good beaches are an hour or more away, so you will be paying for transfers.',
+  chooseIf:'you want the beach to be the whole point, with some history attached',
   flights:[
     {carrier:'Ethiopian Airlines',route:'LOS → ADD → ZNZ', dur:'12h 40m', stops:'1 stop', price:678000, note:'Cheapest — long Addis layover'},
     {carrier:'Kenya Airways',     route:'LOS → NBO → ZNZ', dur:'9h 55m',  stops:'1 stop', price:742000, note:'Best value — tight connection'},
@@ -205,6 +212,7 @@ const DEST = [
   why:'The rare place that satisfies four different travellers at once. One wants a city, one wants a beach, one wants a mountain and the fourth wants a tasting menu — all four get their way, usually before lunch.',
   tip:'Book Table Mountain for your first clear morning, not for a fixed day. The cloud decides this trip, not your itinerary.',
   tradeoff:'A visa to arrange, a long flight, and weather that turns — the wind off the Cape can end a beach day without warning.',
+  chooseIf:'you want a proper city break with mountains and wine on the doorstep',
   flights:[
     {carrier:'Ethiopian Airlines',route:'LOS → ADD → CPT', dur:'15h 10m', stops:'1 stop', price:614000, note:'Cheapest — long layover'},
     {carrier:'Kenya Airways',     route:'LOS → NBO → CPT', dur:'13h 25m', stops:'1 stop', price:706000, note:'Best value'},
@@ -226,6 +234,7 @@ const DEST = [
   why:'This is the one that people talk about for years afterwards. Nowhere else concentrates this much wildlife into a three-night stay, and a private conservancy means you are not queueing six vehicles deep at a lion sighting.',
   tip:'Pay for a conservancy camp rather than one inside the national reserve. Same animals, a fraction of the vehicles, and you can drive off-road and after dark.',
   tradeoff:'This is the most expensive way to spend a week on this list, and the days start before dawn. It is a trip you come back from tired.',
+  chooseIf:'this is the trip you have been saving for',
   flights:[
     {carrier:'Kenya Airways',     route:'LOS → NBO', dur:'5h 30m', stops:'Direct', price:522000, note:'Cheapest — direct, plus bush flight'},
     {carrier:'Kenya Airways',     route:'LOS → NBO', dur:'5h 30m', stops:'Direct', price:604000, note:'Best value — direct, 30kg, flexible'},
@@ -247,6 +256,7 @@ const DEST = [
   why:'The most city you can get for the money. Walkable, endlessly layered, and it works as a four-night break or as the first leg of something longer through Cappadocia and the coast.',
   tip:'Take the commuter ferry to Kadıköy on the Asian side and eat there. It is where Istanbul goes when it is not working.',
   tradeoff:'A walking city built on hills and choked with traffic, and the tourist core is priced and hustled accordingly. Winters are grey and wet.',
+  chooseIf:'you want two continents and serious food at a short-haul price',
   flights:[
     {carrier:'Turkish Airlines',route:'LOS → IST', dur:'6h 40m', stops:'Direct', price:562000, note:'Cheapest — direct, hand baggage only'},
     {carrier:'Turkish Airlines',route:'LOS → IST', dur:'6h 40m', stops:'Direct', price:648000, note:'Best value — direct with 23kg'},
@@ -268,6 +278,7 @@ const DEST = [
   why:'When the trip has to work for everyone — grandparents, teenagers, a five-year-old — Dubai is the safest yes on this list. Nothing goes wrong, everything is close, and the winter weather is faultless.',
   tip:'Do the desert on your first night, not your last. It resets everyone before the city takes over.',
   tradeoff:'Almost everything is indoors and air-conditioned, and nothing is cheap once you leave the hotel. Outside winter the heat rules out the middle of the day.',
+  chooseIf:'the trip has to work for everyone and nothing can go wrong',
   flights:[
     {carrier:'Emirates',        route:'LOS → DXB', dur:'7h 45m', stops:'Direct', price:588000, note:'Cheapest — direct, 30kg'},
     {carrier:'Emirates',        route:'LOS → DXB', dur:'7h 45m', stops:'Direct', price:702000, note:'Best value — flexible, seat choice'},
@@ -289,6 +300,7 @@ const DEST = [
   why:'One of the genuine wonders, and almost nobody flying out of Lagos goes. Pair it with two nights in Chobe and you have a short trip with more in it than most fortnights.',
   tip:'Go between August and October if you want Devil’s Pool. Go in April if you want the falls at full roar — you cannot have both.',
   tradeoff:'The falls themselves are two days, so the rest of the week has to be built around them. Late in the dry season the water drops and so does the spectacle.',
+  chooseIf:'you want a wonder of the world that nobody you know has done',
   flights:[
     {carrier:'Ethiopian Airlines',route:'LOS → ADD → VFA', dur:'16h 20m', stops:'1 stop', price:742000, note:'Cheapest — overnight in Addis'},
     {carrier:'Kenya Airways',     route:'LOS → NBO → LVI', dur:'14h 05m', stops:'1 stop', price:816000, note:'Best value — Zambian side'},
@@ -310,6 +322,7 @@ const DEST = [
   why:'A domestic trip that does not feel domestic. No passport, no forex, no flight longer than an hour — and a landscape almost nobody expects Nigeria to have.',
   tip:'Do not attempt the mountain road after dark. Fly into Calabar in the morning and drive up in daylight — the last stretch is the best part of the journey anyway.',
   tradeoff:'Domestic infrastructure is the weak point — the roads are long and the hotels are basic by international standards.',
+  chooseIf:'you want somewhere cool and green without a passport queue',
   flights:[
     {carrier:'Ibom Air',  route:'LOS → CBQ', dur:'1h 10m', stops:'Direct', price:148000, note:'Cheapest — hand baggage only'},
     {carrier:'Air Peace', route:'LOS → CBQ', dur:'1h 15m', stops:'Direct', price:192000, note:'Best value — 20kg included'},
@@ -331,6 +344,7 @@ const DEST = [
   why:'The single most affecting wildlife experience available anywhere, and a capital city that quietly upends whatever you expected. Visa-free, five hours direct, and almost nobody flying out of Lagos does it.',
   tip:'Book the gorilla permit before you book anything else — the daily allocation is tiny and the whole trip has to be built around the date you get.',
   tradeoff:'Gorilla permits are the single largest cost of any trip here and there is no way around them. Beyond that, Rwanda is quiet after dark.',
+  chooseIf:'you want one unforgettable morning and an easy week around it',
   flights:[
     {carrier:'RwandAir',          route:'LOS → KGL', dur:'5h 05m', stops:'Direct', price:496000, note:'Cheapest — direct, hand baggage only'},
     {carrier:'RwandAir',          route:'LOS → KGL', dur:'5h 05m', stops:'Direct', price:582000, note:'Best value — direct with 23kg'},
@@ -352,6 +366,7 @@ const DEST = [
   why:'This is what people mean when they say they just want a holiday. The resorts are genuinely good, nobody has to plan anything, and you are paying for the certainty that nothing will go wrong.',
   tip:'Base yourself north-west for calm water and sunsets, or east if you want fewer people and can live with more wind.',
   tradeoff:'Resort-shaped: lovely inside the gates, thinner outside them. Cyclone season runs January into March.',
+  chooseIf:'you want to unpack once and not think again',
   flights:[
     {carrier:'Kenya Airways',    route:'LOS → NBO → MRU', dur:'15h 40m', stops:'1 stop', price:968000, note:'Cheapest — long Nairobi layover'},
     {carrier:'Ethiopian Airlines',route:'LOS → ADD → MRU', dur:'14h 25m', stops:'1 stop', price:1064000, note:'Best value'},
@@ -373,6 +388,7 @@ const DEST = [
   why:'The highest-end version of this trip. Nothing else looks quite like the granite boulders, the water is bath-warm year round, and the no-visa rule removes the last piece of admin.',
   tip:'Do not stay on Mahé the whole time. One night there and the rest split between Praslin and La Digue is a completely different holiday.',
   tradeoff:'The most expensive beaches in the Indian Ocean, and moving between the islands is slow and adds up quickly.',
+  chooseIf:'money is not the constraint and the beach has to be perfect',
   flights:[
     {carrier:'Ethiopian Airlines',route:'LOS → ADD → SEZ', dur:'14h 55m', stops:'1 stop', price:1148000, note:'Cheapest — long layover'},
     {carrier:'Kenya Airways',     route:'LOS → NBO → SEZ', dur:'13h 10m', stops:'1 stop', price:1284000, note:'Best value'},

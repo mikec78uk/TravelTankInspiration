@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], lane:'best'
+      dismissed:[], pinned:null, lane:'best'
     };
   }
   function load(){
@@ -148,7 +148,18 @@ const TT = (function(){
       return {d:d, score:r.score, why:r.why};
     }).sort((x,y)=>y.score-x.score);
 
-    const best = scored[0];
+    /* A destination the customer has told us to build around leads, whatever the
+       score says — otherwise "rebuild around X" is a button that does not do it. */
+    let best = scored[0];
+    let pinned = false;
+    if(b.pinned){
+      const forced = scored.find(x=>x.d.id === b.pinned) ||
+                     (function(){ const d = DEST.find(x=>x.id === b.pinned);
+                                  if(!d) return null;
+                                  const r = score(d,b);
+                                  return {d:d, score:r.score, why:r.why}; })();
+      if(forced){ best = forced; pinned = true; }
+    }
 
     /* Premium: same brief, but re-scored as if money were no object, so the
        customer's own budget cap does not penalise the very upgrade we are offering. */
@@ -167,7 +178,7 @@ const TT = (function(){
       .map(x=>({...x, lift:x.score + (x.d.offbeat?40:0)}))
       .sort((a,b2)=>b2.lift-a.lift)[0];
 
-    return {best:best, premium:premium, offbeat:offbeat, recycled:recycled};
+    return {best:best, premium:premium, offbeat:offbeat, recycled:recycled, pinned:pinned};
   }
 
   const LANE_META = {
@@ -214,6 +225,10 @@ const TT = (function(){
     if(b.maxHours) out.push({k:'hours',  label:FLIGHTS.find(f=>f.id===b.maxHours).label});
     if(b.heat==='hot') out.push({k:'heat', label:'Somewhere hot'});
     if(b.quieter)      out.push({k:'quiet', label:'Less touristy'});
+    if(b.pinned){
+      const d = DEST.find(x=>x.id === b.pinned);
+      if(d) out.push({k:'pinned', label:'Built around ' + d.name});
+    }
     if(b.visa==='free')     out.push({k:'visa', label:'Visa-free'});
     else if(b.visa==='required') out.push({k:'visa', label:'Visa required'});
     return out;
@@ -228,6 +243,7 @@ const TT = (function(){
     else if(k==='heat') b.heat=null;
     else if(k==='quiet') b.quieter=false;
     else if(k==='visa') b.visa=null;
+    else if(k==='pinned') b.pinned=null;
     return b;
   }
 

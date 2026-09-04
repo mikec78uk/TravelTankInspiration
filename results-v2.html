@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=10">
+<link rel="stylesheet" href="assets/tt.css?v=13">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:130px;}
@@ -248,7 +248,100 @@
   .sheet-foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:30px;padding-top:22px;border-top:1px solid var(--line-2);}
   .sheet-foot .spacer{flex:1;}
 
-  /* ================= brief rail ================= */
+  /* ================= compare ================= */
+  .cmp{
+    position:fixed;left:0;right:0;bottom:0;top:34px;z-index:93;
+    background:#fff;display:flex;flex-direction:column;
+    transform:translateY(100%);transition:transform .34s cubic-bezier(.22,.7,.3,1);
+  }
+  .cmp.on{transform:translateY(0);}
+  .cmp-hd{
+    flex:0 0 auto;display:flex;align-items:flex-start;gap:20px;
+    padding:22px 34px 18px;border-bottom:1px solid var(--line);
+  }
+  .cmp-hd h2{margin:4px 0 0;font-size:1.8rem;letter-spacing:-.025em;}
+  .cmp-hd p{margin:6px 0 0;font-size:.9rem;color:var(--ink-3);}
+  .cmp-body{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding:0 34px 40px;}
+  .cmp-scroll{overflow-x:auto;}
+
+  .cmp-grid{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;}
+  .cmp-grid th,.cmp-grid td{
+    vertical-align:top;text-align:left;padding:16px 20px;
+    border-bottom:1px solid var(--line-2);
+  }
+  .cmp-grid thead th{border-bottom:1px solid var(--ink);padding-top:22px;position:sticky;top:0;background:#fff;z-index:2;}
+  .cmp-grid .rl{
+    width:180px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:600;color:var(--ink-3);white-space:nowrap;background:#fff;
+    position:sticky;left:0;z-index:1;                 /* labels stay put when scrolled sideways */
+    border-right:1px solid var(--line-2);
+  }
+  .cmp-grid thead .rl{z-index:3;}
+  .cmp-grid tbody tr:hover td{background:var(--panel-2);}
+  .cmp-grid tbody tr:hover .rl{background:var(--panel-2);}
+  .cmp-col{width:calc((100% - 180px)/var(--cols,3));}
+
+  .cmp-role{
+    display:inline-block;font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;
+    font-weight:700;background:var(--ink);color:#fff;padding:4px 9px;margin-bottom:12px;
+  }
+  .cmp-role.mine{background:#fff;color:var(--ink);border:1px solid var(--ink);}
+  .cmp-strip{display:grid;grid-template-columns:2fr 1fr;gap:4px;height:78px;margin-bottom:14px;}
+  .cmp-name{font-size:1.35rem;letter-spacing:-.02em;font-weight:600;line-height:1.15;}
+  .cmp-cty{font-size:.82rem;color:var(--ink-3);margin-top:3px;}
+  .cmp-drop{
+    margin-top:12px;background:none;border:0;padding:0;cursor:pointer;
+    font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .cmp-drop:hover{color:var(--ink);text-decoration:underline;}
+
+  .cmp-v{font-size:.95rem;color:var(--ink-2);}
+  .cmp-v.strong{color:var(--ink);font-weight:600;}
+  .cmp-best{
+    display:inline-block;margin-left:8px;font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;font-weight:700;border:1px solid var(--ink);padding:2px 7px;color:var(--ink);
+  }
+  .cmp-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .cmp-tags .chip{font-size:.76rem;padding:5px 11px;}
+  .cmp-warn{color:var(--ink-2);font-size:.92rem;line-height:1.55;}
+  .cmp-warn::before{content:'\26A0';margin-right:8px;color:var(--ink-3);}
+
+  /* add your own */
+  .cmp-add{
+    border:1px dashed var(--line);background:var(--panel-2);
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+    padding:20px;cursor:pointer;width:100%;text-align:left;min-height:150px;justify-content:center;
+  }
+  .cmp-add:hover{border-color:var(--ink-3);background:var(--panel);}
+  .cmp-add .plus{
+    width:34px;height:34px;border:1px solid var(--ink-3);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ink-2);
+  }
+  .cmp-add .t{font-size:1rem;font-weight:600;color:var(--ink);}
+  .cmp-add .s{font-size:.84rem;color:var(--ink-3);}
+
+  /* our call on the customer's own pick */
+  .cmp-call{border:1px solid var(--ink);padding:26px 30px;margin-top:30px;}
+  .cmp-call h3{margin:10px 0 0;font-size:1.3rem;letter-spacing:-.015em;}
+  .cmp-call p{margin:12px 0 0;font-size:.98rem;line-height:1.62;color:var(--ink-2);max-width:70ch;}
+  .cmp-call ul{list-style:none;margin:16px 0 0;padding:0;}
+  .cmp-call li{position:relative;padding-left:26px;margin-bottom:8px;font-size:.93rem;color:var(--ink-2);}
+  .cmp-call li::before{position:absolute;left:0;font-weight:600;}
+  .cmp-call li.y::before{content:'\2713';color:var(--ink);}
+  .cmp-call li.n::before{content:'\2715';color:var(--ink-3);}
+  .cmp-call .btn-row{margin-top:22px;}
+
+  @media(max-width:620px){
+    .cmp{top:18px;}
+    .cmp-grid .rl{width:120px;white-space:normal;}
+    .cmp-grid th,.cmp-grid td{padding:14px 14px;}
+    .cmp-hd{padding:16px 18px 14px;}
+    .cmp-hd h2{font-size:1.35rem;}
+    .cmp-body{padding:0 18px 32px;}
+    .cmp-call{padding:20px;}
+  }
+
+/* ================= brief rail ================= */
   body{transition:padding-left .24s ease;}
   body.rail-open{padding-left:360px;}
   .rail{
@@ -297,6 +390,12 @@
   .opts button.on{border-color:var(--ink);background:var(--panel-2);color:var(--ink);}
   .opts .bx{flex:0 0 auto;width:18px;height:18px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;}
   .opts button.on .bx{background:var(--ink);border-color:var(--ink);}
+  .pick-search{
+    width:100%;border:1px solid var(--line);padding:12px 14px;font:inherit;font-size:.95rem;
+    outline:none;color:var(--ink);
+  }
+  .pick-search:focus{border-color:var(--ink-3);}
+  .pick-empty{padding:16px 2px;font-size:.9rem;color:var(--ink-3);}
   .modal-note{margin:16px 0 0;}
   .modal-note textarea{
     width:100%;border:1px solid var(--line);padding:12px 14px;font:inherit;font-size:.92rem;
@@ -388,13 +487,13 @@
   <div class="intro">
     <span class="lab">Three we'd stand behind</span>
     <span class="hint">Chosen against your brief — with what each one costs you, not just what it offers</span>
+    <button class="btn btn-sm" id="compareAll" style="margin-left:14px;">Compare all three</button>
   </div>
 
   <div id="recs"></div>
 
   <section class="handoff">
-    <span class="lab">Human handoff</span>
-    <h2>Like the direction but want a little more help?</h2>
+    <h2 style="margin-top:0;">Like the direction but want a little more help?</h2>
     <p>Send your shortlist and everything we have worked out so far to one of our Travel Sharks,
        then add anything else you want a hand with. They pick it up from there.</p>
     <div class="incl" id="sharkIncluded"></div>
@@ -428,8 +527,37 @@
   <div class="sheet-body" id="sheetBody"><div class="sheet-in" id="sheetIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=10"></script>
-<script src="assets/core.js?v=10"></script>
+<!-- ============ compare ============ -->
+<div class="sheet-scrim" id="cmpScrim"></div>
+<section class="cmp" id="cmp" role="dialog" aria-modal="true" aria-labelledby="cmpTitle" inert>
+  <header class="cmp-hd">
+    <div>
+      <h2 id="cmpTitle">Side by side</h2>
+      <p>Same brief, same nights. What each one gives you, and what it costs you.</p>
+    </div>
+    <button class="sheet-x" id="cmpX" aria-label="Close">&times;</button>
+  </header>
+  <div class="cmp-body"><div id="cmpIn"></div></div>
+</section>
+
+<!-- ============ pick your own to compare ============ -->
+<div class="modal" id="pickModal" role="dialog" aria-modal="true" aria-labelledby="pickTitle">
+  <div class="modal-hd">
+    <h3 id="pickTitle">Add your own</h3>
+    <p>Somewhere you were already considering? Put it up against ours and we will tell you straight which we would book.</p>
+  </div>
+  <div class="modal-bd">
+    <input id="pickSearch" class="pick-search" autocomplete="off" placeholder="Search destinations…">
+    <ul class="opts" id="pickList" style="margin-top:12px;"></ul>
+  </div>
+  <div class="modal-ft">
+    <button class="btn" id="pickCancel">Cancel</button>
+    <span class="spacer"></span>
+  </div>
+</div>
+
+<script src="assets/data.js?v=13"></script>
+<script src="assets/core.js?v=13"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -479,8 +607,16 @@ function render(noteText){
   });
 
   const host = document.getElementById('recs');
-  host.innerHTML = LANE_KEYS.map((k,i)=>recHtml(L[k], TT.LANE_META[k], i===0, k)).join('');
-  LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k], TT.LANE_META[k]));
+  host.innerHTML = LANE_KEYS.map((k,i)=>{
+    /* If the lead slot is there because the customer pinned it, say so rather than
+       calling it our best match. */
+    const meta = (k === 'best' && L.pinned)
+      ? {label:'Your pick', blurb:TT.LANE_META.best.blurb}
+      : TT.LANE_META[k];
+    return recHtml(L[k], meta, i===0, k);
+  }).join('');
+  LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k],
+    (k === 'best' && L.pinned) ? {label:'Your pick'} : TT.LANE_META[k]));
 
   renderDrawerBrief();
   renderIncluded();
@@ -551,6 +687,7 @@ function recHtml(item, meta, lead, laneKey){
 
     '<div class="rec-foot">' +
       '<button class="btn btn-primary" data-open>Explore ' + TT.esc(d.name) + ' &rarr;</button>' +
+      '<button class="btn" data-cmp>Compare</button>' +
       '<span class="spacer"></span>' +
       (poolExhausted
         ? '<button class="btn" data-notfor disabled>Nothing left to swap in</button>'
@@ -588,6 +725,7 @@ function wireRec(el, item, meta){
     renderIncluded();
   });
   el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta));
+  el.querySelector('[data-cmp]').addEventListener('click', openCompare);
   const nf = el.querySelector('[data-notfor]');
   if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
 }
@@ -604,11 +742,7 @@ function openSheet(item, meta){
   document.getElementById('sheetCty').textContent = item.d.country;
   drawSheet();
 
-  savedY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = -savedY + 'px';
-  document.body.style.left = '0';
-  document.body.style.right = '0';
+  lockPage();
 
   sheetScrim.classList.add('on');
   sheet.classList.add('on');
@@ -621,11 +755,7 @@ function closeSheet(){
   sheet.classList.remove('on');
   sheet.setAttribute('inert','');
   sheetScrim.classList.remove('on');
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  window.scrollTo(0, savedY);
+  unlockPage();
   sheetItem = null;
 }
 
@@ -701,6 +831,7 @@ function drawSheet(){
 
     '<div class="sheet-foot">' +
       '<button class="btn" id="sheetNotFor">Not for me</button>' +
+      '<button class="btn" id="sheetCmp">Compare</button>' +
       '<span class="spacer"></span>' +
       '<button class="btn" id="sheetAsk">Ask a Travel Shark about this</button>' +
       '<button class="btn btn-primary" id="sheetClose2">Back to the three</button>' +
@@ -716,6 +847,7 @@ function drawSheet(){
   inEl.querySelector('#sheetClose2').addEventListener('click', closeSheet);
   inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d; closeSheet(); openWhy(x); });
   inEl.querySelector('#sheetAsk').addEventListener('click', ()=>{ closeSheet(); openShark(); });
+  inEl.querySelector('#sheetCmp').addEventListener('click', ()=>{ closeSheet(); openCompare(); });
 }
 
 document.getElementById('sheetX').addEventListener('click', closeSheet);
@@ -841,8 +973,7 @@ document.getElementById('sharkSend').addEventListener('click', ()=>{
   closeShark();
   const h = document.querySelector('.handoff');
   h.innerHTML =
-    '<span class="lab">Human handoff</span>' +
-    '<h2>On its way to a Travel Shark</h2>' +
+    '<h2 style="margin-top:0;">On its way to a Travel Shark</h2>' +
     '<p>They have your brief, the three we picked, and what you saved or ruled out' +
       (picks.length ? ', plus that you want help with ' + TT.esc(picks.join(', ').toLowerCase()) : '') +
       (note ? ' — and your note.' : '.') +
@@ -850,6 +981,270 @@ document.getElementById('sharkSend').addEventListener('click', ()=>{
     '<div class="incl">Expect a reply the same working day. Keep browsing in the meantime — anything else you change gets passed on too.</div>';
   h.scrollIntoView({behavior:'smooth', block:'center'});
 });
+
+/* ================= compare ================= */
+const cmp = document.getElementById('cmp');
+const cmpScrim = document.getElementById('cmpScrim');
+const pickModal = document.getElementById('pickModal');
+let cmpCols = [];          // [{d, role, mine}]
+let cmpSavedY = 0;
+
+function lockPage(){
+  cmpSavedY = window.scrollY;
+  document.body.style.position='fixed';
+  document.body.style.top = -cmpSavedY+'px';
+  document.body.style.left='0'; document.body.style.right='0';
+}
+function unlockPage(){
+  document.body.style.position=''; document.body.style.top='';
+  document.body.style.left=''; document.body.style.right='';
+  window.scrollTo(0, cmpSavedY);
+}
+
+function openCompare(){
+  const L = TT.lanes(brief);
+  cmpCols = LANE_KEYS.map(k=>({
+    d:L[k].d,
+    role:(k === 'best' && L.pinned) ? 'Your pick' : TT.LANE_META[k].label,
+    mine:(k === 'best' && L.pinned)
+  }));
+  drawCompare();
+  lockPage();
+  cmpScrim.classList.add('on');
+  cmp.classList.add('on');
+  cmp.removeAttribute('inert');
+  document.querySelector('.cmp-body').scrollTop = 0;
+  document.getElementById('cmpX').focus();
+}
+function closeCompare(){
+  cmp.classList.remove('on');
+  cmp.setAttribute('inert','');
+  cmpScrim.classList.remove('on');
+  unlockPage();
+}
+
+/* Descriptive values, all read off the destination record. */
+const PACE_WORD  = {1:'Very quiet', 2:'Quiet', 3:'Lively', 4:'Full on'};
+const BAND_WORD  = {1:'Easy on the wallet', 2:'Mid-range', 3:'Premium'};
+
+function tripTotal(d){
+  const st = stateFor(d.id);
+  return d.flights[st.flight].price + d.hotels[st.tier][0].night * TT.nights();
+}
+
+function drawCompare(){
+  const cols = cmpCols;
+  const nights = TT.nights();
+
+  /* Mark the winner on the rows where "best" is objective. */
+  const minHours = Math.min.apply(null, cols.map(c=>c.d.hours));
+  const minTotal = Math.min.apply(null, cols.map(c=>tripTotal(c.d)));
+  const noVisa   = c => c.d.visa === 'free' || c.d.visa === 'on-arrival';
+
+  const head = cols.map(c=>
+    '<th class="cmp-col">' +
+      '<span class="cmp-role' + (c.mine ? ' mine' : '') + '">' + TT.esc(c.role) + '</span>' +
+      '<div class="cmp-strip"><div class="ph"></div><div class="ph ph-sm"></div></div>' +
+      '<div class="cmp-name">' + TT.esc(c.d.name) + '</div>' +
+      '<div class="cmp-cty">' + TT.esc(c.d.country) + '</div>' +
+      (cols.length > 2 ? '<button type="button" class="cmp-drop" data-drop="' + c.d.id + '">Remove</button>' : '') +
+    '</th>').join('') +
+    (cols.length < 4
+      ? '<th class="cmp-col"><button type="button" class="cmp-add" id="cmpAdd">' +
+          '<span class="plus">+</span><span class="t">Add your own</span>' +
+          '<span class="s">Somewhere you were already thinking about</span></button></th>'
+      : '');
+
+  function row(label, fn){
+    return '<tr><td class="rl">' + label + '</td>' +
+      cols.map(c=>'<td class="cmp-col">' + fn(c) + '</td>').join('') +
+      (cols.length < 4 ? '<td class="cmp-col"></td>' : '') + '</tr>';
+  }
+
+  document.getElementById('cmpIn').innerHTML =
+    '<div class="cmp-scroll"><table class="cmp-grid" style="--cols:' + (cols.length + (cols.length<4?1:0)) + ';">' +
+      '<thead><tr><th class="rl"></th>' + head + '</tr></thead>' +
+      '<tbody>' +
+        row('Against your brief', c=>{
+          const r = TT.matchReport(c.d, brief);
+          return '<span class="cmp-v strong">' + r.level + '</span>' +
+                 (r.total ? '<div class="cmp-v">' + r.hit + ' of ' + r.total + ' things you asked for</div>' : '');
+        }) +
+        row('Choose this if', c=>'<span class="cmp-v">' + TT.esc(c.d.chooseIf) + '</span>') +
+        row('Flight from Lagos', c=>'<span class="cmp-v' + (c.d.hours===minHours?' strong':'') + '">' + hrs(c.d.hours) + '</span>' +
+             (c.d.hours===minHours ? '<span class="cmp-best">Shortest</span>' : '')) +
+        row('Entry', c=>'<span class="cmp-v' + (noVisa(c)?' strong':'') + '">' + VISA_LABEL[c.d.visa] + '</span>') +
+        row('Best months', c=>{
+          const inWindow = brief.month && c.d.months.indexOf(brief.month) !== -1;
+          return '<span class="cmp-v">' + TT.monthRuns(c.d) + '</span>' +
+            (brief.month
+              ? '<div class="cmp-v" style="color:var(--ink-3);margin-top:4px;">' +
+                  MONTHS_FULL[brief.month-1] + (inWindow ? ' works' : ' is outside that') + '</div>'
+              : '');
+        }) +
+        row('Price band', c=>'<span class="cmp-v">' + BAND_WORD[c.d.budget] + '</span>') +
+        row('Indicative total', c=>{
+          const t = tripTotal(c.d);
+          return '<span class="cmp-v' + (t===minTotal?' strong':'') + '">' + TT.money(t) + '</span>' +
+                 (t===minTotal ? '<span class="cmp-best">Cheapest</span>' : '') +
+                 '<div class="cmp-v" style="color:var(--ink-3);margin-top:4px;">' + nights + ' nights, flights and hotel</div>';
+        }) +
+        row('Good for', c=>'<div class="cmp-tags">' +
+            c.d.vibes.map(v=>'<span class="chip chip-sm on">' + TT.esc((VIBES.find(x=>x.id===v)||{label:v}).label) + '</span>').join('') +
+          '</div>') +
+        row('Pace', c=>'<span class="cmp-v">' + PACE_WORD[c.d.pace] + (c.d.offbeat ? ' · off the beaten track' : '') + '</span>') +
+        row('Main compromise', c=>'<div class="cmp-warn">' + TT.esc(c.d.tradeoff) + '</div>') +
+      '</tbody>' +
+    '</table></div>' +
+    (cmpCols.some(c=>c.mine) ? ourCall() : '');
+
+  const add = document.getElementById('cmpAdd');
+  if(add) add.addEventListener('click', openPick);
+  document.querySelectorAll('[data-drop]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      cmpCols = cmpCols.filter(c=>c.d.id !== b.dataset.drop);
+      drawCompare();
+    });
+  });
+  const stick = document.getElementById('cmpStick');
+  if(stick) stick.addEventListener('click', ()=>{
+    cmpCols = cmpCols.filter(c=>!c.mine);
+    drawCompare();
+  });
+  const rebuild = document.getElementById('cmpRebuild');
+  if(rebuild) rebuild.addEventListener('click', ()=>{
+    const mine = cmpCols.find(c=>c.mine).d;
+    /* Relax only what was actually standing in the way, and say so. Bolting the
+       destination's every tag onto the brief would claim they asked for things
+       they never said. */
+    const changed = [];
+    if(brief.budget && mine.budget > brief.budget){
+      brief.budget = mine.budget;
+      changed.push('raised the budget to ' + BUDGETS[mine.budget-1].label.toLowerCase());
+    }
+    if(brief.maxHours && mine.hours > brief.maxHours){
+      brief.maxHours = mine.hours <= 6 ? 6 : (mine.hours <= 10 ? 10 : 99);
+      changed.push(brief.maxHours === 99 ? 'lifted the flight limit' : 'stretched the flight limit to ' + brief.maxHours + ' hours');
+    }
+    if(brief.visa === 'free' && mine.visa !== 'free' && mine.visa !== 'on-arrival'){
+      brief.visa = null;
+      changed.push('dropped the visa-free filter');
+    }
+    if(brief.month && mine.months.indexOf(brief.month) === -1){
+      changed.push('kept ' + MONTHS_FULL[brief.month-1] + ', which is outside its best window');
+    }
+    brief.pinned = mine.id;
+    closeCompare();
+    render(changed.length
+      ? 'Built around ' + mine.name + ' — we ' + changed.join(', ') + '. Take the chip off your brief to undo it.'
+      : 'Built around ' + mine.name + '. Nothing in your brief was standing in its way.');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+}
+
+/* An honest read of the customer's own pick against our best match. */
+function ourCall(){
+  const mine = cmpCols.find(c=>c.mine).d;
+  const other = cmpCols.find(c=>!c.mine);
+  if(!other) return '';
+  const ours = other.d;
+  const rm = TT.matchReport(mine, brief), ro = TT.matchReport(ours, brief);
+
+  const points = [];
+  const add = (ok, txt) => points.push({ok:ok, txt:txt});
+  if(rm.total){
+    add(rm.hit >= ro.hit, mine.name + ' meets ' + rm.hit + ' of your ' + rm.total +
+        ' points; ' + ours.name + ' meets ' + ro.hit);
+  }
+  add(mine.hours <= ours.hours, mine.name + ' is ' + hrs(mine.hours) + ' away, ' + ours.name + ' is ' + hrs(ours.hours));
+  add(tripTotal(mine) <= tripTotal(ours),
+      TT.money(tripTotal(mine)) + ' against ' + TT.money(tripTotal(ours)) + ' for the same nights');
+  if(brief.month){
+    add(mine.months.indexOf(brief.month) !== -1,
+        MONTHS_FULL[brief.month-1] + (mine.months.indexOf(brief.month) !== -1 ? ' is a good month there' : ' is outside its best window'));
+  }
+
+  /* The verdict is read off the same points shown below it. Deciding on brief-match
+     alone let the headline say "we would still send you to ours" while the evidence
+     underneath had their pick winning on flight time, price and season. */
+  let net = 0;
+  points.forEach(p=>{ net += p.ok ? 1 : -1; });
+  if(rm.total) net += (rm.hit - ro.hit);          // the brief still counts for most
+  const wins = points.filter(p=>p.ok).length;
+  const lower = t => t.charAt(0).toLowerCase() + t.slice(1);
+
+  let headline, body;
+  if(net > 0){
+    headline = 'Honestly? ' + mine.name + ' is the better call';
+    body = mine.name + ' beats our pick on ' + wins + ' of the ' + points.length +
+      ' things worth comparing here. If that is where your head already was, go with it — ' +
+      'we will rebuild the shortlist around it. Worth knowing before you do: ' + lower(mine.tradeoff);
+  } else if(net === 0){
+    headline = 'It is line-ball';
+    body = 'There is nothing in it between ' + mine.name + ' and ' + ours.name +
+      ' on this brief. We would take ' + ours.name + ' on the detail, but you would not be wrong either way. ' +
+      'The thing that would decide it for us: ' + lower(mine.tradeoff);
+  } else {
+    headline = 'We would still send you to ' + ours.name;
+    body = (wins
+        ? mine.name + ' does beat it on ' + wins + ' of these, but it misses more of what you actually asked for. '
+        : mine.name + ' comes up short on every point that matters here. ') +
+      'Where it would cost you: ' + lower(mine.tradeoff);
+  }
+
+  return '<div class="cmp-call">' +
+    '<span class="lab">TravelTank’s call</span>' +
+    '<h3>' + TT.esc(headline) + '</h3>' +
+    '<p>' + TT.esc(body) + '</p>' +
+    '<ul>' + points.map(p=>'<li class="' + (p.ok?'y':'n') + '">' + TT.esc(p.txt) + '</li>').join('') + '</ul>' +
+    '<div class="btn-row">' +
+      '<button class="btn btn-primary" id="cmpRebuild">Rebuild around ' + TT.esc(mine.name) + '</button>' +
+      '<button class="btn" id="cmpStick">Stick with our pick</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* --- pick your own --- */
+function openPick(){
+  document.getElementById('pickSearch').value = '';
+  drawPick('');
+  mscrim.classList.add('on');
+  pickModal.classList.add('on');
+  setTimeout(()=>document.getElementById('pickSearch').focus(), 30);
+}
+function closePick(){ mscrim.classList.remove('on'); pickModal.classList.remove('on'); }
+function drawPick(q){
+  const shown = cmpCols.map(c=>c.d.id);
+  const term = q.trim().toLowerCase();
+  const hits = DEST.filter(d=>shown.indexOf(d.id) === -1)
+    .filter(d=>!term || (d.name + ' ' + d.country).toLowerCase().indexOf(term) !== -1);
+  const ul = document.getElementById('pickList');
+  ul.innerHTML = '';
+  if(!hits.length){
+    ul.innerHTML = '<li class="pick-empty">Nothing of ours matches &ldquo;' + TT.esc(q) +
+      '&rdquo;. A Travel Shark can look into it — close this and use <b>Ask a Travel Shark</b> at the foot of the page.</li>';
+    return;
+  }
+  hits.forEach(d=>{
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '<span class="bx"></span><span><b>' + TT.esc(d.name) + '</b> &nbsp;<span style="color:var(--ink-3);">' +
+                  TT.esc(d.country) + ' · ' + hrs(d.hours) + ' · from ' + TT.money(d.flights[0].price) + '</span></span>';
+    b.addEventListener('click', ()=>{
+      cmpCols = cmpCols.filter(c=>!c.mine).concat([{d:d, role:'Your pick', mine:true}]);
+      closePick();
+      drawCompare();
+      document.querySelector('.cmp-call').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+    li.appendChild(b); ul.appendChild(li);
+  });
+}
+document.getElementById('pickSearch').addEventListener('input', e=>drawPick(e.target.value));
+document.getElementById('pickCancel').addEventListener('click', closePick);
+document.getElementById('cmpX').addEventListener('click', closeCompare);
+cmpScrim.addEventListener('click', closeCompare);
+
 
 /* ================= brief rail ================= */
 const scrim = document.getElementById('scrim'), rail = document.getElementById('rail');
@@ -908,12 +1303,14 @@ scrim.addEventListener('click', closeRail);
 
 document.addEventListener('keydown', e=>{
   if(e.key !== 'Escape') return;
-  if(sheet.classList.contains('on')) closeSheet();
+  if(pickModal.classList.contains('on')) closePick();
+  else if(cmp.classList.contains('on')) closeCompare();
+  else if(sheet.classList.contains('on')) closeSheet();
   else if(whyModal.classList.contains('on')) closeWhy();
   else if(sharkModal.classList.contains('on')) closeShark();
   else closeRail();
 });
-mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); });
+mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); closePick(); });
 
 function drSubmit(){
   const t = drInput.value.trim();
@@ -942,6 +1339,8 @@ document.getElementById('startAgain').addEventListener('click', ()=>{
   TT.clear();
   location.href = brief.source ? brief.source + '.html' : 'index.html';
 });
+
+document.getElementById('compareAll').addEventListener('click', openCompare);
 
 render();
 </script>

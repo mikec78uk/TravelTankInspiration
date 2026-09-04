@@ -80,9 +80,21 @@ Selecting a destination opens a **full-screen sheet from the bottom** holding th
 description, shark tip, flights, hotels, trip total. The page behind it is locked while it is
 open and returns to where it was on close.
 
-**Human handoff** sits at the foot of the page: *Like the direction but want a little more
-help?* opens a form that names what is already being passed to a Travel Shark, asks what you
-want help with, and takes a free-text note.
+**Compare** opens a side-by-side sheet: ten rows — match against the brief, *Choose this if*,
+flight, entry, season, price band, indicative total, what it is good for, pace and *Main
+compromise* — with the objectively best cell in a row marked (Shortest, Cheapest). Row labels
+stay pinned while the columns scroll.
+
+**Add your own** puts a destination the customer was already considering into a fourth column,
+and **TravelTank's call** gives a straight answer on it. The verdict is computed from the same
+points shown beneath it, so it flips to *"Honestly? X is the better call"* when their pick
+genuinely wins. **Rebuild around X** then pins it as the lead recommendation — labelled *Your
+pick*, not *Best match* — relaxing only the parts of the brief that were blocking it and saying
+which. A chip on the brief undoes it.
+
+*Like the direction but want a little more help?* sits at the foot of the page and opens a form
+that names what is already being passed to a Travel Shark, asks what you want help with, and
+takes a free-text note.
 
 *Nudge it* docks to the bottom of the window and only appears once the customer has scrolled
 into the recommendations — offering it on arrival asks them to change a result they have not
