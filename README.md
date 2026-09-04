@@ -83,7 +83,22 @@ weather with a temperature band, what to wear, what you will be eating, four sig
 your party, and where to stay.
 
 It opens on a row of **key facts with icons** — flight time, climate, best months, entry, price
-band — and the four sights are **image cards** rather than a list.
+band — then runs as separate sections.
+
+**Weather** leads with a verdict on the customer's own month (*February falls inside its best
+window*, or *Not its strongest month*), six suitability tiles, *What this means for your trip*,
+and a **TravelTank watch-out** written per destination. All of it is read off the destination
+record and the brief, so an out-of-season month genuinely changes what it says.
+
+**What to wear** is a per-destination packing list broken into tiles, with a panel naming what
+the brief added on top — *"a waterproof, because August is outside its best window; one smarter
+outfit, since you said food mattered."*
+
+**Food** opens on why it is here at all if the customer said food mattered, then four cards —
+one special dinner, eat like a local, the one to try, something you might miss — and a cost
+panel with a per-person-per-day range scaled to the destination.
+
+**Do not miss** is a list of six, three shown with a *View all 6* rather than a grid.
 
 **Hotels are an accordion** — open one without leaving the page and get a picture gallery,
 facilities as icon chips, a map showing roughly where it sits, and the room types. Facilities
