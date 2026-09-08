@@ -177,6 +177,12 @@ The three sit in a tab strip detached from the card below, with a pointer tying 
 one to it. Each destination leads with its name and country, then an image mosaic — one lead
 tile with two stacked beside it — rather than a single banner with the name overlaid.
 
+**Ruled out (n)** appears in the header once anything has been rejected. It lists what was
+rejected, newest first, with the reasons given at the time, and puts any of them — or all of
+them — back. Bringing one back does not silently undo the brief changes the rejection made, so
+the page says plainly whether it has actually returned to the three or is only back in the
+running.
+
 **Not for me** asks why before it swaps. The reasons are optional and multi-select, and each
 one changes the brief rather than just being recorded — *too expensive* drops the budget a
 notch, *too far* tightens the flight cap, *the visa is a hassle* filters to visa-free — so the

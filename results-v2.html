@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=48">
+<link rel="stylesheet" href="assets/tt.css?v=52">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -795,6 +795,29 @@
   .opts button.on{border-color:var(--ink);background:var(--panel-2);color:var(--ink);}
   .opts .bx{flex:0 0 auto;width:18px;height:18px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;}
   .opts button.on .bx{background:var(--ink);border-color:var(--ink);}
+  /* Its own list — the .opts rules from the other modals turn every child into a
+     full-width button, which shreds this layout. */
+  .out-list{list-style:none;margin:0;padding:0;}
+  .out-list li{border-bottom:1px solid var(--line-2);padding:14px 0;}
+  .out-list li:last-child{border-bottom:0;}
+  .out-row{display:flex;align-items:flex-start;gap:14px;width:100%;}
+  .out-row .thumb{flex:0 0 auto;width:74px;height:56px;}
+  .out-row .in{flex:1;min-width:0;text-align:left;}
+  .out-row .nm{font-size:.98rem;font-weight:600;color:var(--ink);}
+  .out-row .mt{font-size:.8rem;color:var(--ink-3);margin-top:3px;}
+  .out-row .wy{font-size:.82rem;color:var(--ink-2);margin-top:6px;}
+  .out-row .wy b{font-weight:600;}
+  .out-back{
+    flex:0 0 auto;align-self:center;border:1px solid var(--line);background:#fff;cursor:pointer;
+    font:inherit;font-size:.78rem;font-weight:600;padding:8px 14px;color:var(--ink-2);
+  }
+  .out-back:hover{border-color:var(--ink);color:var(--ink);}
+  .out-empty{padding:14px 2px;font-size:.9rem;color:var(--ink-3);}
+  @media(max-width:560px){
+    .out-row{flex-wrap:wrap;}
+    .out-row .in{flex:1 1 60%;}
+    .out-back{width:100%;align-self:stretch;margin-top:4px;}
+  }
   .modal-note{margin:16px 0 0;}
   .modal-note textarea{
     width:100%;border:1px solid var(--line);padding:12px 14px;font:inherit;font-size:.92rem;
@@ -829,6 +852,20 @@
     <button class="btn" id="whyCancel">Cancel</button>
     <span class="spacer"></span>
     <button class="btn btn-primary" id="whyGo">Show me another</button>
+  </div>
+</div>
+
+<!-- ============ what you have ruled out ============ -->
+<div class="modal" id="outModal" role="dialog" aria-modal="true" aria-labelledby="outTitle">
+  <div class="modal-hd">
+    <h3 id="outTitle">What you have ruled out</h3>
+    <p>Nothing is gone for good. Put any of these back and it returns to the running.</p>
+  </div>
+  <div class="modal-bd"><ul class="out-list" id="outList"></ul></div>
+  <div class="modal-ft">
+    <button class="btn" id="outClose">Close</button>
+    <span class="spacer"></span>
+    <button class="btn" id="outAll">Put them all back</button>
   </div>
 </div>
 
@@ -887,6 +924,7 @@
     <span class="hint">Chosen against your brief — with what each one costs you, not just what it offers</span>
     <button class="btn btn-sm" id="compareAll" style="margin-left:14px;">Compare all three</button>
     <div class="view-toggle" id="viewToggle" role="group" aria-label="How to show the three"></div>
+    <button class="btn btn-sm" id="ruledOutBtn" hidden></button>
   </div>
 
   <div id="recs"></div>
@@ -932,8 +970,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=48"></script>
-<script src="assets/core.js?v=48"></script>
+<script src="assets/data.js?v=52"></script>
+<script src="assets/core.js?v=52"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -986,6 +1024,7 @@ function render(noteText){
 
   renderDrawerBrief();
   renderIncluded();
+  renderRuledOut();
 }
 
 function drawViewToggle(){
@@ -1719,10 +1758,97 @@ document.getElementById('whyGo').addEventListener('click', ()=>{
   const said = [];
   WHY.filter(w=>whyPicked.has(w.id)).forEach(w=>{ const t = w.apply(brief); if(t) said.push(t); });
   if(brief.dismissed.indexOf(d.id) === -1) brief.dismissed.push(d.id);
+  /* Keep what they said, so the history can show it and they can judge whether to
+     bring it back. */
+  brief.rejectedWhy = brief.rejectedWhy || {};
+  brief.rejectedWhy[d.id] = WHY.filter(w=>whyPicked.has(w.id)).map(w=>w.label);
   closeWhy();
   render(said.length
     ? 'Dropped ' + d.name + '. We ' + said.join(', ') + ' and picked again.'
     : 'Dropped ' + d.name + '. Here is the next best fit for that slot.');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ================= what you have ruled out =================
+   Rejections are recoverable. The list keeps what they said at the time, so the
+   decision to bring something back is an informed one. */
+const outModal = document.getElementById('outModal');
+const ruledOutBtn = document.getElementById('ruledOutBtn');
+
+function renderRuledOut(){
+  const n = (brief.dismissed || []).length;
+  ruledOutBtn.hidden = n === 0;
+  ruledOutBtn.textContent = 'Ruled out (' + n + ')';
+}
+
+function openOut(){
+  drawOut();
+  mscrim.classList.add('on');
+  outModal.classList.add('on');
+}
+function closeOut(){ mscrim.classList.remove('on'); outModal.classList.remove('on'); }
+
+function drawOut(){
+  const ul = document.getElementById('outList');
+  const ids = brief.dismissed || [];
+  ul.innerHTML = '';
+  if(!ids.length){
+    ul.innerHTML = '<li class="out-empty">You have not ruled anything out.</li>';
+    document.getElementById('outAll').hidden = true;
+    return;
+  }
+  document.getElementById('outAll').hidden = false;
+
+  ids.slice().reverse().forEach(id=>{               /* most recently rejected first */
+    const d = DEST.find(x=>x.id === id);
+    if(!d) return;
+    const why = (brief.rejectedWhy || {})[id] || [];
+    const li = document.createElement('li');
+    li.innerHTML =
+      '<div class="out-row">' +
+        '<div class="thumb ph ph-sm"></div>' +
+        '<div class="in">' +
+          '<div class="nm">' + TT.esc(d.name) + '</div>' +
+          '<div class="mt">' + TT.esc(d.country) + ' &middot; ' + hrs(d.hours) + ' &middot; from ' +
+            TT.money(d.flights[0].price) + '</div>' +
+          '<div class="wy">' + (why.length
+            ? 'You said: <b>' + TT.esc(why.join(', ').toLowerCase()) + '</b>'
+            : 'No reason given') + '</div>' +
+        '</div>' +
+        '<button type="button" class="out-back" data-back="' + id + '">Put it back</button>' +
+      '</div>';
+    li.querySelector('[data-back]').addEventListener('click', ()=>putBack(id));
+    ul.appendChild(li);
+  });
+}
+
+/* Bringing one back does not undo the brief changes the rejection made — those
+   were separate choices and are visible as chips. So say plainly whether it has
+   actually returned to the three. */
+function putBack(id){
+  const d = DEST.find(x=>x.id === id);
+  brief.dismissed = (brief.dismissed || []).filter(x=>x !== id);
+  if(brief.rejectedWhy) delete brief.rejectedWhy[id];
+  closeOut();
+  render();
+
+  const L = TT.lanes(brief);
+  const back = LANE_KEYS.some(k=>L[k].d.id === id);
+  render(back
+    ? d.name + ' is back in the three.'
+    : d.name + ' is back in the running, but not in the three as your brief stands. ' +
+      'Put it up against them from Compare, or loosen the brief.');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+ruledOutBtn.addEventListener('click', openOut);
+document.getElementById('outClose').addEventListener('click', closeOut);
+document.getElementById('outAll').addEventListener('click', ()=>{
+  const n = (brief.dismissed || []).length;
+  brief.dismissed = [];
+  brief.rejectedWhy = {};
+  closeOut();
+  render('Put ' + n + ' back into the running.');
   window.scrollTo({top:0, behavior:'smooth'});
 });
 
@@ -2181,9 +2307,10 @@ document.addEventListener('keydown', e=>{
   else if(sheet.classList.contains('on')) closeSheet();
   else if(whyModal.classList.contains('on')) closeWhy();
   else if(sharkModal.classList.contains('on')) closeShark();
+  else if(outModal.classList.contains('on')) closeOut();
   else closeRail();
 });
-mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); });
+mscrim.addEventListener('click', ()=>{ closeWhy(); closeShark(); closeOut(); });
 
 function drSubmit(){
   const t = drInput.value.trim();

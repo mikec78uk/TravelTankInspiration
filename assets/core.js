@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
+      dismissed:[], rejectedWhy:{}, pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
     };
   }
   function load(){
