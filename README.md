@@ -93,6 +93,11 @@ It opens on a row of **key facts with icons** — flight time, climate, best mon
 band — then runs as separate sections on one template: a kicker in a fixed left rail, and the
 heading and everything beneath it in a single aligned column, with one rhythm between blocks.
 
+The order leads with the inspiration: **In short**, then **Do not miss**, then **Where to stay**.
+Weather, what to wear and food follow as **accordions**, closed by default, each with a peek at
+what is inside — the temperature band, how many packing notes there are — so the practical
+detail is there without pushing the hotels down the page.
+
 **Weather** leads with a verdict on the customer's own month (*February falls inside its best
 window*, or *Not its strongest month*), six suitability tiles, *What this means for your trip*,
 and a **TravelTank watch-out** written per destination. All of it is read off the destination

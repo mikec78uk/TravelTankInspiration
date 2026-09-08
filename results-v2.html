@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=55">
+<link rel="stylesheet" href="assets/tt.css?v=56">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -396,6 +396,26 @@
     .dsec-k{padding-top:0;}
     .dsec-c > h3{font-size:1.18rem;}
   }
+
+  /* A section whose content collapses. The kicker stays in the rail and the
+     heading becomes the control, so the page keeps one layout. */
+  .dsec.acc-sec{padding-top:24px;padding-bottom:24px;}
+  .acc > summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;
+    margin:0;font-size:1.34rem;letter-spacing:-.018em;line-height:1.25;font-weight:600;color:var(--ink);
+  }
+  .acc > summary::-webkit-details-marker{display:none;}
+  .acc > summary:hover{color:var(--ink-2);}
+  .acc > summary .caret{
+    margin-left:auto;flex:0 0 auto;color:var(--ink-3);font-size:1.1rem;
+    transition:transform .15s;display:inline-block;
+  }
+  .acc[open] > summary .caret{transform:rotate(90deg);}
+  .acc > summary .peek{
+    font-size:.86rem;font-weight:400;color:var(--ink-3);letter-spacing:0;
+  }
+  .acc-body{padding-top:18px;}
+  .acc-body > * + *{margin-top:16px;}
 
   .temps{
     display:inline-block;border:1px solid var(--line);
@@ -979,8 +999,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=55"></script>
-<script src="assets/core.js?v=55"></script>
+<script src="assets/data.js?v=56"></script>
+<script src="assets/core.js?v=56"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1373,17 +1393,6 @@ function drawSheet(){
       '<div class="panel"><div class="pt">' + I('pin') + 'Shark tip</div>' +
         '<div class="pb">' + TT.esc(d.tip) + '</div></div>') +
 
-    /* ---- weather ---- */
-    sec('Weather', 'sun',
-      brief.month ? MONTHS_FULL[brief.month-1] + ' in ' + d.name : 'When to go, and what it is like',
-      weatherBlock(d)) +
-
-    /* ---- what to wear ---- */
-    sec('What to wear', 'room', 'Your packing list', packBlock(d)) +
-
-    /* ---- food ---- */
-    sec('Food', 'food', 'What you will be eating', foodBlock(d)) +
-
     /* ---- sights ---- */
     sec('Do not miss', null, d.sights.length + ' things we would not skip', sightsBlock(d, st)) +
 
@@ -1395,6 +1404,17 @@ function drawSheet(){
       '</div>' +
       '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
       '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>') +
+
+    /* ---- the practical detail, folded away until it is wanted ---- */
+    secAcc('Weather', 'sun',
+      brief.month ? MONTHS_FULL[brief.month-1] + ' in ' + d.name : 'When to go, and what it is like',
+      d.temps, weatherBlock(d)) +
+
+    secAcc('What to wear', 'room', 'Your packing list',
+      d.pack.length + ' things worth getting right', packBlock(d)) +
+
+    secAcc('Food', 'food', 'What you will be eating',
+      brief.vibes.indexOf('food') !== -1 ? 'You said this mattered' : '', foodBlock(d)) +
 
     /* ---- on to the logistics ---- */
     '<div class="stage">' +
@@ -1552,6 +1572,18 @@ function pricingStrip(st, nights){
       TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' · ' + travellers(st) +
       '. Change any of it and everything below reprices.</div>' +
   '</div>';
+}
+
+function secAcc(kicker, ic, heading, peek, body){
+  return '<section class="dsec acc-sec">' +
+      '<div class="dsec-k"><span class="lab">' + (ic ? TT.icon(ic) : '') + TT.esc(kicker) + '</span></div>' +
+      '<div class="dsec-c"><details class="acc">' +
+        '<summary>' + TT.esc(heading) +
+          (peek ? ' <span class="peek">' + TT.esc(peek) + '</span>' : '') +
+          '<span class="caret">&rsaquo;</span></summary>' +
+        '<div class="acc-body">' + body + '</div>' +
+      '</details></div>' +
+    '</section>';
 }
 
 function sec(kicker, ic, heading, body){
