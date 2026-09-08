@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=69">
+<link rel="stylesheet" href="assets/tt.css?v=70">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -376,8 +376,6 @@
   .total{border:1px solid var(--ink);padding:20px 24px;margin-top:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
   .total .big{font-size:1.6rem;font-weight:600;letter-spacing:-.02em;}
   .total .bd{font-size:.85rem;color:var(--ink-3);}
-  .sheet-foot{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:30px;padding-top:22px;border-top:1px solid var(--line-2);}
-  .sheet-foot .spacer{flex:1;}
 
   /* ---- one shape for every section ----
      A kicker in the left rail, then the heading and everything under it in a
@@ -1057,8 +1055,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=69"></script>
-<script src="assets/core.js?v=69"></script>
+<script src="assets/data.js?v=70"></script>
+<script src="assets/core.js?v=70"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1418,6 +1416,15 @@ function closeSheet(){
   sheetItem = null;
 }
 
+/* Choosing a hotel changes what the summary at the foot says you are buying,
+   and the summary is a long way below the hotel you just clicked. */
+function toSummary(){
+  requestAnimationFrame(()=>{
+    const stage = document.querySelector('#sheetIn .stage');
+    if(stage) stage.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+}
+
 function partyFor(id){
   if(!ui[id]) stateFor(id);
   const st = ui[id];
@@ -1486,14 +1493,7 @@ function drawSheet(){
       '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>', 'stay') +
 
     /* ---- what you are buying ---- */
-    tripBar(d, st, nights) +
-
-    '<div class="sheet-foot">' +
-      '<button class="btn" id="sheetNotFor">Not for me</button>' +
-      '<button class="btn" id="sheetCmp">Compare</button>' +
-      '<span class="spacer"></span>' +
-      '<button class="btn" id="sheetClose2">Back to the three</button>' +
-    '</div>';
+    tripBar(d, st, nights);
 
   wireSheet(d, st, nights);
 }
@@ -1883,8 +1883,10 @@ function wireSheet(d, st, nights){
     el.addEventListener('click', e=>{
       e.stopPropagation();
       const i = +el.dataset.choose;
-      st.hotel = (st.hotel === i) ? null : i;
+      const chose = st.hotel !== i;      /* choosing, rather than un-choosing */
+      st.hotel = chose ? i : null;
       drawSheet();
+      if(chose) toSummary();
     });
   });
   const drop = inEl.querySelector('[data-drop]');
@@ -1910,10 +1912,7 @@ function wireSheet(d, st, nights){
   const ms = inEl.querySelector('[data-moresights]');
   if(ms) ms.addEventListener('click', ()=>{ st.allSights = !st.allSights; drawSheet(); });
 
-  inEl.querySelector('#sheetClose2').addEventListener('click', closeSheet);
-  inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d, k = sheetLane; closeSheet(); openWhy(x, k); });
   inEl.querySelector('#sheetAsk').addEventListener('click', ()=>{ closeSheet(); openShark(); });
-  inEl.querySelector('#sheetCmp').addEventListener('click', ()=>{ closeSheet(); openCompare(); });
   const jump = ()=>{
     const target = document.getElementById('stay');
     if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
