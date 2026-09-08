@@ -19,7 +19,6 @@ recommendation engine, all leading to a shared results page.
 | [`concept-4.html`](concept-4.html) | **Entry point 4** — stepped questions on the page, writing into the prompt |
 | [`results.html`](results.html) | Shared results — three destinations, flights, hotels, editable brief |
 | [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
-| [`results-v3.html`](results-v3.html) | Same content as v2, laid out horizontally in one screenful |
 | [`flights.html`](flights.html) | Step 2 — the logistics, once the destination and hotel are settled |
 
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
@@ -64,28 +63,20 @@ wireframe nav, and all four entry points still open the original. Each page carr
 layout CSS and script inline, so editing one leaves the other alone; they do share
 `assets/tt.css`, `core.js` and `data.js`, and a change there lands on both.
 
-### v3 — the same shortlist in one screenful
-
-`results-v3.html` is v2's content laid out horizontally: a compact head, then three full-height
-columns filling what is left, and a slim handoff strip. The page itself does not scroll — the
-whole shortlist is comparable at a glance without moving.
-
-Everything v2 does still works: the destination sheet, side-by-side compare, the brief rail,
-per-card nudges, favourites and the handoff. What changed is density — the verdict and trade-off
-are line-clamped and the fits list is cut to two, with the full text a click away in the sheet.
-
-At 1080px and taller the columns fit exactly. Shorter than that a column scrolls inside itself,
-and the cut is faded so it reads as "more below" rather than as truncation. Under 900px one
-screenful is not achievable, so the columns become a swipeable snap rail and the page scrolls
-normally.
-
 ### What v2 does differently
 
 The original page reads as a way of navigating destination content. v2 is built to read as a
 recommendation, and to show its working.
 
-All three are on the page at once as separate cards rather than tabs you toggle — bordered,
-spaced apart, imagery running to the card edges, with a heavier top rule on the lead pick. Each one
+All three are on the page at once rather than tabs you toggle, in a **list or grid** view the
+customer switches between.
+
+**List** stacks them full width. **Grid** puts them three across, and every band lines up with
+the same band on the cards beside it — verdicts on one line, trade-offs on one line, buttons on
+one line — using CSS subgrid so the row track belongs to the container rather than each card.
+The confidence disclosure opens on all three together, since a shared row would otherwise leave
+the other two padding out empty space. Grid cards carry a tall 300px image with a five-shot
+gallery: dots, arrows and a counter. Each one
 carries a **TravelTank verdict**, **Why it fits you**, **The trade-off** — a real downside,
 written per destination — and an expandable **Why we're confident**.
 

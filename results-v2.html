@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=44">
+<link rel="stylesheet" href="assets/tt.css?v=47">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -128,6 +128,130 @@
   .handoff .incl b{color:var(--ink-2);font-weight:600;}
   .handoff .btn-row{margin-top:22px;}
   @media(max-width:620px){.handoff{padding:24px 20px;}.handoff h2{font-size:1.3rem;}}
+
+  /* ================= grid view =================
+     Three across, with every band aligned to the same band on the cards beside it.
+     Subgrid does that: the row track is owned by the container, so the verdicts
+     line up, the trade-offs line up, and the buttons sit on one line. ================= */
+  .view-toggle{display:flex;gap:2px;margin-left:14px;}
+  .view-toggle button{
+    border:1px solid var(--line);background:var(--panel-2);padding:8px 15px;cursor:pointer;
+    font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .view-toggle button.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .view-toggle .ic{width:15px;height:15px;}
+
+  .view-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+    grid-template-rows:repeat(8, auto);
+  }
+  .view-grid .gcard{
+    display:grid;grid-row:span 8;grid-template-rows:subgrid;gap:0;
+    border:1px solid var(--line);border-top:3px solid var(--line);background:#fff;
+    box-shadow:0 1px 3px rgba(17,19,21,.05);margin:0;
+  }
+  /* Same weight on every card so the first band starts on the same line; only the
+     colour marks the lead pick. */
+  .view-grid .gcard.lead{border-top-color:var(--ink);}
+  /* Without subgrid the bands cannot align, so fall back to a plain stack. */
+  @supports not (grid-template-rows: subgrid){
+    .view-grid .gcard{display:flex;flex-direction:column;grid-row:auto;}
+  }
+  @media(max-width:1000px){
+    .view-grid{grid-template-columns:1fr;grid-template-rows:none;}
+    .view-grid .gcard{grid-row:auto;grid-template-rows:none;display:flex;flex-direction:column;}
+  }
+
+  /* every band takes the same inset */
+  .gcard > *:not(.gmedia){padding-left:22px;padding-right:22px;}
+
+  /* ---- media: taller, and there is more than one ---- */
+  .gmedia{position:relative;height:300px;overflow:hidden;}
+  .gmedia .gshot{position:absolute;inset:0;}
+  .gtag{
+    position:absolute;top:14px;left:14px;background:var(--ink);color:#fff;z-index:2;
+    font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;padding:5px 10px;
+  }
+  .gfav{
+    position:absolute;top:12px;right:12px;z-index:2;width:36px;height:36px;
+    border:1px solid var(--line);background:#fff;cursor:pointer;font-size:.95rem;
+    color:var(--ink-2);border-radius:50%;
+  }
+  .gfav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .gcount{
+    position:absolute;bottom:14px;right:14px;z-index:2;background:rgba(255,255,255,.94);
+    border:1px solid var(--line);font-size:.72rem;color:var(--ink-2);padding:3px 9px;
+  }
+  .gnav{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:34px;height:34px;
+    border:1px solid var(--line);background:rgba(255,255,255,.94);cursor:pointer;
+    font-size:1rem;line-height:1;color:var(--ink-2);border-radius:50%;opacity:0;transition:opacity .15s;
+  }
+  .gmedia:hover .gnav,.gnav:focus{opacity:1;}
+  .gnav.prev{left:12px;}
+  .gnav.next{right:12px;}
+  .gdots{position:absolute;bottom:16px;left:14px;z-index:2;display:flex;gap:6px;}
+  .gdots button{
+    width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
+    border:1px solid var(--ink-2);background:rgba(255,255,255,.8);
+  }
+  .gdots button.on{background:var(--ink);border-color:var(--ink);}
+
+  /* ---- bands ---- */
+  .gident{padding-top:20px;padding-bottom:16px;}
+  .glevel{
+    font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-3);border:1px solid var(--line);padding:3px 8px;display:inline-block;
+  }
+  .gswapped{
+    font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+    border:1px solid var(--ink);padding:3px 8px;display:inline-block;margin-left:6px;color:var(--ink);
+  }
+  .gname{font-size:1.85rem;line-height:1.08;letter-spacing:-.028em;font-weight:600;margin:11px 0 0;}
+  .gsub{font-size:.83rem;color:var(--ink-3);margin-top:7px;line-height:1.55;}
+  .gsub b{color:var(--ink-2);}
+
+  .gband{padding-top:16px;padding-bottom:16px;border-top:1px solid var(--line-2);}
+  .gband .lab{display:block;margin:0 0 8px;font-size:.62rem;}
+  .gband p{margin:0;font-size:.94rem;line-height:1.6;color:var(--ink-2);}
+  .gband .gverdict{color:var(--ink);}
+  .gticks{list-style:none;margin:0;padding:0;}
+  .gticks li{position:relative;padding-left:22px;margin-bottom:6px;font-size:.9rem;color:var(--ink-2);line-height:1.5;}
+  .gticks li:last-child{margin-bottom:0;}
+  .gticks li::before{content:'\2713';position:absolute;left:0;top:-1px;color:var(--ink);font-weight:600;}
+
+  /* the disclosure is its own band, so nothing is left hanging under it */
+  .gconf{border-top:1px solid var(--line-2);}
+  .gconf summary{
+    list-style:none;cursor:pointer;padding:14px 0;display:flex;align-items:center;gap:9px;
+    font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
+  }
+  .gconf summary::-webkit-details-marker{display:none;}
+  .gconf summary::after{content:'\203A';transition:transform .15s;display:inline-block;color:var(--ink-3);}
+  .gconf[open] summary::after{transform:rotate(90deg);}
+  .gconf .inner{padding-bottom:16px;}
+  .gconf .conf-score{font-size:.88rem;margin:0 0 10px;}
+  .gconf .marks{columns:1;margin-bottom:12px;}
+  .gconf .marks li{font-size:.85rem;}
+  .gconf .evid li{font-size:.8rem;}
+
+  .gacts{padding-top:16px;padding-bottom:14px;border-top:1px solid var(--line-2);
+    display:flex;gap:7px;align-items:stretch;}
+  .gacts .btn{
+    flex:0 0 auto;justify-content:center;text-align:center;
+    padding:11px 12px;font-size:.82rem;white-space:nowrap;
+  }
+  .gacts .btn:first-child{flex:1 1 auto;}      /* Explore takes what is left */
+  .gnudge{padding-top:14px;padding-bottom:18px;border-top:1px solid var(--line-2);
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center;align-content:start;}
+  .gnudge .nl{font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-3);width:100%;margin-bottom:2px;}
+  .gnudge .chip{font-size:.78rem;padding:5px 11px;}
+  .gnudge .undo{
+    background:none;border:0;padding:0;cursor:pointer;font:inherit;
+    font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
+  }
+  .gnudge .undo:hover{color:var(--ink);text-decoration:underline;}
 
   /* ---- "like this, but…" — a nudge on the card, not the whole shortlist ---- */
   .rec-nudge{
@@ -762,6 +886,7 @@
     <span class="lab">Three we'd stand behind</span>
     <span class="hint">Chosen against your brief — with what each one costs you, not just what it offers</span>
     <button class="btn btn-sm" id="compareAll" style="margin-left:14px;">Compare all three</button>
+    <div class="view-toggle" id="viewToggle" role="group" aria-label="How to show the three"></div>
   </div>
 
   <div id="recs"></div>
@@ -807,8 +932,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=44"></script>
-<script src="assets/core.js?v=44"></script>
+<script src="assets/data.js?v=47"></script>
+<script src="assets/core.js?v=47"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -844,14 +969,17 @@ function render(noteText){
     n.hidden = false; n.textContent = noteText;
   } else n.hidden = true;
 
+  drawViewToggle();
+
   const host = document.getElementById('recs');
+  host.className = brief.view === 'grid' ? 'view-grid' : 'view-list';
   host.innerHTML = LANE_KEYS.map((k,i)=>{
     /* If the lead slot is there because the customer pinned it, say so rather than
        calling it our best match. */
     const meta = (k === 'best' && L.pinned)
       ? {label:'Your pick', blurb:TT.LANE_META.best.blurb}
       : TT.LANE_META[k];
-    return recHtml(L[k], meta, i===0, k);
+    return brief.view === 'grid' ? gridHtml(L[k], meta, i===0, k) : recHtml(L[k], meta, i===0, k);
   }).join('');
   LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k],
     (k === 'best' && L.pinned) ? {label:'Your pick'} : TT.LANE_META[k]));
@@ -860,18 +988,111 @@ function render(noteText){
   renderIncluded();
 }
 
+function drawViewToggle(){
+  const el = document.getElementById('viewToggle');
+  const views = [
+    {id:'list', label:'List', ic:'M3 6h18M3 12h18M3 18h18'},
+    {id:'grid', label:'Grid', ic:'M4 4h6v16H4zM14 4h6v16h-6z'}
+  ];
+  el.innerHTML = views.map(v=>
+    '<button type="button" class="' + (brief.view === v.id || (!brief.view && v.id === 'list') ? 'on' : '') +
+      '" data-view="' + v.id + '" aria-pressed="' + (brief.view === v.id) + '">' +
+      '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + v.ic + '"/></svg>' +
+      v.label + '</button>').join('');
+  el.querySelectorAll('[data-view]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      brief.view = b.dataset.view;
+      TT.save(brief);
+      render();
+    });
+  });
+}
+
+/* The three cards share a row track, so one card expanding on its own would leave
+   the other two padding out empty space. They open together instead. */
+let gridConfOpen = false;
+
+const SHOTS = 5;
+function shotIndex(id){
+  const st = stateFor(id);
+  if(st.shot === undefined) st.shot = 0;
+  return st.shot;
+}
+
+/* The grid card is a flat list of bands so the container's subgrid can line each
+   one up with the same band on the cards beside it. */
+function gridHtml(item, meta, lead, laneKey){
+  const d = item.d;
+  const rep = TT.matchReport(d, brief);
+  const fits = TT.score(d, brief).why.slice(0,3);
+  if(!fits.length){
+    fits.push(laneKey === 'premium'
+      ? 'Here as the upgrade rather than the closest fit'
+      : 'A safe first pick while you tell us more');
+  }
+  const shot = shotIndex(d.id);
+
+  return '' +
+  '<article class="gcard' + (lead ? ' lead' : '') + '">' +
+
+    '<div class="gmedia">' +
+      '<div class="gshot ph' + (shot % 2 ? ' ph-sm' : '') + '"></div>' +
+      '<span class="gtag">' + meta.label + '</span>' +
+      '<button class="gfav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
+      '<button class="gnav prev" data-shot="-1" aria-label="Previous picture">&lsaquo;</button>' +
+      '<button class="gnav next" data-shot="1" aria-label="Next picture">&rsaquo;</button>' +
+      '<span class="gcount">' + (shot + 1) + ' / ' + SHOTS + '</span>' +
+      '<span class="gdots">' + Array.from({length:SHOTS}, (_,i)=>
+        '<button type="button" class="' + (i===shot?'on':'') + '" data-dot="' + i + '" ' +
+          'aria-label="Picture ' + (i+1) + '"></button>').join('') + '</span>' +
+    '</div>' +
+
+    '<div class="gident">' +
+      '<span class="glevel">' + rep.level + '</span>' +
+      (item.swapped ? '<span class="gswapped">You swapped this in</span>' : '') +
+      '<h2 class="gname">' + TT.esc(d.name) + '</h2>' +
+      '<div class="gsub">' + TT.esc(d.country) + ' &middot; ' + hrs(d.hours) + ' &middot; ' +
+        VISA_LABEL[d.visa] + '<br>from <b>' + TT.money(d.flights[0].price) + '</b> &middot; best ' +
+        TT.monthRuns(d) + '</div>' +
+    '</div>' +
+
+    '<div class="gband"><span class="lab">TravelTank verdict</span>' +
+      '<p class="gverdict">' + TT.esc(d.why) + '</p></div>' +
+
+    '<div class="gband"><span class="lab">Why it fits you</span>' +
+      '<ul class="gticks">' + fits.map(w=>'<li>' + TT.esc(w) + '</li>').join('') + '</ul></div>' +
+
+    '<div class="gband"><span class="lab">The trade-off</span>' +
+      '<p>' + TT.esc(d.tradeoff) + '</p></div>' +
+
+    '<details class="gconf"' + (gridConfOpen ? ' open' : '') + '><summary>Why we&rsquo;re confident</summary>' +
+      '<div class="inner">' + confidenceHtml(d, rep) + '</div></details>' +
+
+    '<div class="gacts">' +
+      '<button class="btn btn-primary" data-open>Explore &rarr;</button>' +
+      '<button class="btn" data-cmp>Compare</button>' +
+      (poolExhausted
+        ? '<button class="btn" data-notfor disabled>None left</button>'
+        : '<button class="btn" data-notfor>Not for me</button>') +
+    '</div>' +
+
+    nudgeRow(d, laneKey, 'gnudge') +
+  '</article>';
+}
+
 /* Only chips we can actually deliver — nudgeOptionsFor works out the replacement
    before we offer the option. */
-function nudgeRow(d, laneKey){
+function nudgeRow(d, laneKey, cls){
   const L = TT.lanes(brief);
   const shown = LANE_KEYS.map(k=>L[k].d.id);
   const opts = TT.nudgeOptionsFor(d, brief, shown);
   const from = (brief.swapFrom || {})[laneKey];
   const orig = from ? DEST.find(x=>x.id === from) : null;
 
-  if(!opts.length && !orig) return '';
+  if(!opts.length && !orig) return cls ? '<div class="' + cls + '"></div>' : '';
 
-  return '<div class="rec-nudge">' +
+  return '<div class="' + (cls || 'rec-nudge') + '">' +
     '<span class="nl">Like this, but&hellip;</span>' +
     opts.map(o=>'<button type="button" class="chip" data-nudge="' + o.id +
       '" data-lane="' + laneKey + '" data-to="' + o.to.id + '" ' +
@@ -988,6 +1209,24 @@ function wireRec(el, item, meta){
   el.querySelector('[data-cmp]').addEventListener('click', openCompare);
   const nf = el.querySelector('[data-notfor]');
   if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
+
+  const gc = el.querySelector('.gconf');
+  if(gc) gc.addEventListener('toggle', ()=>{
+    if(gc.open === gridConfOpen) return;
+    gridConfOpen = gc.open;
+    document.querySelectorAll('.gconf').forEach(x=>{ x.open = gridConfOpen; });
+  });
+
+  el.querySelectorAll('[data-shot]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const st = stateFor(d.id);
+      st.shot = ((shotIndex(d.id) + (+b.dataset.shot)) % SHOTS + SHOTS) % SHOTS;
+      render();
+    });
+  });
+  el.querySelectorAll('[data-dot]').forEach(b=>{
+    b.addEventListener('click', ()=>{ stateFor(d.id).shot = +b.dataset.dot; render(); });
+  });
 
   el.querySelectorAll('[data-nudge]').forEach(b=>{
     b.addEventListener('click', ()=>{
