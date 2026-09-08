@@ -180,7 +180,7 @@ tile with two stacked beside it — rather than a single banner with the name ov
 **A history icon sits beside *Not for me*** on any card whose slot has had something rejected
 from it, badged with the count. Rejections belong to the slot they were made in, so the icon on
 the premium card shows what you turned down for that slot — not one pile for the whole page. It
-lists them newest first with the reason given at the time, and restores any one or all of them.
+lists them newest first with the reason given at the time, and restores them one at a time.
 Bringing one back does not silently undo the brief changes the rejection made, so the page says
 plainly whether it has actually returned to the three or is only back in the running.
 

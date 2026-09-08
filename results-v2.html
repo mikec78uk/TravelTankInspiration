@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=53">
+<link rel="stylesheet" href="assets/tt.css?v=54">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -876,8 +876,6 @@
   <div class="modal-bd"><ul class="out-list" id="outList"></ul></div>
   <div class="modal-ft">
     <button class="btn" id="outClose">Close</button>
-    <span class="spacer"></span>
-    <button class="btn" id="outAll">Put them all back</button>
   </div>
 </div>
 
@@ -981,8 +979,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=53"></script>
-<script src="assets/core.js?v=53"></script>
+<script src="assets/data.js?v=54"></script>
+<script src="assets/core.js?v=54"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1827,10 +1825,8 @@ function drawOut(){
   ul.innerHTML = '';
   if(!ids.length){
     ul.innerHTML = '<li class="out-empty">You have not ruled anything out.</li>';
-    document.getElementById('outAll').hidden = true;
     return;
   }
-  document.getElementById('outAll').hidden = false;
 
   ids.slice().reverse().forEach(id=>{               /* most recently rejected first */
     const d = DEST.find(x=>x.id === id);
@@ -1876,18 +1872,6 @@ function putBack(id){
 }
 
 document.getElementById('outClose').addEventListener('click', closeOut);
-document.getElementById('outAll').addEventListener('click', ()=>{
-  const ids = rejectedIn(outLane);
-  ids.forEach(id=>{
-    brief.dismissed = brief.dismissed.filter(x=>x !== id);
-    if(brief.rejectedWhy) delete brief.rejectedWhy[id];
-    if(brief.rejectedFrom) delete brief.rejectedFrom[id];
-  });
-  closeOut();
-  render('Put ' + ids.length + ' back into the running.');
-  window.scrollTo({top:0, behavior:'smooth'});
-});
-
 /* ================= human handoff ================= */
 const SHARK_HELP = [
   'Choosing between these three',
