@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
-<title>Flights — the logistics · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=57">
+<title>Your trip · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css?v=61">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -168,8 +168,8 @@
   <div id="page"></div>
 </main>
 
-<script src="assets/data.js?v=57"></script>
-<script src="assets/core.js?v=57"></script>
+<script src="assets/data.js?v=61"></script>
+<script src="assets/core.js?v=61"></script>
 <script>
 TT.mount('flights.html');
 
@@ -204,38 +204,46 @@ function render(){
   const roomsNeeded = hotel ? Math.max(trip.rooms, TT.roomsNeeded(room, trip.adults, trip.children)) : 0;
   const stay = hotel ? room.night * roomsNeeded * nights : 0;
 
+  const mode = trip.mode || (trip.hotel !== null && trip.hotel !== undefined ? 'both' : 'flight');
+  const wantsFlight = mode !== 'hotel';
   if(trip.flight === undefined) trip.flight = suggestFlight(d);
   const cabins = TT.cabinsFor(d);
   if(!trip.cabin || !cabins.some(c=>c.id === trip.cabin)) trip.cabin = 'eco';
   const flight = d.flights[trip.flight];
   const fare = TT.farePrice(flight, trip.cabin);
-  const air = fare * people;
+  const air = wantsFlight ? fare * people : 0;
 
   /* Everything except the one we are recommending above. Filtering out the
      *selected* flight too would make it vanish the moment you picked it. */
   const others = d.flights.map((f,i)=>({f:f, i:i})).filter(x=>x.i !== suggestFlight(d));
 
   page.innerHTML =
-    '<div class="crumb">Step 2 of 2 &middot; <b>' + TT.esc(d.name) + '</b> &middot; the logistics</div>' +
-    '<h1>Getting you there</h1>' +
-    '<p class="lede">The inspiration is settled. This part is just picking the flight that suits you — ' +
-      'we have suggested one, but the rest of the route is here.</p>' +
+    '<div class="crumb">Step 2 of 2 &middot; <b>' + TT.esc(d.name) + '</b> &middot; ' +
+      (mode === 'hotel' ? 'the stay' : mode === 'flight' ? 'the flights' : 'flights and hotel') + '</div>' +
+    '<h1>' + (mode === 'hotel' ? 'Your stay' : mode === 'flight' ? 'Getting you there' : 'Your trip') + '</h1>' +
+    '<p class="lede">' + (mode === 'hotel'
+      ? 'Just the hotel, no flights on this booking. Change the dates or the room back on the destination.'
+      : mode === 'flight'
+        ? 'Flights only — no hotel on this booking. We have suggested one, but the rest of the route is here.'
+        : 'The inspiration is settled. This part is just picking the flight that suits you — ' +
+          'we have suggested one, but the rest of the route is here.') + '</p>' +
 
     '<div class="trip">' +
       '<div class="trip-grid">' +
         '<div><span class="lab">Destination</span><div class="v">' + TT.esc(d.name) +
           '<small>' + TT.esc(d.country) + '</small></div></div>' +
         '<div><span class="lab">Dates</span><div class="v">' + TT.fmtDate(trip.from) +
-          '<small>to ' + TT.fmtDate(TT.addDays(trip.from, nights)) + ' · ' + nights + ' nights</small></div></div>' +
+          '<small>to ' + TT.fmtDate(TT.addDays(trip.from, nights)) + ' · ' + nts(nights) + '</small></div></div>' +
         '<div><span class="lab">Travelling</span><div class="v">' + people + ' travelling' +
           '<small>' + trip.adults + ' adult' + (trip.adults===1?'':'s') +
             (trip.children ? ', ' + trip.children + ' child' + (trip.children===1?'':'ren') : '') + '</small></div></div>' +
         '<div><span class="lab">Staying at</span><div class="v">' + (hotel ? TT.esc(hotel.n) : 'Not chosen') +
-          '<small>' + (hotel ? roomsNeeded + ' × ' + TT.esc(room.name).toLowerCase() : 'You can add this later') + '</small></div></div>' +
+          '<small>' + (hotel ? roomsNeeded + ' × ' + TT.esc(room.name).toLowerCase() : 'Flights only') + '</small></div></div>' +
       '</div>' +
     '</div>' +
 
-    '<div class="sec">' +
+    (!wantsFlight ? '' :
+'<div class="sec">' +
       '<div class="sec-hd"><h2>Cabin</h2></div>' +
       '<div class="cabins">' + cabins.map(c=>
         '<button type="button" class="cabin' + (c.id===trip.cabin?' on':'') + '" data-cabin="' + c.id + '">' +
@@ -259,26 +267,32 @@ function render(){
       '<div class="sec-hd"><h2>Everything else on the route</h2></div>' +
       '<p class="sec-sub">Same dates, same cabin. Cheaper usually means a longer layover.</p>' +
       others.map(x=>flightRow(x.f, x.i, people, trip.flight === x.i, d)).join('') +
-    '</div>' +
+    '</div>') +
 
     '<div class="total">' +
       '<div class="total-top">' +
         '<div><span class="lab">Indicative trip total</span>' +
           '<div class="big">' + TT.money(air + stay) + '</div>' +
-          '<div class="bd">' + people + ' travelling &middot; ' + nights + ' nights</div></div>' +
+          '<div class="bd">' + people + ' travelling &middot; ' + nts(nights) + ' &middot; ' +
+            (mode === 'hotel' ? 'hotel only' : mode === 'flight' ? 'flights only' : 'flights and hotel') +
+          '</div></div>' +
       '</div>' +
       '<div class="breakdown">' +
-        '<div>Flights &mdash; ' + TT.esc(flight.carrier) + ', ' + TT.cabinOf(trip.cabin).label.toLowerCase() +
-          ', ' + people + ' &times; ' + TT.money(fare) + '</div>' +
-        '<div class="amt">' + TT.money(air) + '</div>' +
+        (wantsFlight
+          ? '<div>Flights &mdash; ' + TT.esc(flight.carrier) + ', ' + TT.cabinOf(trip.cabin).label.toLowerCase() +
+              ', ' + people + ' &times; ' + TT.money(fare) + '</div>' +
+            '<div class="amt">' + TT.money(air) + '</div>'
+          : '<div>Flights &mdash; not part of this booking</div><div class="amt">&mdash;</div>') +
         (hotel
           ? '<div>Hotel &mdash; ' + TT.esc(hotel.n) + ', ' + roomsNeeded + ' room' + (roomsNeeded===1?'':'s') +
-              ' &times; ' + nights + ' nights</div><div class="amt">' + TT.money(stay) + '</div>'
-          : '<div>Hotel &mdash; not chosen yet</div><div class="amt">&mdash;</div>') +
+              ' &times; ' + nts(nights) + '</div><div class="amt">' + TT.money(stay) + '</div>'
+          : '<div>Hotel &mdash; not part of this booking</div><div class="amt">&mdash;</div>') +
         '<div class="tot">Total</div><div class="amt tot">' + TT.money(air + stay) + '</div>' +
       '</div>' +
       '<div class="btn-row">' +
-        '<button class="btn btn-primary" id="book">Book this trip</button>' +
+        '<button class="btn btn-primary" id="book">' +
+          (mode === 'hotel' ? 'Book this stay' : mode === 'flight' ? 'Book these flights' : 'Book this trip') +
+        '</button>' +
         '<button class="btn" id="shark">Speak to a Travel Shark</button>' +
       '</div>' +
       '<p class="disclaim">Indicative only — fares and rates move. A Travel Shark confirms the real price before anything is booked.</p>' +

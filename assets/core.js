@@ -696,7 +696,7 @@ const TT = (function(){
       ['concept-4.html','4 · Stepped prompt'],
       ['results.html','Results'],
       ['results-v2.html','Results v2'],
-      ['flights.html','Flights']
+      ['flights.html','Your trip']
     ];
     return '<div class="wf-bar"><div class="wf-bar-in">' +
       '<span class="wf-tag">Wireframe</span>' +

@@ -113,6 +113,19 @@ panel with a per-person-per-day range scaled to the destination.
 
 **Do not miss** is a list of six, three shown with a *View all 6* rather than a grid.
 
+**Where you stay is treated as part of the inspiration**, not a booking step. The section is
+headed *Where you stay changes the trip* and says so plainly — the same destination is a
+different holiday depending on the base. Because that section sits below the fold, a strip
+under the key facts points at it: *6 places we would book in Doha, from ₦61,000 a night* with a
+jump link.
+
+**Three ways to buy, named as such.** A dark panel at the foot of the sheet shows what is
+chosen — where and when, hotel, flights — and offers only the paths that make sense from there.
+No hotel picked: *Choose where to stay* or *Flights only*. Hotel picked: *Add flights and book
+both* or *Book the stay only*. The final page follows the choice: hotel-only drops the cabin and
+flight sections entirely and reads *Your stay*; flights-only shows *Hotel — not part of this
+booking*; each gets its own book button.
+
 **Hotels are cards, not a list.** Each carries a large image, a badge where the record supports
 one (*On the beach*, *Lowest rate here*, *Five star*), star rating and board, the property's own
 line pulled out as the hook, facility chips, and both the nightly rate and what the stay

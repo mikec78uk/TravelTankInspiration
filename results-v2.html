@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=57">
+<link rel="stylesheet" href="assets/tt.css?v=61">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -624,15 +624,44 @@
     .hpanel{padding:6px 20px 22px;}
   }
 
-  .stage{
-    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    border:1px solid var(--ink);background:var(--ink);color:#fff;padding:20px 26px;margin-top:30px;
+  /* ---- what you are actually buying ---- */
+  .stage{border:1px solid var(--ink);background:var(--ink);color:#fff;padding:22px 26px;margin-top:34px;}
+  .stage .t{font-size:1.15rem;font-weight:600;}
+  .stage .s{font-size:.88rem;color:rgba(255,255,255,.7);margin-top:4px;}
+  .stage-lines{
+    margin:18px 0 0;padding:16px 0 0;border-top:1px solid rgba(255,255,255,.22);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
   }
-  .stage .t{font-size:1.05rem;font-weight:600;}
-  .stage .s{font-size:.88rem;color:rgba(255,255,255,.72);margin-top:3px;}
-  .stage .btn{margin-left:auto;background:#fff;border-color:#fff;color:var(--ink);}
-  .stage .btn:hover{background:var(--panel);border-color:var(--panel);}
-  @media(max-width:620px){.stage .btn{margin-left:0;}}
+  @media(max-width:760px){.stage-lines{grid-template-columns:1fr;gap:12px;}}
+  .stage-line .k{
+    font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;
+    color:rgba(255,255,255,.6);font-weight:600;
+  }
+  .stage-line .v{font-size:.95rem;margin-top:5px;color:#fff;}
+  .stage-line .v small{display:block;font-size:.8rem;color:rgba(255,255,255,.62);margin-top:2px;}
+  .stage-line.none .v{color:rgba(255,255,255,.55);}
+  .stage-acts{
+    margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.22);
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  }
+  .stage-acts .btn{background:transparent;border-color:rgba(255,255,255,.45);color:#fff;}
+  .stage-acts .btn:hover{background:rgba(255,255,255,.12);border-color:#fff;}
+  .stage-acts .btn-primary{background:#fff;border-color:#fff;color:var(--ink);}
+  .stage-acts .btn-primary:hover{background:var(--panel);border-color:var(--panel);}
+  .stage-acts .sp{flex:1;}
+  @media(max-width:620px){.stage-acts .sp{display:none;}.stage-acts .btn{flex:1 1 auto;justify-content:center;}}
+
+  /* ---- a pointer to the hotels, before the page pushes them down ---- */
+  .stay-teaser{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    border:1px solid var(--line);background:var(--panel-2);padding:16px 20px;margin-top:22px;
+  }
+  .stay-teaser .tt{font-size:1rem;font-weight:600;color:var(--ink);}
+  .stay-teaser .ts{font-size:.88rem;color:var(--ink-3);margin-top:3px;}
+  .stay-teaser .thumbs{display:flex;gap:5px;margin-left:auto;}
+  .stay-teaser .thumbs .ph{width:56px;height:42px;}
+  .stay-teaser .btn{flex:0 0 auto;}
+  @media(max-width:700px){.stay-teaser .thumbs{display:none;}}
 
   /* ================= compare ================= */
   .cmp{
@@ -998,8 +1027,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=57"></script>
-<script src="assets/core.js?v=57"></script>
+<script src="assets/data.js?v=61"></script>
+<script src="assets/core.js?v=61"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1386,6 +1415,9 @@ function drawSheet(){
       keyTile('wallet',   'Price band',        ['Easy on the wallet','Mid-range','Premium'][d.budget-1], 'for where you would stay') +
     '</div>' +
 
+    /* ---- the hotels sit below the fold, so say they are there ---- */
+    stayTeaser(d, st) +
+
     /* ---- overview ---- */
     sec('Overview', null, 'In short',
       '<p>' + TT.esc(d.blurb) + '</p>' +
@@ -1396,13 +1428,15 @@ function drawSheet(){
     sec('Do not miss', null, d.sights.length + ' things we would not skip', sightsBlock(d, st)) +
 
     /* ---- where to stay ---- */
-    sec('Where to stay', 'room', 'Somewhere to base yourself',
+    sec('Where to stay', 'room', 'Where you stay changes the trip',
+      '<p>' + TT.esc(d.name) + ' is three different holidays depending on where you put yourself. ' +
+        'These are the three we would book, and what each one turns the week into.</p>' +
       pricingStrip(st, nights) +
       '<div class="tiers">' + TIERS.map(([k,l])=>
         '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
       '</div>' +
       '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
-      '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>') +
+      '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>', 'stay') +
 
     /* ---- the practical detail, folded away until it is wanted ---- */
     secAcc('Weather', 'sun',
@@ -1415,15 +1449,8 @@ function drawSheet(){
     secAcc('Food', 'food', 'What you will be eating',
       brief.vibes.indexOf('food') !== -1 ? 'You said this mattered' : '', foodBlock(d)) +
 
-    /* ---- on to the logistics ---- */
-    '<div class="stage">' +
-      '<div><div class="t">' + (st.hotel !== null ? 'Hotel chosen' : 'Happy with the destination?') + '</div>' +
-        '<div class="s">' + (st.hotel !== null
-          ? 'Next: flights from Lagos for ' + travellers(st) + '.'
-          : 'Pick somewhere to stay, or go straight to the flights.') + '</div></div>' +
-      '<button class="btn" id="sheetAsk">Ask a Travel Shark</button>' +
-      '<button class="btn btn-primary" id="toFlights">See flights from Lagos &rarr;</button>' +
-    '</div>' +
+    /* ---- what you are buying ---- */
+    tripBar(d, st, nights) +
 
     '<div class="sheet-foot">' +
       '<button class="btn" id="sheetNotFor">Not for me</button>' +
@@ -1585,11 +1612,65 @@ function secAcc(kicker, ic, heading, peek, body){
     '</section>';
 }
 
-function sec(kicker, ic, heading, body){
-  return '<section class="dsec">' +
+function sec(kicker, ic, heading, body, id){
+  return '<section class="dsec"' + (id ? ' id="' + id + '"' : '') + '>' +
       '<div class="dsec-k"><span class="lab">' + (ic ? TT.icon(ic) : '') + TT.esc(kicker) + '</span></div>' +
       '<div class="dsec-c">' + (heading ? '<h3>' + TT.esc(heading) + '</h3>' : '') + body + '</div>' +
     '</section>';
+}
+
+function stayTeaser(d, st){
+  const total = ['low','mid','high'].reduce((n,k)=>n + d.hotels[k].length, 0);
+  const from = Math.min.apply(null, ['low','mid','high'].map(k=>
+    Math.min.apply(null, d.hotels[k].map(h=>h.night))));
+  return '<div class="stay-teaser">' +
+    '<div><div class="tt">Where you stay changes this trip</div>' +
+      '<div class="ts">' + total + ' places we would book in ' + TT.esc(d.name) +
+        ', from ' + TT.money(from) + ' a night — a beach base and a city one are not the same week.</div></div>' +
+    '<div class="thumbs"><div class="ph"></div><div class="ph ph-sm"></div><div class="ph"></div></div>' +
+    '<button type="button" class="btn btn-sm" id="toStay">See where to stay &darr;</button>' +
+  '</div>';
+}
+
+/* Three ways out of here, and the page has to say which is which: the flight on
+   its own, the stay on its own, or both. */
+function tripBar(d, st, nights){
+  const hotel = st.hotel !== null && st.hotel !== undefined ? d.hotels[st.tier][st.hotel] : null;
+  const rooms = hotel ? TT.roomsFor(hotel) : null;
+  const room  = hotel ? (rooms.find(r=>r.id === st.room) || rooms[0]) : null;
+  const needed = hotel ? Math.max(st.rooms, TT.roomsNeeded(room, st.adults, st.children)) : 0;
+  const stay  = hotel ? room.night * needed * nights : 0;
+  const stayFrom = TT.stayOf(brief);
+
+  return '<div class="stage">' +
+    '<div class="t">' + (hotel ? 'Your trip so far' : 'What would you like to book?') + '</div>' +
+    '<div class="s">' + (hotel
+      ? 'Take the stay on its own, or add flights and book it as one trip.'
+      : 'Pick somewhere to stay for the whole trip, or take the flights on their own.') + '</div>' +
+
+    '<div class="stage-lines">' +
+      '<div class="stage-line"><div class="k">Where and when</div>' +
+        '<div class="v">' + TT.esc(d.name) +
+          '<small>' + TT.fmtDate(stayFrom.from) + ' · ' + nts(nights) + ' · ' + travellers(st) + '</small></div></div>' +
+      '<div class="stage-line' + (hotel ? '' : ' none') + '"><div class="k">Hotel</div>' +
+        '<div class="v">' + (hotel
+          ? TT.esc(hotel.n) + '<small>' + needed + ' × ' + TT.esc(room.name).toLowerCase() +
+            ' · ' + TT.money(stay) + '</small>'
+          : 'Not chosen<small>Pick one below to include it</small>') + '</div></div>' +
+      '<div class="stage-line none"><div class="k">Flights</div>' +
+        '<div class="v">Not chosen<small>From ' + TT.money(d.flights[0].price) + ' each, return</small></div></div>' +
+    '</div>' +
+
+    '<div class="stage-acts">' +
+      (hotel
+        ? '<button class="btn btn-primary" data-go="both">Add flights and book both &rarr;</button>' +
+          '<button class="btn" data-go="hotel">Book the stay only &rarr;</button>'
+        : '<button class="btn btn-primary" id="toStay2">Choose where to stay</button>' +
+          '<button class="btn" data-go="flight">Flights only &rarr;</button>') +
+      '<span class="sp"></span>' +
+      '<button class="btn" id="sheetAsk">Ask a Travel Shark</button>' +
+    '</div>' +
+  '</div>';
 }
 
 function keyTile(ic, label, value, sub){
@@ -1664,7 +1745,7 @@ function hotelRow(h, i, st, nights, d){
         '<div>' +
           '<div class="amt">' + TT.money(h.night) + '</div>' +
           '<div class="per">per room, per night</div>' +
-          '<div class="stay">' + TT.money(chosen.night * needed * nights) + ' for ' + nights + ' nights</div>' +
+          '<div class="stay">' + TT.money(chosen.night * needed * nights) + ' for ' + nts(nights) + '</div>' +
         '</div>' +
         '<span class="cta">' + (open ? 'Hide details' : 'View this hotel') +
           '<span class="caret">&rsaquo;</span></span>' +
@@ -1701,7 +1782,7 @@ function hotelRow(h, i, st, nights, d){
             }).join('') +
           '</div>' +
           '<div class="hsel">' +
-            '<span class="sum"><b>' + TT.money(stayTotal) + '</b> for ' + nights + ' nights &middot; ' +
+            '<span class="sum"><b>' + TT.money(stayTotal) + '</b> for ' + nts(nights) + ' &middot; ' +
               needed + ' &times; ' + TT.esc(chosen.name).toLowerCase() + '</span>' +
           '</div>' +
         '</div>'
@@ -1755,15 +1836,27 @@ function wireSheet(d, st, nights){
   inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d, k = sheetLane; closeSheet(); openWhy(x, k); });
   inEl.querySelector('#sheetAsk').addEventListener('click', ()=>{ closeSheet(); openShark(); });
   inEl.querySelector('#sheetCmp').addEventListener('click', ()=>{ closeSheet(); openCompare(); });
-  inEl.querySelector('#toFlights').addEventListener('click', ()=>{
-    brief.trip = {
-      dest: d.id,
-      from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v2.html',
-      adults: st.adults, children: st.children, rooms: st.rooms,
-      tier: st.tier, hotel: st.hotel, room: st.room
-    };
-    TT.save(brief);
-    location.href = 'flights.html';
+  const jump = ()=>{
+    const target = document.getElementById('stay');
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  };
+  const t1 = inEl.querySelector('#toStay');  if(t1) t1.addEventListener('click', jump);
+  const t2 = inEl.querySelector('#toStay2'); if(t2) t2.addEventListener('click', jump);
+
+  inEl.querySelectorAll('[data-go]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const mode = b.dataset.go;              /* 'both' | 'hotel' | 'flight' */
+      brief.trip = {
+        dest: d.id, mode: mode,
+        from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v2.html',
+        adults: st.adults, children: st.children, rooms: st.rooms,
+        tier: st.tier,
+        hotel: mode === 'flight' ? null : st.hotel,
+        room: st.room
+      };
+      TT.save(brief);
+      location.href = 'flights.html';
+    });
   });
 }
 
@@ -2079,7 +2172,7 @@ function drawCompare(){
           const t = tripTotal(c.d);
           return '<span class="cmp-v' + (t===minTotal?' strong':'') + '">' + TT.money(t) + '</span>' +
                  (t===minTotal ? '<span class="cmp-best">Cheapest</span>' : '') +
-                 '<div class="cmp-v" style="color:var(--ink-3);margin-top:4px;">' + nights + ' nights, flights and hotel</div>';
+                 '<div class="cmp-v" style="color:var(--ink-3);margin-top:4px;">' + nts(nights) + ', flights and hotel</div>';
         }) +
         row('Good for', c=>'<div class="cmp-tags">' +
             c.d.vibes.map(v=>'<span class="chip chip-sm on">' + TT.esc((VIBES.find(x=>x.id===v)||{label:v}).label) + '</span>').join('') +
