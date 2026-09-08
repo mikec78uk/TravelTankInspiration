@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=70">
+<link rel="stylesheet" href="assets/tt.css?v=72">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -455,6 +455,8 @@
   .panel .pt{font-size:1rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:9px;}
   .panel .pt .ic{color:var(--ink-2);}
   .panel .pb{font-size:.95rem;color:var(--ink-3);margin-top:8px;line-height:1.6;}
+  .ways{display:flex;gap:10px;flex-wrap:wrap;}
+  @media(max-width:620px){.ways .btn{flex:1 1 auto;justify-content:center;}}
 
   /* ---- food budget ---- */
   .budget{border:1px solid var(--line);padding:20px 24px;}
@@ -679,17 +681,6 @@
   .stage-acts .sp{flex:1;}
   @media(max-width:620px){.stage-acts .sp{display:none;}.stage-acts .btn{flex:1 1 auto;justify-content:center;}}
 
-  /* ---- a pointer to the hotels, before the page pushes them down ---- */
-  .stay-teaser{
-    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-    border:1px solid var(--line);background:var(--panel-2);padding:16px 20px;margin-top:22px;
-  }
-  .stay-teaser .tt{font-size:1rem;font-weight:600;color:var(--ink);}
-  .stay-teaser .ts{font-size:.88rem;color:var(--ink-3);margin-top:3px;}
-  .stay-teaser .thumbs{display:flex;gap:5px;margin-left:auto;}
-  .stay-teaser .thumbs .ph{width:56px;height:42px;}
-  .stay-teaser .btn{flex:0 0 auto;}
-  @media(max-width:700px){.stay-teaser .thumbs{display:none;}}
 
   /* ================= compare ================= */
   .cmp{
@@ -1055,8 +1046,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=70"></script>
-<script src="assets/core.js?v=70"></script>
+<script src="assets/data.js?v=72"></script>
+<script src="assets/core.js?v=72"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1458,14 +1449,15 @@ function drawSheet(){
       keyTile('wallet',   'Price band',        ['Easy on the wallet','Mid-range','Premium'][d.budget-1], 'for where you would stay') +
     '</div>' +
 
-    /* ---- the hotels sit below the fold, so say they are there ---- */
-    stayTeaser(d, st) +
-
     /* ---- overview ---- */
     sec('Overview', null, 'In short',
       '<p>' + TT.esc(d.blurb) + '</p>' +
       '<div class="panel"><div class="pt">' + I('pin') + 'Shark tip</div>' +
-        '<div class="pb">' + TT.esc(d.tip) + '</div></div>') +
+        '<div class="pb">' + TT.esc(d.tip) + '</div></div>' +
+      '<div class="ways">' +
+        '<button type="button" class="btn btn-primary" id="toStay">View accommodation &darr;</button>' +
+        '<button type="button" class="btn" data-go="flight">View flight only &rarr;</button>' +
+      '</div>') +
 
     /* ---- sights ---- */
     sec('Do not miss', null, d.sights.length + ' things we would not skip', sightsBlock(d, st)) +
@@ -1653,19 +1645,6 @@ function sec(kicker, ic, heading, body, id){
       '<div class="dsec-k"><span class="lab">' + (ic ? TT.icon(ic) : '') + TT.esc(kicker) + '</span></div>' +
       '<div class="dsec-c">' + (heading ? '<h3>' + TT.esc(heading) + '</h3>' : '') + body + '</div>' +
     '</section>';
-}
-
-function stayTeaser(d, st){
-  const total = ['low','mid','high'].reduce((n,k)=>n + d.hotels[k].length, 0);
-  const from = Math.min.apply(null, ['low','mid','high'].map(k=>
-    Math.min.apply(null, d.hotels[k].map(h=>h.night))));
-  return '<div class="stay-teaser">' +
-    '<div><div class="tt">Where you stay changes this trip</div>' +
-      '<div class="ts">' + total + ' places we would book in ' + TT.esc(d.name) +
-        ', from ' + TT.money(from) + ' a night — a beach base and a city one are not the same week.</div></div>' +
-    '<div class="thumbs"><div class="ph"></div><div class="ph ph-sm"></div><div class="ph"></div></div>' +
-    '<button type="button" class="btn btn-sm" id="toStay">See where to stay &darr;</button>' +
-  '</div>';
 }
 
 /* Three ways out of here, and the page has to say which is which: the flight on
