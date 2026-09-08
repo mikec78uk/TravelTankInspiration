@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
-<title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
+<title>Results v3 — One screen · TravelTank Inspiration</title>
 <link rel="stylesheet" href="assets/tt.css?v=44">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
@@ -17,117 +17,137 @@
   .intro .lab{margin:0;}
   .intro .hint{margin:0 0 0 auto;}
 
-  /* ================= the three recommendations ================= */
-  /* Each recommendation is its own card — the three were running together as one
-     document, which made them read as a list of content rather than three picks. */
-  .rec{
-    border:1px solid var(--line);background:#fff;margin-bottom:30px;
+  /* ================= one screen, three columns =================
+     The page itself does not scroll: a compact head, then three equal columns
+     filling what is left. A column scrolls inside itself only if the screen is
+     too short to hold it. ================= */
+  /* The whole page is one flex column: the wireframe bar and site header take
+     their own height, and what is left goes to the columns. */
+  html,body{height:100%;}
+  body{display:flex;flex-direction:column;overflow:hidden;}
+  body > .wf-bar, body > .site-header{flex:0 0 auto;}
+  .layout{flex:1 1 auto;min-height:0;display:flex;}
+  .shell{
+    max-width:none;padding:0 24px 18px;flex:1 1 auto;min-width:0;
+    display:flex;flex-direction:column;min-height:0;
+  }
+
+  .v3-head{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding:12px 0 10px;flex:0 0 auto;}
+  .v3-head h1{margin:0;font-size:1.55rem;letter-spacing:-.025em;}
+  .v3-head .lede{margin:3px 0 0;font-size:.86rem;max-width:64ch;}
+  .v3-acts{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;}
+  .note{margin:0 0 12px;flex:0 0 auto;}
+
+  .cols{
+    flex:1 1 auto;min-height:0;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  }
+
+  .col{
+    border:1px solid var(--line);background:#fff;
+    display:flex;flex-direction:column;min-height:0;overflow:hidden;
     box-shadow:0 1px 3px rgba(17,19,21,.05);
   }
-  .rec:first-child{border-top:3px solid var(--ink);}   /* the lead pick */
+  .col.lead{border-top:3px solid var(--ink);}
+  .col-shot{flex:0 0 auto;height:clamp(92px,13vh,175px);position:relative;}
+  .col-tag{
+    position:absolute;top:12px;left:12px;background:var(--ink);color:#fff;
+    font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;padding:4px 9px;
+  }
+  .col-fav{
+    position:absolute;top:10px;right:10px;width:34px;height:34px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;font-size:.9rem;color:var(--ink-2);border-radius:50%;
+  }
+  .col-fav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
 
-  .rec-head{display:flex;align-items:flex-start;gap:24px;padding-top:30px;margin-bottom:22px;}
-  .rec-kicker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-  .rec-tag{
-    font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
-    background:var(--ink);color:#fff;padding:5px 11px;
+  .col-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 16px 6px;}
+  /* On a short screen a column has more than it can show. Fade the cut rather than
+     letting it look truncated. */
+  .col-body.more{
+    -webkit-mask-image:linear-gradient(#000 calc(100% - 26px), transparent);
+    mask-image:linear-gradient(#000 calc(100% - 26px), transparent);
   }
-  .rec-level{
-    font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;font-weight:600;
-    color:var(--ink-3);border:1px solid var(--line);padding:4px 10px;
+  .col-body.more.ended{-webkit-mask-image:none;mask-image:none;}
+  .col-level{
+    font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:600;
+    color:var(--ink-3);border:1px solid var(--line);padding:3px 8px;display:inline-block;
   }
-  .rec-name{font-size:2.9rem;line-height:1.02;letter-spacing:-.03em;margin:0;font-weight:600;}
-  .rec-sub{margin-top:10px;font-size:.92rem;color:var(--ink-3);}
-  .rec-sub b{color:var(--ink-2);font-weight:600;}
-  .fav{
-    flex:0 0 auto;margin-left:auto;width:42px;height:42px;border:1px solid var(--line);
-    background:#fff;cursor:pointer;font-size:1.05rem;color:var(--ink-2);border-radius:50%;
+  .col-swapped{
+    font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+    border:1px solid var(--ink);padding:3px 8px;display:inline-block;margin-left:6px;color:var(--ink);
   }
-  .fav:hover{border-color:var(--ink-3);color:var(--ink);}
-  .fav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .col-name{font-size:1.6rem;line-height:1.1;letter-spacing:-.025em;font-weight:600;margin:10px 0 0;}
+  .col-sub{font-size:.8rem;color:var(--ink-3);margin-top:6px;line-height:1.5;}
+  .col-sub b{color:var(--ink-2);}
 
-  .mosaic{display:grid;gap:10px;margin-bottom:26px;background:#fff;}
-  .mosaic.big{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:420px;}
-  .mosaic.big .lead{grid-row:1 / span 2;}
-  .mosaic.small{grid-template-columns:1fr 1fr 1fr;height:230px;}
-
-  .verdict{
-    display:grid;grid-template-columns:150px 1fr;gap:26px;
-    padding-top:24px;padding-bottom:26px;border-top:1px solid var(--line-2);
+  .col-block{margin-top:14px;padding-top:13px;border-top:1px solid var(--line-2);}
+  .col-block .lab{margin:0 0 7px;font-size:.62rem;}
+  .col-verdict{
+    font-size:.94rem;line-height:1.55;color:var(--ink);margin:0;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
   }
-  .verdict p{
-    margin:0;font-size:1.16rem;line-height:1.62;color:var(--ink);max-width:62ch;
+  .col-ticks{list-style:none;margin:0;padding:0;}
+  .col-ticks li{position:relative;padding-left:20px;margin-bottom:5px;font-size:.85rem;color:var(--ink-2);line-height:1.45;}
+  .col-ticks li::before{content:'\2713';position:absolute;left:0;top:-1px;color:var(--ink);font-weight:600;}
+  .col-trade{
+    font-size:.85rem;line-height:1.5;color:var(--ink-2);margin:0;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
   }
-
-  .split{
-    display:grid;grid-template-columns:150px 1fr 1fr;gap:26px;
-    padding-top:24px;padding-bottom:26px;border-top:1px solid var(--line-2);
+  .col-conf{margin-top:14px;padding-top:13px;border-top:1px solid var(--line-2);}
+  .col-conf summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
   }
-  .split .lab{grid-column:1;}
-  .ticks{list-style:none;margin:0;padding:0;}
-  .ticks li{position:relative;padding-left:26px;margin-bottom:9px;font-size:.95rem;color:var(--ink-2);}
-  .ticks li::before{content:'\2713';position:absolute;left:0;top:-1px;color:var(--ink);font-weight:600;}
-  .trade p{margin:0;font-size:.95rem;line-height:1.6;color:var(--ink-2);}
-  .trade .lab{display:block;margin-bottom:12px;}
+  .col-conf summary::-webkit-details-marker{display:none;}
+  .col-conf summary::after{content:'\203A';transition:transform .15s;display:inline-block;color:var(--ink-3);}
+  .col-conf[open] summary::after{transform:rotate(90deg);}
+  .col-conf .conf-score{font-size:.85rem;margin:10px 0 8px;}
+  .col-conf .marks{columns:1;margin-bottom:10px;}
+  .col-conf .marks li{font-size:.8rem;margin-bottom:5px;}
+  .col-conf .evid li{font-size:.78rem;}
 
-  .conf{border-top:1px solid var(--line-2);}
-  .conf summary{
-    list-style:none;cursor:pointer;padding:18px 0;display:flex;align-items:center;gap:10px;
-    font-size:.8rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
+  .col-foot{flex:0 0 auto;border-top:1px solid var(--line-2);padding:11px 16px 12px;}
+  .col-foot .row{display:flex;gap:6px;}
+  .col-foot .row .btn{padding:9px 10px;font-size:.8rem;text-align:center;justify-content:center;}
+  .col-foot .row .btn:first-child{flex:2;}
+  .col-foot .row .btn:not(:first-child){flex:1;}
+  .col-nudge{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--line-2);}
+  .col-nudge .nl{font-size:.58rem;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-3);margin-right:2px;}
+  .col-nudge .chip{font-size:.72rem;padding:4px 9px;}
+  .col-nudge .undo{
+    background:none;border:0;padding:0;cursor:pointer;font:inherit;
+    font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
   }
-  .conf summary::-webkit-details-marker{display:none;}
-  .conf summary::after{content:'\203A';margin-left:2px;transition:transform .15s;display:inline-block;color:var(--ink-3);}
-  .conf[open] summary::after{transform:rotate(90deg);}
-  .conf-in{padding-bottom:22px;display:grid;grid-template-columns:150px 1fr;gap:26px;}
-  .conf-score{font-size:.95rem;color:var(--ink-2);margin:0 0 14px;}
-  .conf-score b{color:var(--ink);}
-  .marks{list-style:none;margin:0 0 18px;padding:0;columns:2;column-gap:26px;}
-  .marks li{
-    position:relative;padding-left:24px;margin-bottom:8px;font-size:.9rem;
-    color:var(--ink-2);break-inside:avoid;
-  }
-  .marks li::before{position:absolute;left:0;top:-1px;font-weight:600;}
-  .marks li.y::before{content:'\2713';color:var(--ink);}
-  .marks li.n::before{content:'\2715';color:var(--ink-3);}
-  .marks li.n{color:var(--ink-3);}
-  .evid{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--line-2);}
-  .evid li{font-size:.88rem;color:var(--ink-3);margin-bottom:7px;}
+  .col-nudge .undo:hover{color:var(--ink);text-decoration:underline;}
 
-  .rec-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line-2);padding-top:22px;padding-bottom:28px;}
-
-  /* Every band in the card takes the same inset, matched by position rather than
-     by name so a band added later cannot be left out. Two classes of specificity
-     beats the single-class rules above, so a padding shorthand there cannot reset
-     it. The mosaic is the deliberate exception — its imagery runs to the edges. */
-  .rec > *:not(.mosaic), .conf > *{
-    padding-left:34px;padding-right:34px;
-  }
-  .rec-foot .spacer{flex:1;}
-
-  @media(max-width:860px){
-    .rec > *:not(.mosaic), .conf > *{
-      padding-left:20px;padding-right:20px;
+  /* Below the breakpoint one screenful is not achievable, so the columns become a
+     swipeable rail and the page scrolls again. */
+  @media(max-width:900px){
+    body{display:block;overflow:auto;}
+    .layout{display:block;}
+    .shell{padding-bottom:40px;}
+    .cols{
+      display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;padding-bottom:8px;
     }
-    .rec-name{font-size:2.1rem;}
-    .mosaic.big{grid-template-columns:1fr;grid-template-rows:210px 100px 100px;height:auto;}
-    .mosaic.big .lead{grid-row:auto;}
-    .mosaic.small{height:150px;}
-    .verdict,.split,.conf-in{grid-template-columns:1fr;gap:12px;}
-    .verdict p{font-size:1.05rem;}
-    .marks{columns:1;}
+    .col{flex:0 0 86%;scroll-snap-align:start;max-height:none;}
+    .col-body{overflow:visible;}
+    .col-shot{height:190px;}
+    .v3-head{align-items:flex-start;}
+    .v3-acts{margin-left:0;width:100%;}
   }
 
   /* ================= human handoff ================= */
-  .handoff{border:1px solid var(--line);background:#fff;padding:34px 36px;margin-top:14px;
-           box-shadow:0 1px 3px rgba(17,19,21,.05);}
-  .handoff h2{margin:12px 0 0;font-size:1.55rem;letter-spacing:-.02em;}
-  .handoff p{margin:12px 0 0;font-size:1rem;color:var(--ink-2);max-width:62ch;line-height:1.6;}
-  .handoff .incl{
-    margin-top:20px;padding:14px 18px;background:var(--panel);font-size:.86rem;color:var(--ink-3);
+  .handoff{
+    flex:0 0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    border:1px solid var(--line);background:#fff;padding:9px 16px;margin-top:12px;
   }
+  .handoff h2{margin:0;font-size:.98rem;letter-spacing:-.01em;}
+  .handoff p{margin:0;font-size:.85rem;color:var(--ink-3);}
+  .handoff .incl{font-size:.78rem;color:var(--ink-3);}
   .handoff .incl b{color:var(--ink-2);font-weight:600;}
-  .handoff .btn-row{margin-top:22px;}
-  @media(max-width:620px){.handoff{padding:24px 20px;}.handoff h2{font-size:1.3rem;}}
+  .handoff .btn-row{margin:0 0 0 auto;}
+  @media(max-width:900px){.handoff .btn-row{margin-left:0;}}
 
   /* ---- "like this, but…" — a nudge on the card, not the whole shortlist ---- */
   .rec-nudge{
@@ -748,31 +768,28 @@
 </aside>
 
 <main class="shell">
-  <div class="top-actions">
-    <button class="btn btn-cap" id="editBrief">Edit brief</button>
-    <button class="btn btn-cap" id="startAgain">Start again</button>
+  <div class="v3-head">
+    <div>
+      <h1>Here's a shortlist of where we'd send you</h1>
+      <p class="lede" id="lede"></p>
+    </div>
+    <div class="v3-acts">
+      <button class="btn btn-sm" id="compareAll">Compare all three</button>
+      <button class="btn btn-sm" id="editBrief">Edit brief</button>
+      <button class="btn btn-sm" id="startAgain">Start again</button>
+    </div>
   </div>
-
-  <h1>Here's a shortlist of where we'd send you</h1>
-  <p class="lede" id="lede"></p>
 
   <div class="note" id="note" hidden></div>
 
-  <div class="intro">
-    <span class="lab">Three we'd stand behind</span>
-    <span class="hint">Chosen against your brief — with what each one costs you, not just what it offers</span>
-    <button class="btn btn-sm" id="compareAll" style="margin-left:14px;">Compare all three</button>
-  </div>
-
-  <div id="recs"></div>
+  <div class="cols" id="recs"></div>
 
   <section class="handoff">
-    <h2 style="margin-top:0;">Like the direction but want a little more help?</h2>
-    <p>Send your shortlist and everything we have worked out so far to one of our Travel Sharks,
-       then add anything else you want a hand with. They pick it up from there.</p>
+    <h2>Like the direction but want a little more help?</h2>
+    <p>Send the shortlist to a Travel Shark.</p>
     <div class="incl" id="sharkIncluded"></div>
     <div class="btn-row">
-      <button class="btn btn-primary" id="sharkBtn">Ask a Travel Shark &rarr;</button>
+      <button class="btn btn-sm btn-primary" id="sharkBtn">Ask a Travel Shark &rarr;</button>
     </div>
   </section>
 </main>
@@ -810,7 +827,7 @@
 <script src="assets/data.js?v=44"></script>
 <script src="assets/core.js?v=44"></script>
 <script>
-TT.mount('results-v2.html');
+TT.mount('results-v3.html');
 
 let brief = TT.load();
 const fav = new Set();
@@ -858,7 +875,25 @@ function render(noteText){
 
   renderDrawerBrief();
   renderIncluded();
+  markOverflow();
 }
+
+/* Only fade a column that actually has more below the fold, and drop the fade
+   once it has been scrolled to the end. */
+function markOverflow(){
+  document.querySelectorAll('.col-body').forEach(b=>{
+    const more = b.scrollHeight > b.clientHeight + 2;
+    b.classList.toggle('more', more);
+    b.classList.toggle('ended', more && b.scrollTop + b.clientHeight >= b.scrollHeight - 4);
+    if(more && !b.dataset.wired){
+      b.dataset.wired = '1';
+      b.addEventListener('scroll', ()=>{
+        b.classList.toggle('ended', b.scrollTop + b.clientHeight >= b.scrollHeight - 4);
+      }, {passive:true});
+    }
+  });
+}
+window.addEventListener('resize', markOverflow);
 
 /* Only chips we can actually deliver — nudgeOptionsFor works out the replacement
    before we offer the option. */
@@ -871,7 +906,7 @@ function nudgeRow(d, laneKey){
 
   if(!opts.length && !orig) return '';
 
-  return '<div class="rec-nudge">' +
+  return '<div class="col-nudge">' +
     '<span class="nl">Like this, but&hellip;</span>' +
     opts.map(o=>'<button type="button" class="chip" data-nudge="' + o.id +
       '" data-lane="' + laneKey + '" data-to="' + o.to.id + '" ' +
@@ -885,74 +920,60 @@ function recHtml(item, meta, lead, laneKey){
   const d = item.d;
   const rep = TT.matchReport(d, brief);
   /* Score against the brief the customer actually gave us, not the relaxed one the
-     premium lane is picked with — otherwise this list can claim a place is "priced
-     about where you wanted" while the check below marks the budget as a miss. */
-  const fits = TT.score(d, brief).why.slice(0,4);
+     premium lane is picked with. */
+  const fits = TT.score(d, brief).why.slice(0,2);
   if(!fits.length){
     fits.push(laneKey === 'premium'
-      ? 'Here as the upgrade rather than the closest fit — see the trade-off'
+      ? 'Here as the upgrade rather than the closest fit'
       : 'A safe first pick while you tell us more');
   }
 
-  const facts = [
-    hrs(d.hours) + ' from Lagos',
-    VISA_LABEL[d.visa],
-    'Best ' + TT.monthRuns(d),
-    'from <b>' + TT.money(d.flights[0].price) + '</b>'
-  ].join(' &nbsp;·&nbsp; ');
-
   return '' +
-  '<article class="rec">' +
-    '<div class="rec-head">' +
-      '<div>' +
-        '<div class="rec-kicker">' +
-          '<span class="rec-tag">' + meta.label + '</span>' +
-          '<span class="rec-level">' + rep.level + '</span>' +
-          (item.swapped ? '<span class="swapped-tag">You swapped this in</span>' : '') +
-        '</div>' +
-        '<h2 class="rec-name">' + TT.esc(d.name) + '</h2>' +
-        '<div class="rec-sub">' + TT.esc(d.country) + ' &nbsp;·&nbsp; ' + facts + '</div>' +
+  '<article class="col' + (lead ? ' lead' : '') + '">' +
+    '<div class="col-shot ph' + (lead ? '' : ' ph-sm') + '">' +
+      '<span class="col-tag">' + meta.label + '</span>' +
+      '<button class="col-fav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
+    '</div>' +
+
+    '<div class="col-body">' +
+      '<span class="col-level">' + rep.level + '</span>' +
+      (item.swapped ? '<span class="col-swapped">Yours</span>' : '') +
+      '<h2 class="col-name">' + TT.esc(d.name) + '</h2>' +
+      '<div class="col-sub">' + TT.esc(d.country) + ' &middot; ' + hrs(d.hours) + ' &middot; ' +
+        VISA_LABEL[d.visa] + '<br>from <b>' + TT.money(d.flights[0].price) + '</b> &middot; best ' +
+        TT.monthRuns(d) + '</div>' +
+
+      '<div class="col-block">' +
+        '<span class="lab">TravelTank verdict</span>' +
+        '<p class="col-verdict">' + TT.esc(d.why) + '</p>' +
       '</div>' +
-      '<button class="fav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
-    '</div>' +
 
-    '<div class="mosaic ' + (lead ? 'big' : 'small') + '">' +
-      (lead
-        ? '<div class="ph lead"></div><div class="ph ph-sm"></div><div class="ph ph-sm"></div>'
-        : '<div class="ph"></div><div class="ph ph-sm"></div><div class="ph ph-sm"></div>') +
-    '</div>' +
+      '<div class="col-block">' +
+        '<span class="lab">Why it fits</span>' +
+        '<ul class="col-ticks">' + fits.map(w=>'<li>' + TT.esc(w) + '</li>').join('') + '</ul>' +
+      '</div>' +
 
-    '<div class="verdict">' +
-      '<span class="lab">TravelTank verdict</span>' +
-      '<p>' + TT.esc(d.why) + '</p>' +
-    '</div>' +
-
-    '<div class="split">' +
-      '<span class="lab">Why it fits you</span>' +
-      '<ul class="ticks">' + fits.map(w=>'<li>' + TT.esc(w) + '</li>').join('') + '</ul>' +
-      '<div class="trade">' +
+      '<div class="col-block">' +
         '<span class="lab">The trade-off</span>' +
-        '<p>' + TT.esc(d.tradeoff) + '</p>' +
+        '<p class="col-trade">' + TT.esc(d.tradeoff) + '</p>' +
       '</div>' +
+
+      '<details class="col-conf">' +
+        '<summary>Why we&rsquo;re confident</summary>' +
+        '<div style="margin-top:10px;">' + confidenceHtml(d, rep) + '</div>' +
+      '</details>' +
     '</div>' +
 
-    '<details class="conf">' +
-      '<summary>Why we&rsquo;re confident</summary>' +
-      '<div class="conf-in">' +
-        '<span class="lab">The check</span>' +
-        '<div>' + confidenceHtml(d, rep) + '</div>' +
+    '<div class="col-foot">' +
+      '<div class="row">' +
+        '<button class="btn btn-primary" data-open>Explore &rarr;</button>' +
+        '<button class="btn" data-cmp>Compare</button>' +
+        (poolExhausted
+          ? '<button class="btn" data-notfor disabled>None left</button>'
+          : '<button class="btn" data-notfor>Not for me</button>') +
       '</div>' +
-    '</details>' +
-
-    '<div class="rec-foot">' +
-      '<button class="btn btn-primary" data-open>Explore ' + TT.esc(d.name) + ' &rarr;</button>' +
-      '<button class="btn" data-cmp>Compare</button>' +
-      '<span class="spacer"></span>' +
-      (poolExhausted
-        ? '<button class="btn" data-notfor disabled>Nothing left to swap in</button>'
-        : '<button class="btn" data-notfor>Not for me</button>') +
+      nudgeRow(d, laneKey) +
     '</div>' +
-    nudgeRow(d, laneKey) +
   '</article>';
 }
 
@@ -1426,7 +1447,7 @@ function wireSheet(d, st, nights){
   inEl.querySelector('#toFlights').addEventListener('click', ()=>{
     brief.trip = {
       dest: d.id,
-      from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v2.html',
+      from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v3.html',
       adults: st.adults, children: st.children, rooms: st.rooms,
       tier: st.tier, hotel: st.hotel, room: st.room
     };

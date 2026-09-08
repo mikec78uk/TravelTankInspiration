@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Flights — the logistics · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=40">
+<link rel="stylesheet" href="assets/tt.css?v=44">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -168,8 +168,8 @@
   <div id="page"></div>
 </main>
 
-<script src="assets/data.js?v=40"></script>
-<script src="assets/core.js?v=40"></script>
+<script src="assets/data.js?v=44"></script>
+<script src="assets/core.js?v=44"></script>
 <script>
 TT.mount('flights.html');
 
@@ -181,7 +181,8 @@ document.getElementById('startAgain').addEventListener('click', ()=>{
   TT.clear();
   location.href = brief.source ? brief.source + '.html' : 'index.html';
 });
-document.getElementById('back').addEventListener('click', ()=>{ location.href = 'results-v2.html'; });
+const backTo = (brief.trip && brief.trip.via) ? brief.trip.via : 'results-v2.html';
+document.getElementById('back').addEventListener('click', ()=>{ location.href = backTo; });
 
 if(!trip || !DEST.find(d=>d.id === trip.dest)){
   page.innerHTML =
@@ -310,7 +311,7 @@ function render(){
   });
   /* Land on the results page with the handoff already open, so the button does
      what it says rather than just navigating back. */
-  page.querySelector('#shark').addEventListener('click', ()=>{ location.href = 'results-v2.html#shark'; });
+  page.querySelector('#shark').addEventListener('click', ()=>{ location.href = backTo + '#shark'; });
 }
 
 function nts(n){ return n + ' night' + (n === 1 ? '' : 's'); }

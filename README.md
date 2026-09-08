@@ -19,6 +19,7 @@ recommendation engine, all leading to a shared results page.
 | [`concept-4.html`](concept-4.html) | **Entry point 4** — stepped questions on the page, writing into the prompt |
 | [`results.html`](results.html) | Shared results — three destinations, flights, hotels, editable brief |
 | [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
+| [`results-v3.html`](results-v3.html) | Same content as v2, laid out horizontally in one screenful |
 | [`flights.html`](flights.html) | Step 2 — the logistics, once the destination and hotel are settled |
 
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
@@ -62,6 +63,21 @@ copy where changes are made, so the original survives — both are in the
 wireframe nav, and all four entry points still open the original. Each page carries its own
 layout CSS and script inline, so editing one leaves the other alone; they do share
 `assets/tt.css`, `core.js` and `data.js`, and a change there lands on both.
+
+### v3 — the same shortlist in one screenful
+
+`results-v3.html` is v2's content laid out horizontally: a compact head, then three full-height
+columns filling what is left, and a slim handoff strip. The page itself does not scroll — the
+whole shortlist is comparable at a glance without moving.
+
+Everything v2 does still works: the destination sheet, side-by-side compare, the brief rail,
+per-card nudges, favourites and the handoff. What changed is density — the verdict and trade-off
+are line-clamped and the fits list is cut to two, with the full text a click away in the sheet.
+
+At 1080px and taller the columns fit exactly. Shorter than that a column scrolls inside itself,
+and the cut is faded so it reads as "more below" rather than as truncation. Under 900px one
+screenful is not achievable, so the columns become a swipeable snap rail and the page scrolls
+normally.
 
 ### What v2 does differently
 
