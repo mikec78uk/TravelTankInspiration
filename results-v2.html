@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=63">
+<link rel="stylesheet" href="assets/tt.css?v=68">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -586,6 +586,16 @@
   .hgal{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:210px;margin:20px 0 22px;}
   .hgal .ph:first-child{grid-row:1 / span 2;}
   @media(max-width:700px){.hgal{grid-template-columns:1fr 1fr;height:240px;}.hgal .ph:first-child{grid-column:1 / -1;grid-row:auto;}}
+  .hintro{margin-bottom:26px;}
+  .hintro-t{position:relative;}
+  .hintro-t p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
+  .hintro-t p + p{margin-top:13px;}
+  .hintro-t.clamp{max-height:5.04em;overflow:hidden;}   /* three lines of the above */
+  .hintro-t.clamp::after{
+    content:'';position:absolute;left:0;right:0;bottom:0;height:1.9em;
+    background:linear-gradient(to bottom, rgba(255,255,255,0), #fff 80%);pointer-events:none;
+  }
+  .hintro .more-btn{margin-top:14px;padding:8px 16px;font-size:.82rem;}
   .hsplit{display:grid;grid-template-columns:1fr 300px;gap:30px;margin-bottom:24px;}
   @media(max-width:820px){.hsplit{grid-template-columns:1fr;}}
   .facs{display:flex;flex-wrap:wrap;gap:8px;}
@@ -1039,8 +1049,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=63"></script>
-<script src="assets/core.js?v=63"></script>
+<script src="assets/data.js?v=68"></script>
+<script src="assets/core.js?v=68"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1408,6 +1418,7 @@ function partyFor(id){
     st.open = null;      /* which panel is expanded */
     st.hotel = null;     /* which hotel is actually chosen for the trip */
     st.room = 'std';
+    st.intro = false;    /* the introduction to the open hotel, unclamped */
   }
   return st;
 }
@@ -1444,17 +1455,6 @@ function drawSheet(){
     /* ---- sights ---- */
     sec('Do not miss', null, d.sights.length + ' things we would not skip', sightsBlock(d, st)) +
 
-    /* ---- where to stay ---- */
-    sec('Where to stay', 'room', 'Where you stay changes the trip',
-      '<p>' + TT.esc(d.name) + ' is three different holidays depending on where you put yourself. ' +
-        'These are the three we would book, and what each one turns the week into.</p>' +
-      pricingStrip(st, nights) +
-      '<div class="tiers">' + TIERS.map(([k,l])=>
-        '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
-      '</div>' +
-      '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
-      '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>', 'stay') +
-
     /* ---- the practical detail, folded away until it is wanted ---- */
     secAcc('Weather', 'sun',
       brief.month ? MONTHS_FULL[brief.month-1] + ' in ' + d.name : 'When to go, and what it is like',
@@ -1465,6 +1465,17 @@ function drawSheet(){
 
     secAcc('Food', 'food', 'What you will be eating',
       brief.vibes.indexOf('food') !== -1 ? 'You said this mattered' : '', foodBlock(d)) +
+
+    /* ---- where to stay ---- */
+    sec('Where to stay', 'room', 'Where you stay changes the trip',
+      '<p>' + TT.esc(d.name) + ' is three different holidays depending on where you put yourself. ' +
+        'These are the three we would book, and what each one turns the week into.</p>' +
+      pricingStrip(st, nights) +
+      '<div class="tiers">' + TIERS.map(([k,l])=>
+        '<button type="button" class="tier' + (k===st.tier?' on':'') + '" data-tier="' + k + '">' + l + '</button>').join('') +
+      '</div>' +
+      '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
+      '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>', 'stay') +
 
     /* ---- what you are buying ---- */
     tripBar(d, st, nights) +
@@ -1777,6 +1788,14 @@ function hotelRow(h, i, st, nights, d){
             '<div class="ph"></div><div class="ph ph-sm"></div><div class="ph ph-sm"></div>' +
             '<div class="ph ph-sm"></div><div class="ph"></div>' +
           '</div>' +
+          '<div class="hintro">' +
+            '<span class="lab">About the hotel</span>' +
+            '<div class="hintro-t' + (st.intro ? '' : ' clamp') + '">' +
+              TT.hotelIntro(h, d).map(t=>'<p>' + TT.esc(t) + '</p>').join('') +
+            '</div>' +
+            '<button type="button" class="more-btn" data-hmore>' +
+              (st.intro ? 'Read less' : 'Read more') + '</button>' +
+          '</div>' +
           '<div class="hsplit">' +
             '<div>' +
               '<span class="lab">Facilities</span>' +
@@ -1845,6 +1864,7 @@ function wireSheet(d, st, nights){
     el.addEventListener('click', ()=>{
       const i = +el.dataset.hotel;
       st.open = (st.open === i) ? null : i;    /* looking is not choosing */
+      st.intro = false;                        /* each hotel's introduction starts folded */
       drawSheet();
     });
   });
@@ -1859,6 +1879,19 @@ function wireSheet(d, st, nights){
   inEl.querySelectorAll('[data-room]').forEach(el=>{
     el.addEventListener('click', ()=>{ st.room = el.dataset.room; drawSheet(); });
   });
+
+  /* The introduction only earns a Read more when it is actually cut off — measure
+     rather than assume, since the text and the column both vary. */
+  const hm = inEl.querySelector('[data-hmore]');
+  if(hm){
+    const body = inEl.querySelector('.hintro-t');
+    if(!st.intro && body.scrollHeight <= body.clientHeight + 1){
+      body.classList.remove('clamp');
+      hm.remove();
+    } else {
+      hm.addEventListener('click', ()=>{ st.intro = !st.intro; drawSheet(); });
+    }
+  }
 
   const ms = inEl.querySelector('[data-moresights]');
   if(ms) ms.addEventListener('click', ()=>{ st.allSights = !st.allSights; drawSheet(); });

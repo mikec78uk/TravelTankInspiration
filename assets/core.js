@@ -513,6 +513,88 @@ const TT = (function(){
     return out.filter(x=>{ if(seen[x.t]) return false; seen[x.t] = 1; return true; });
   }
 
+  /* A short introduction to a property, built from the same record everything else
+     on the hotel card reads — stars, board, area and the one-line note — rather than
+     written out ninety-six times. Returns paragraphs. */
+  function hotelIntro(h, d){
+    const name = h.n.toLowerCase(), area = h.area.toLowerCase(), text = h.note.toLowerCase();
+    const lux = h.stars >= 5, mid = h.stars === 4;
+
+    /* On the sand means on the sand — a note that promises the beach in fifteen
+       minutes is describing somewhere that is not. */
+    const onSand  = /beachfront|on the beach|on the sand|right on|direct beach|steps from/.test(text)
+                 || /beach|plage|praia|lagoon|seafront|shore/.test(area)
+                 || /beach/.test(name);   /* a bay is a place name, not a promise of sand */
+    const central = /central|centre|center|downtown|city|old town|medina|island|ridge|marina|souk/
+                      .test(area + ' ' + text);
+    const quiet   = /quiet|residential|garden|hills|retreat|grove|valley|farm|plateau/
+                      .test(area + ' ' + text);
+
+    const cruise = /cruise|dahabiya/.test(name + ' ' + text);
+
+    const type =
+        cruise                                       ? 'river boat'
+      : /\bcamp\b|\btented\b|\bsafari\b/.test(name + ' ' + text) ? (lux ? 'tented camp' : 'safari camp')
+      : /riad/.test(name)                            ? 'riad'
+      : /lodge/.test(name)                           ? (lux ? 'private lodge' : 'small lodge')
+      : /hostel|backpacker/.test(name + ' ' + text) ? 'hostel with private rooms'
+      : /chalet/.test(name + ' ' + text)             ? (/self-catering/.test(text) ? 'self-catering chalet' : 'chalet')
+      : /guesthouse|guest house/.test(name + ' ' + text)               ? 'guesthouse'
+      : /r\u00e9sidence|residence|apartment|self-catering/.test(name + ' ' + text) ? 'self-catering apartment'
+      : /resort/.test(name)                          ? (onSand ? (lux ? 'beachfront resort' : 'beach resort')
+                                                               : (lux ? 'resort' : 'small resort'))
+      : onSand ? (lux ? 'beachfront resort' : (mid ? 'beach hotel' : 'small beach place'))
+      : lux    ? 'five-star hotel'
+      : mid    ? (quiet ? 'boutique hotel' : 'four-star hotel')
+      :          'simple, well-run hotel';
+
+    /* Some of these areas are a side of a river or the top of a plateau, not a district —
+       and one of them is a route rather than a place at all. */
+    const prep = cruise ? 'sailing '
+               : /(side|plateau|coast|peninsula|river)$/.test(area) ? 'on the '
+               : 'in ';
+
+    const note = h.note.charAt(0).toLowerCase() + h.note.slice(1);
+
+    const standing = lux
+      ? 'It is the kind of place you would be happy not to leave. The service is as much the point as the address, and it holds its own against anything you would book in Europe for the same money.'
+      : mid
+      ? 'It is the sensible middle of the market: comfortable, properly staffed, and near enough to what you came for that you are not negotiating a taxi every time you want dinner.'
+      : 'It is not pretending to be a resort. It is clean, friendly and cheap enough that the money goes on the trip rather than the room.';
+
+    const rooms = cruise
+      ? 'Cabins are compact but well kept, and the good ones face out; the deck is where you will spend the day anyway.'
+      : lux
+      ? 'Rooms are large and quiet, with the bathroom you would expect at the price; the higher floors are worth the difference for the view.'
+      : mid
+      ? 'Rooms are a good size and recently done, and the superior rooms are worth the small step up if you are staying the week.'
+      : 'Rooms are plain but spotless, with air conditioning that works and space enough to unpack properly.';
+
+    const board = /all inclusive/i.test(h.board)
+      ? 'It is all inclusive, so the week costs what it says on the day you book it.'
+      : /half board/i.test(h.board)
+      ? 'Half board is included, which takes the pressure off dinner on the nights you get back late.'
+      : /full board/i.test(h.board)
+      ? 'Full board is included, which is worth having somewhere this far from a row of restaurants.'
+      : /breakfast/i.test(h.board)
+      ? 'Breakfast is included, and it is a proper one rather than a pastry and a coffee.'
+      : 'It is room only — no bad thing' + (d ? ' in ' + d.name : '') + ', where you will want to be eating out anyway.';
+
+    const place = onSand
+      ? 'You are on the sand, so the beach day takes no planning at all: it is the thing outside the door.'
+      : central
+      ? 'You are in the middle of it, so most of what you came to see is a walk or a short ride away.'
+      : quiet
+      ? 'It sits away from the noise, and that is the trade — calmer nights, a few minutes in a car to dinner.'
+      : 'It is a straightforward base: nothing dramatic out of the window, everything within reach.';
+
+    return [
+      h.n + ' is ' + (/^[aeiou]/.test(type) ? 'an ' : 'a ') + type + ' ' + prep + h.area +
+        ' — ' + note + '. ' + standing,
+      rooms + ' ' + board + ' ' + place
+    ];
+  }
+
   /* Room options are derived from the hotel's nightly rate and star rating rather
      than authored per property — enough to price a party realistically in a
      wireframe, and consistent across all of them. */
@@ -729,6 +811,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,stayOf,defaultStay,addDays,fmtDate,daysBetween,iso,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,nudgeOptionsFor,roomsFor,roomsNeeded,icon,facilitiesFor,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,nudgeOptionsFor,roomsFor,roomsNeeded,icon,facilitiesFor,hotelIntro,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();
