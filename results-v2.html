@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=56">
+<link rel="stylesheet" href="assets/tt.css?v=57">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -380,11 +380,11 @@
      A kicker in the left rail, then the heading and everything under it in a
      single aligned column. ---- */
   .dsec{
-    display:grid;grid-template-columns:190px 1fr;gap:30px;
-    border-top:1px solid var(--line);padding:46px 0 46px;
+    display:grid;grid-template-columns:1fr;gap:0;
+    border-top:1px solid var(--line);padding:40px 0 42px;
   }
   .dsec:first-of-type{border-top:0;padding-top:10px;}
-  .dsec-k{padding-top:6px;}                    /* sit the kicker on the heading */
+  .dsec-k{display:none;}                       /* the kicker rail is hidden */
   .dsec-k .lab{margin:0;display:flex;align-items:center;gap:8px;line-height:1.5;}
   .dsec-k .lab .ic{width:17px;height:17px;color:var(--ink-3);flex:0 0 auto;}
   .dsec-c > h3{margin:0 0 20px;font-size:1.34rem;letter-spacing:-.018em;line-height:1.25;}
@@ -392,8 +392,7 @@
   .dsec-c > h3 + *{margin-top:0;}
   .dsec-c p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
   @media(max-width:900px){
-    .dsec{grid-template-columns:1fr;gap:14px;padding:34px 0 34px;}
-    .dsec-k{padding-top:0;}
+    .dsec{padding:30px 0 32px;}
     .dsec-c > h3{font-size:1.18rem;}
   }
 
@@ -999,8 +998,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=56"></script>
-<script src="assets/core.js?v=56"></script>
+<script src="assets/data.js?v=57"></script>
+<script src="assets/core.js?v=57"></script>
 <script>
 TT.mount('results-v2.html');
 

@@ -90,8 +90,8 @@ weather with a temperature band, what to wear, what you will be eating, four sig
 your party, and where to stay.
 
 It opens on a row of **key facts with icons** — flight time, climate, best months, entry, price
-band — then runs as separate sections on one template: a kicker in a fixed left rail, and the
-heading and everything beneath it in a single aligned column, with one rhythm between blocks.
+band — then runs as separate sections on one template: a heading and everything beneath it in a
+single column, with one rhythm between blocks.
 
 The order leads with the inspiration: **In short**, then **Do not miss**, then **Where to stay**.
 Weather, what to wear and food follow as **accordions**, closed by default, each with a peek at
