@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=68">
+<link rel="stylesheet" href="assets/tt.css?v=69">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -586,7 +586,7 @@
   .hgal{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:210px;margin:20px 0 22px;}
   .hgal .ph:first-child{grid-row:1 / span 2;}
   @media(max-width:700px){.hgal{grid-template-columns:1fr 1fr;height:240px;}.hgal .ph:first-child{grid-column:1 / -1;grid-row:auto;}}
-  .hintro{margin-bottom:26px;}
+  .hintro{margin-top:26px;}
   .hintro-t{position:relative;}
   .hintro-t p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
   .hintro-t p + p{margin-top:13px;}
@@ -662,6 +662,14 @@
   .stage-line .v{font-size:.95rem;margin-top:5px;color:#fff;}
   .stage-line .v small{display:block;font-size:.8rem;color:rgba(255,255,255,.62);margin-top:2px;}
   .stage-line.none .v{color:rgba(255,255,255,.55);}
+  .drop-w{display:inline-flex;align-items:center;gap:8px;}
+  .drop{
+    display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    padding:0;border:1px solid rgba(255,255,255,.35);background:transparent;
+    color:rgba(255,255,255,.75);cursor:pointer;flex:0 0 auto;
+  }
+  .drop .ic{width:14px;height:14px;}
+  .drop:hover{background:#fff;border-color:#fff;color:var(--ink);}
   .stage-acts{
     margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.22);
     display:flex;gap:10px;flex-wrap:wrap;align-items:center;
@@ -1049,8 +1057,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=68"></script>
-<script src="assets/core.js?v=68"></script>
+<script src="assets/data.js?v=69"></script>
+<script src="assets/core.js?v=69"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1682,7 +1690,10 @@ function tripBar(d, st, nights){
           '<small>' + TT.fmtDate(stayFrom.from) + ' · ' + nts(nights) + ' · ' + travellers(st) + '</small></div></div>' +
       '<div class="stage-line' + (hotel ? '' : ' none') + '"><div class="k">Hotel</div>' +
         '<div class="v">' + (hotel
-          ? TT.esc(hotel.n) + '<small>' + needed + ' × ' + TT.esc(room.name).toLowerCase() +
+          ? '<span class="drop-w">' + TT.esc(hotel.n) +
+              '<button type="button" class="drop" data-drop aria-label="Remove ' + TT.esc(hotel.n) +
+                ' from the trip" title="Remove this hotel">' + TT.icon('bin') + '</button></span>' +
+            '<small>' + needed + ' × ' + TT.esc(room.name).toLowerCase() +
             ' · ' + TT.money(stay) + '</small>'
           : 'Not chosen<small>Pick one below to include it</small>') + '</div></div>' +
       '<div class="stage-line none"><div class="k">Flights</div>' +
@@ -1788,19 +1799,19 @@ function hotelRow(h, i, st, nights, d){
             '<div class="ph"></div><div class="ph ph-sm"></div><div class="ph ph-sm"></div>' +
             '<div class="ph ph-sm"></div><div class="ph"></div>' +
           '</div>' +
-          '<div class="hintro">' +
-            '<span class="lab">About the hotel</span>' +
-            '<div class="hintro-t' + (st.intro ? '' : ' clamp') + '">' +
-              TT.hotelIntro(h, d).map(t=>'<p>' + TT.esc(t) + '</p>').join('') +
-            '</div>' +
-            '<button type="button" class="more-btn" data-hmore>' +
-              (st.intro ? 'Read less' : 'Read more') + '</button>' +
-          '</div>' +
           '<div class="hsplit">' +
             '<div>' +
               '<span class="lab">Facilities</span>' +
               '<div class="facs">' + facs.map(f=>
                 '<span class="fac">' + TT.icon(f.i) + TT.esc(f.t) + '</span>').join('') + '</div>' +
+              '<div class="hintro">' +
+                '<span class="lab">About the hotel</span>' +
+                '<div class="hintro-t' + (st.intro ? '' : ' clamp') + '">' +
+                  TT.hotelIntro(h, d).map(t=>'<p>' + TT.esc(t) + '</p>').join('') +
+                '</div>' +
+                '<button type="button" class="more-btn" data-hmore>' +
+                  (st.intro ? 'Read less' : 'Read more') + '</button>' +
+              '</div>' +
             '</div>' +
             '<div>' +
               '<span class="lab">Where it is</span>' +
@@ -1876,6 +1887,9 @@ function wireSheet(d, st, nights){
       drawSheet();
     });
   });
+  const drop = inEl.querySelector('[data-drop]');
+  if(drop) drop.addEventListener('click', ()=>{ st.hotel = null; drawSheet(); });
+
   inEl.querySelectorAll('[data-room]').forEach(el=>{
     el.addEventListener('click', ()=>{ st.room = el.dataset.room; drawSheet(); });
   });

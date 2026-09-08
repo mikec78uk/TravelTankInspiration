@@ -130,11 +130,12 @@ booking*; each gets its own book button.
 one (*On the beach*, *Lowest rate here*, *Five star*), star rating and board, the property's own
 line pulled out as the hook, facility chips, and both the nightly rate and what the stay
 actually costs. A tier note says why we would put you in that band at all. Opening one — without
-leaving the page — adds a gallery, an introduction to the property (folded to three lines with a
-*Read more* when there is more than that), the full facilities, a map, and the room types, each
-with a picture. **Opening a hotel is not the same as choosing it**: the panel carries an explicit
+leaving the page — adds a gallery, the facilities and an introduction to the property (folded to
+three lines with a *Read more* when there is more than that) beside a map, and the room types,
+each with a picture. **Opening a hotel is not the same as choosing it**: the panel carries an explicit
 *Choose this hotel*, which becomes *Chosen — remove*, so a hotel can be looked at without being
-committed to and unpicked afterwards. Facilities
+committed to and unpicked afterwards — from the panel, or from the bin on the summary at the foot
+of the page. Facilities
 and room options are derived from the property record (star rating, board, area) rather than
 authored, so they stay consistent across all 96 hotels.
 
