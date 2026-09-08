@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=54">
+<link rel="stylesheet" href="assets/tt.css?v=55">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -979,8 +979,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=54"></script>
-<script src="assets/core.js?v=54"></script>
+<script src="assets/data.js?v=55"></script>
+<script src="assets/core.js?v=55"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -988,6 +988,18 @@ let brief = TT.load();
 const fav = new Set();
 const ui = {};
 const LANE_KEYS = ['best','premium','offbeat'];
+
+/* v2 renames the lead slot. Overridden here rather than in core so results.html —
+   the version already shown to the client — is left as it was.
+   `prose` is the form that reads correctly mid-sentence. */
+const LANE_META = {
+  best:    {label:'Travel Shark pick',  prose:'the Travel Shark pick',
+            blurb:TT.LANE_META.best.blurb},
+  premium: {label:'The premium option', prose:'the premium option',
+            blurb:TT.LANE_META.premium.blurb},
+  offbeat: {label:'Off the beaten track', prose:'off the beaten track',
+            blurb:TT.LANE_META.offbeat.blurb}
+};
 const TIERS = [['low','Spend less'],['mid','Our pick'],['high','Upgrade']];
 let poolExhausted = false;
 
@@ -1024,12 +1036,12 @@ function render(noteText){
     /* If the lead slot is there because the customer pinned it, say so rather than
        calling it our best match. */
     const meta = (k === 'best' && L.pinned)
-      ? {label:'Your pick', blurb:TT.LANE_META.best.blurb}
-      : TT.LANE_META[k];
+      ? {label:'Your pick', prose:'your pick', blurb:LANE_META.best.blurb}
+      : LANE_META[k];
     return brief.view === 'grid' ? gridHtml(L[k], meta, i===0, k) : recHtml(L[k], meta, i===0, k);
   }).join('');
   LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k],
-    (k === 'best' && L.pinned) ? {label:'Your pick'} : TT.LANE_META[k], k));
+    (k === 'best' && L.pinned) ? {label:'Your pick'} : LANE_META[k], k));
 
   renderDrawerBrief();
   renderIncluded();
@@ -1819,9 +1831,9 @@ function closeOut(){ mscrim.classList.remove('on'); outModal.classList.remove('o
 function drawOut(){
   const ul = document.getElementById('outList');
   const ids = rejectedIn(outLane);
-  const meta = TT.LANE_META[outLane];
+  const meta = LANE_META[outLane];
   document.getElementById('outTitle').textContent =
-    'Ruled out of ' + (meta ? meta.label.toLowerCase() : 'this slot');
+    'Ruled out of ' + (meta ? meta.prose : 'this slot');
   ul.innerHTML = '';
   if(!ids.length){
     ul.innerHTML = '<li class="out-empty">You have not ruled anything out.</li>';
@@ -1959,7 +1971,7 @@ function openCompare(){
   const L = TT.lanes(brief);
   cmpCols = LANE_KEYS.map(k=>({
     d:L[k].d,
-    role:(k === 'best' && L.pinned) ? 'Your pick' : TT.LANE_META[k].label,
+    role:(k === 'best' && L.pinned) ? 'Your pick' : LANE_META[k].label,
     mine:(k === 'best' && L.pinned)
   }));
   drawCompare();

@@ -166,6 +166,8 @@ that cannot be delivered, and a candidate has to share something with what it re
 cheaper should give you the same trip for less, not a different holiday. A swapped card is
 labelled as yours and carries an undo. **Edit brief** is unchanged.
 
+In v2 the lead slot is the **Travel Shark pick**; the original results page keeps *Best match*.
+
 Three destinations the customer toggles between:
 
 - **Best match** — the closest fit to the brief
