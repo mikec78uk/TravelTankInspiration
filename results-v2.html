@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=52">
+<link rel="stylesheet" href="assets/tt.css?v=53">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -812,6 +812,18 @@
     font:inherit;font-size:.78rem;font-weight:600;padding:8px 14px;color:var(--ink-2);
   }
   .out-back:hover{border-color:var(--ink);color:var(--ink);}
+  .hist-btn{
+    flex:0 0 auto;width:40px;padding:0;border:1px solid var(--line);background:#fff;cursor:pointer;
+    color:var(--ink-3);display:inline-flex;align-items:center;justify-content:center;position:relative;
+  }
+  .hist-btn:hover{border-color:var(--ink);color:var(--ink);}
+  .hist-btn .ic{width:18px;height:18px;}
+  .hist-btn .n{
+    position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;border-radius:9px;
+    background:var(--ink);color:#fff;font-size:.65rem;font-weight:700;
+    display:flex;align-items:center;justify-content:center;padding:0 5px;
+  }
+  .rec-foot .hist-btn{align-self:stretch;}
   .out-empty{padding:14px 2px;font-size:.9rem;color:var(--ink-3);}
   @media(max-width:560px){
     .out-row{flex-wrap:wrap;}
@@ -924,7 +936,6 @@
     <span class="hint">Chosen against your brief — with what each one costs you, not just what it offers</span>
     <button class="btn btn-sm" id="compareAll" style="margin-left:14px;">Compare all three</button>
     <div class="view-toggle" id="viewToggle" role="group" aria-label="How to show the three"></div>
-    <button class="btn btn-sm" id="ruledOutBtn" hidden></button>
   </div>
 
   <div id="recs"></div>
@@ -970,8 +981,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=52"></script>
-<script src="assets/core.js?v=52"></script>
+<script src="assets/data.js?v=53"></script>
+<script src="assets/core.js?v=53"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1020,11 +1031,10 @@ function render(noteText){
     return brief.view === 'grid' ? gridHtml(L[k], meta, i===0, k) : recHtml(L[k], meta, i===0, k);
   }).join('');
   LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k],
-    (k === 'best' && L.pinned) ? {label:'Your pick'} : TT.LANE_META[k]));
+    (k === 'best' && L.pinned) ? {label:'Your pick'} : TT.LANE_META[k], k));
 
   renderDrawerBrief();
   renderIncluded();
-  renderRuledOut();
 }
 
 function drawViewToggle(){
@@ -1113,6 +1123,7 @@ function gridHtml(item, meta, lead, laneKey){
       (poolExhausted
         ? '<button class="btn" data-notfor disabled>None left</button>'
         : '<button class="btn" data-notfor>Not for me</button>') +
+      historyBtn(laneKey) +
     '</div>' +
 
     nudgeRow(d, laneKey, 'gnudge') +
@@ -1209,6 +1220,7 @@ function recHtml(item, meta, lead, laneKey){
       (poolExhausted
         ? '<button class="btn" data-notfor disabled>Nothing left to swap in</button>'
         : '<button class="btn" data-notfor>Not for me</button>') +
+      historyBtn(laneKey) +
     '</div>' +
     nudgeRow(d, laneKey) +
   '</article>';
@@ -1235,16 +1247,16 @@ function confidenceHtml(d, rep){
     '</ul>';
 }
 
-function wireRec(el, item, meta){
+function wireRec(el, item, meta, laneKey){
   const d = item.d;
   el.querySelector('[data-fav]').addEventListener('click', e=>{
     if(fav.has(d.id)) fav.delete(d.id); else fav.add(d.id);
     e.currentTarget.classList.toggle('on');
     renderIncluded();
   });
-  el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta));
+  el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta, laneKey));
   const nf = el.querySelector('[data-notfor]');
-  if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
+  if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d, laneKey));
 
   const gc = el.querySelector('.gconf');
   if(gc) gc.addEventListener('toggle', ()=>{
@@ -1252,6 +1264,9 @@ function wireRec(el, item, meta){
     gridConfOpen = gc.open;
     document.querySelectorAll('.gconf').forEach(x=>{ x.open = gridConfOpen; });
   });
+
+  const hb = el.querySelector('[data-hist]');
+  if(hb) hb.addEventListener('click', ()=>openOut(hb.dataset.hist));
 
   el.querySelectorAll('[data-shot]').forEach(b=>{
     b.addEventListener('click', ()=>{
@@ -1286,12 +1301,13 @@ function wireRec(el, item, meta){
 }
 
 /* ================= the destination sheet ================= */
-let sheetItem = null, savedY = 0;
+let sheetItem = null, sheetLane = null, savedY = 0;
 const sheet = document.getElementById('sheet');
 const sheetScrim = document.getElementById('sheetScrim');
 
-function openSheet(item, meta){
+function openSheet(item, meta, laneKey){
   sheetItem = item;
+  sheetLane = laneKey || null;
   document.getElementById('sheetKicker').textContent = meta.label;
   document.getElementById('sheetName').textContent = item.d.name;
   document.getElementById('sheetCty').textContent = item.d.country;
@@ -1695,7 +1711,7 @@ function wireSheet(d, st, nights){
   if(ms) ms.addEventListener('click', ()=>{ st.allSights = !st.allSights; drawSheet(); });
 
   inEl.querySelector('#sheetClose2').addEventListener('click', closeSheet);
-  inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d; closeSheet(); openWhy(x); });
+  inEl.querySelector('#sheetNotFor').addEventListener('click', ()=>{ const x = sheetItem.d, k = sheetLane; closeSheet(); openWhy(x, k); });
   inEl.querySelector('#sheetAsk').addEventListener('click', ()=>{ closeSheet(); openShark(); });
   inEl.querySelector('#sheetCmp').addEventListener('click', ()=>{ closeSheet(); openCompare(); });
   inEl.querySelector('#toFlights').addEventListener('click', ()=>{
@@ -1726,8 +1742,8 @@ const mscrim = document.getElementById('mscrim');
 const whyModal = document.getElementById('whyModal');
 let whyFor = null, whyPicked = new Set();
 
-function openWhy(d){
-  whyFor = d; whyPicked = new Set();
+function openWhy(d, laneKey){
+  whyFor = d; whyLane = laneKey || null; whyPicked = new Set();
   document.getElementById('whyTitle').textContent = 'Not ' + d.name + ', then';
   drawWhy();
   mscrim.classList.add('on');
@@ -1762,6 +1778,8 @@ document.getElementById('whyGo').addEventListener('click', ()=>{
      bring it back. */
   brief.rejectedWhy = brief.rejectedWhy || {};
   brief.rejectedWhy[d.id] = WHY.filter(w=>whyPicked.has(w.id)).map(w=>w.label);
+  brief.rejectedFrom = brief.rejectedFrom || {};
+  brief.rejectedFrom[d.id] = whyLane || 'best';
   closeWhy();
   render(said.length
     ? 'Dropped ' + d.name + '. We ' + said.join(', ') + ' and picked again.'
@@ -1773,15 +1791,27 @@ document.getElementById('whyGo').addEventListener('click', ()=>{
    Rejections are recoverable. The list keeps what they said at the time, so the
    decision to bring something back is an informed one. */
 const outModal = document.getElementById('outModal');
-const ruledOutBtn = document.getElementById('ruledOutBtn');
 
-function renderRuledOut(){
-  const n = (brief.dismissed || []).length;
-  ruledOutBtn.hidden = n === 0;
-  ruledOutBtn.textContent = 'Ruled out (' + n + ')';
+/* Rejections belong to the slot they were made in, so the history sits on that
+   card rather than being one pile for the whole page. */
+function rejectedIn(laneKey){
+  const from = brief.rejectedFrom || {};
+  return (brief.dismissed || []).filter(id=>(from[id] || 'best') === laneKey);
 }
 
-function openOut(){
+function historyBtn(laneKey){
+  const n = rejectedIn(laneKey).length;
+  if(!n) return '';
+  return '<button type="button" class="hist-btn" data-hist="' + laneKey + '" ' +
+    'title="See the ' + n + ' you ruled out of this slot" ' +
+    'aria-label="See the ' + n + ' you ruled out of this slot">' +
+    TT.icon('history') + '<span class="n">' + n + '</span></button>';
+}
+
+let outLane = null;
+
+function openOut(laneKey){
+  outLane = laneKey;
   drawOut();
   mscrim.classList.add('on');
   outModal.classList.add('on');
@@ -1790,7 +1820,10 @@ function closeOut(){ mscrim.classList.remove('on'); outModal.classList.remove('o
 
 function drawOut(){
   const ul = document.getElementById('outList');
-  const ids = brief.dismissed || [];
+  const ids = rejectedIn(outLane);
+  const meta = TT.LANE_META[outLane];
+  document.getElementById('outTitle').textContent =
+    'Ruled out of ' + (meta ? meta.label.toLowerCase() : 'this slot');
   ul.innerHTML = '';
   if(!ids.length){
     ul.innerHTML = '<li class="out-empty">You have not ruled anything out.</li>';
@@ -1829,6 +1862,7 @@ function putBack(id){
   const d = DEST.find(x=>x.id === id);
   brief.dismissed = (brief.dismissed || []).filter(x=>x !== id);
   if(brief.rejectedWhy) delete brief.rejectedWhy[id];
+  if(brief.rejectedFrom) delete brief.rejectedFrom[id];
   closeOut();
   render();
 
@@ -1841,14 +1875,16 @@ function putBack(id){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-ruledOutBtn.addEventListener('click', openOut);
 document.getElementById('outClose').addEventListener('click', closeOut);
 document.getElementById('outAll').addEventListener('click', ()=>{
-  const n = (brief.dismissed || []).length;
-  brief.dismissed = [];
-  brief.rejectedWhy = {};
+  const ids = rejectedIn(outLane);
+  ids.forEach(id=>{
+    brief.dismissed = brief.dismissed.filter(x=>x !== id);
+    if(brief.rejectedWhy) delete brief.rejectedWhy[id];
+    if(brief.rejectedFrom) delete brief.rejectedFrom[id];
+  });
   closeOut();
-  render('Put ' + n + ' back into the running.');
+  render('Put ' + ids.length + ' back into the running.');
   window.scrollTo({top:0, behavior:'smooth'});
 });
 

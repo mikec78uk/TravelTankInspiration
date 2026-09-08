@@ -177,11 +177,12 @@ The three sit in a tab strip detached from the card below, with a pointer tying 
 one to it. Each destination leads with its name and country, then an image mosaic — one lead
 tile with two stacked beside it — rather than a single banner with the name overlaid.
 
-**Ruled out (n)** appears in the header once anything has been rejected. It lists what was
-rejected, newest first, with the reasons given at the time, and puts any of them — or all of
-them — back. Bringing one back does not silently undo the brief changes the rejection made, so
-the page says plainly whether it has actually returned to the three or is only back in the
-running.
+**A history icon sits beside *Not for me*** on any card whose slot has had something rejected
+from it, badged with the count. Rejections belong to the slot they were made in, so the icon on
+the premium card shows what you turned down for that slot — not one pile for the whole page. It
+lists them newest first with the reason given at the time, and restores any one or all of them.
+Bringing one back does not silently undo the brief changes the rejection made, so the page says
+plainly whether it has actually returned to the three or is only back in the running.
 
 **Not for me** asks why before it swaps. The reasons are optional and multi-select, and each
 one changes the brief rather than just being recorded — *too expensive* drops the budget a

@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], rejectedWhy:{}, pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
+      dismissed:[], rejectedWhy:{}, rejectedFrom:{}, pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
     };
   }
   function load(){
@@ -476,7 +476,8 @@ const TT = (function(){
     bar:'M4 4h16l-8 8v7M8 19h8M14.5 8.5l4-4',
     concierge:'M3 18h18M5 18a7 7 0 0114 0M12 8V6M10.5 6h3',
     room:'M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5M3 18v2M21 18v2M6 11V8a1.5 1.5 0 011.5-1.5h9A1.5 1.5 0 0118 8v3',
-    pin:'M12 22s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12zM12 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z'
+    pin:'M12 22s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12zM12 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z',
+    history:'M3.2 12a8.8 8.8 0 102.6-6.3L3 8.2M3 3.6v4.6h4.6M12 7.8v4.4l3 1.8'
   };
   function icon(name, cls){
     const d = ICONS[name];
