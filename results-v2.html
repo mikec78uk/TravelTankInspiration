@@ -289,11 +289,12 @@
   .sheet-grab{flex:0 0 auto;display:flex;justify-content:center;padding:10px 0 2px;}
   .sheet-grab span{width:46px;height:4px;border-radius:2px;background:var(--line);}
   .sheet-hd{
-    flex:0 0 auto;display:flex;align-items:flex-start;gap:20px;
-    padding:12px 34px 18px;border-bottom:1px solid var(--line-2);
+    flex:0 0 auto;position:relative;text-align:center;
+    padding:12px 74px 18px;border-bottom:1px solid var(--line-2);
   }
   .sheet-hd h2{margin:4px 0 0;font-size:1.9rem;letter-spacing:-.025em;}
   .sheet-hd .cty{font-size:.92rem;color:var(--ink-3);margin-top:4px;}
+  .sheet-hd .sheet-x{position:absolute;top:12px;right:34px;margin:0;}
   .sheet-x{
     margin-left:auto;flex:0 0 auto;width:40px;height:40px;border:1px solid var(--line);
     background:#fff;cursor:pointer;font-size:1.2rem;line-height:1;color:var(--ink-2);border-radius:50%;
@@ -306,7 +307,8 @@
   .sheet-in{max-width:1000px;margin:0 auto;}
   @media(max-width:620px){
     .sheet{top:18px;}
-    .sheet-hd{padding:10px 18px 16px;}
+    .sheet-hd{padding:10px 58px 16px;}
+    .sheet-hd .sheet-x{top:8px;right:14px;width:34px;height:34px;}
     .sheet-hd h2{font-size:1.45rem;}
     .sheet-body{padding:20px 18px 32px;}
   }
