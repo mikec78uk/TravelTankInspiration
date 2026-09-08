@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=47">
+<link rel="stylesheet" href="assets/tt.css?v=48">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -932,8 +932,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=47"></script>
-<script src="assets/core.js?v=47"></script>
+<script src="assets/data.js?v=48"></script>
+<script src="assets/core.js?v=48"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1071,7 +1071,6 @@ function gridHtml(item, meta, lead, laneKey){
 
     '<div class="gacts">' +
       '<button class="btn btn-primary" data-open>Explore &rarr;</button>' +
-      '<button class="btn" data-cmp>Compare</button>' +
       (poolExhausted
         ? '<button class="btn" data-notfor disabled>None left</button>'
         : '<button class="btn" data-notfor>Not for me</button>') +
@@ -1167,7 +1166,6 @@ function recHtml(item, meta, lead, laneKey){
 
     '<div class="rec-foot">' +
       '<button class="btn btn-primary" data-open>Explore ' + TT.esc(d.name) + ' &rarr;</button>' +
-      '<button class="btn" data-cmp>Compare</button>' +
       '<span class="spacer"></span>' +
       (poolExhausted
         ? '<button class="btn" data-notfor disabled>Nothing left to swap in</button>'
@@ -1206,7 +1204,6 @@ function wireRec(el, item, meta){
     renderIncluded();
   });
   el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta));
-  el.querySelector('[data-cmp]').addEventListener('click', openCompare);
   const nf = el.querySelector('[data-notfor]');
   if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d));
 
