@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=72">
+<link rel="stylesheet" href="assets/tt.css?v=73">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -517,6 +517,9 @@
   .mini .n{min-width:16px;text-align:center;font-size:.9rem;font-weight:600;}
 
   /* ---- hotels: a card each, not a row in a list ---- */
+  /* .dsec-c p zeroes every paragraph margin, which is right after a heading and
+     wrong under the tier buttons, which have no bottom margin of their own. */
+  .dsec-c .tier-note{margin-top:16px;}
   .tier-note{font-size:.94rem;color:var(--ink-3);line-height:1.6;}
   .hcard{border:1px solid var(--line);background:#fff;margin-bottom:14px;}
   .hcard:last-child{margin-bottom:0;}
@@ -1046,8 +1049,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=72"></script>
-<script src="assets/core.js?v=72"></script>
+<script src="assets/data.js?v=73"></script>
+<script src="assets/core.js?v=73"></script>
 <script>
 TT.mount('results-v2.html');
 
