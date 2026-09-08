@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=61">
+<link rel="stylesheet" href="assets/tt.css?v=63">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -336,7 +336,8 @@
   .fl:hover{background:var(--panel-2);}
   .fl.on{border-color:var(--ink);position:relative;z-index:1;background:#fff;}
   .radio{width:16px;height:16px;border:1px solid var(--ink-3);border-radius:50%;display:inline-block;}
-  .fl.on .radio{border:5px solid var(--ink);}
+  .fl.on .radio,
+  .room.on .radio{border:5px solid var(--ink);}
   .fl .car{font-weight:600;font-size:.93rem;display:block;}
   .fl .rt{font-size:.82rem;color:var(--ink-3);margin-top:2px;display:block;}
   .fl .dur{font-size:.9rem;color:var(--ink-2);}
@@ -518,6 +519,13 @@
   .hcard{border:1px solid var(--line);background:#fff;margin-bottom:14px;}
   .hcard:last-child{margin-bottom:0;}
   .hcard.on{border-color:var(--ink);}
+  .hcard.chosen{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink);}
+  .chosen-tag{
+    position:absolute;top:12px;left:12px;background:var(--ink);color:#fff;z-index:2;
+    font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;font-weight:700;padding:4px 9px;
+  }
+  .hchoose{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .hchoose .btn{flex:0 0 auto;}
   .hbtn{
     display:grid;grid-template-columns:220px 1fr auto;gap:24px;align-items:stretch;
     width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer;
@@ -601,10 +609,11 @@
 
   .rooms{display:grid;gap:2px;}
   .room{
-    display:grid;grid-template-columns:24px 1fr auto;gap:16px;align-items:center;
-    border:1px solid var(--line);padding:15px 18px;margin-bottom:-1px;cursor:pointer;
+    display:grid;grid-template-columns:24px 92px 1fr auto;gap:16px;align-items:center;
+    border:1px solid var(--line);padding:14px 18px;margin-bottom:-1px;cursor:pointer;
     background:#fff;text-align:left;width:100%;
   }
+  .room .rshot{height:64px;}
   .room:hover{background:var(--panel-2);}
   .room.on{border-color:var(--ink);position:relative;z-index:1;}
   .room .rn{display:block;font-size:.97rem;font-weight:600;}
@@ -619,8 +628,9 @@
   .hsel .sum{font-size:.95rem;color:var(--ink-2);}
   .hsel .sum b{color:var(--ink);font-size:1.05rem;}
   @media(max-width:700px){
-    .room{grid-template-columns:24px 1fr;row-gap:8px;}
-    .room .rp{grid-column:2;text-align:left;}
+    .room{grid-template-columns:24px 68px 1fr;row-gap:10px;}
+    .room .rshot{height:52px;}
+    .room .rp{grid-column:2 / -1;text-align:left;}
     .hpanel{padding:6px 20px 22px;}
   }
 
@@ -1027,8 +1037,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=61"></script>
-<script src="assets/core.js?v=61"></script>
+<script src="assets/data.js?v=63"></script>
+<script src="assets/core.js?v=63"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1391,7 +1401,12 @@ function closeSheet(){
 function partyFor(id){
   if(!ui[id]) stateFor(id);
   const st = ui[id];
-  if(st.adults === undefined){ st.adults = 2; st.children = 0; st.rooms = 1; st.hotel = null; st.room = 'std'; }
+  if(st.adults === undefined){
+    st.adults = 2; st.children = 0; st.rooms = 1;
+    st.open = null;      /* which panel is expanded */
+    st.hotel = null;     /* which hotel is actually chosen for the trip */
+    st.room = 'std';
+  }
   return st;
 }
 
@@ -1715,20 +1730,23 @@ function hotelBadge(h, i, list){
 }
 
 function hotelRow(h, i, st, nights, d){
-  const open   = st.hotel === i;
+  const open   = st.open === i;
+  const isChosen = st.hotel === i;
   const list   = d.hotels[st.tier];
   const rooms  = TT.roomsFor(h);
-  const chosen = rooms.find(r=>r.id === st.room) || rooms[0];
-  const needed = Math.max(st.rooms, TT.roomsNeeded(chosen, st.adults, st.children));
-  const stayTotal = chosen.night * needed * nights;
+  const pickedRoom = rooms.find(r=>r.id === st.room) || rooms[0];
+  const needed = Math.max(st.rooms, TT.roomsNeeded(pickedRoom, st.adults, st.children));
+  const stayTotal = pickedRoom.night * needed * nights;
   const facs   = TT.facilitiesFor(h, d);
   const badge  = hotelBadge(h, i, list);
 
-  return '<div class="hcard' + (open ? ' on' : '') + '">' +
+  return '<div class="hcard' + (open ? ' on' : '') + (isChosen ? ' chosen' : '') + '">' +
     '<button type="button" class="hbtn" data-hotel="' + i + '" aria-expanded="' + open + '">' +
       '<div class="shotwrap">' +
         '<div class="shot ph' + (i % 2 ? ' ph-sm' : '') + '"></div>' +
-        (badge ? '<span class="badge">' + TT.esc(badge) + '</span>' : '') +
+        (isChosen
+          ? '<span class="chosen-tag">Chosen</span>'
+          : (badge ? '<span class="badge">' + TT.esc(badge) + '</span>' : '')) +
       '</div>' +
       '<div class="hmid">' +
         '<div class="hstars"><span class="st">' + stars(h.stars) + '</span>' +
@@ -1745,7 +1763,7 @@ function hotelRow(h, i, st, nights, d){
         '<div>' +
           '<div class="amt">' + TT.money(h.night) + '</div>' +
           '<div class="per">per room, per night</div>' +
-          '<div class="stay">' + TT.money(chosen.night * needed * nights) + ' for ' + nts(nights) + '</div>' +
+          '<div class="stay">' + TT.money(pickedRoom.night * needed * nights) + ' for ' + nts(nights) + '</div>' +
         '</div>' +
         '<span class="cta">' + (open ? 'Hide details' : 'View this hotel') +
           '<span class="caret">&rsaquo;</span></span>' +
@@ -1775,15 +1793,18 @@ function hotelRow(h, i, st, nights, d){
               const n = Math.max(st.rooms, TT.roomsNeeded(r, st.adults, st.children));
               return '<button type="button" class="room' + (r.id===st.room?' on':'') + '" data-room="' + r.id + '">' +
                 '<span class="radio"></span>' +
+                '<span class="rshot ph' + (r.id === 'sup' ? ' ph-sm' : '') + '"></span>' +
                 '<span><span class="rn">' + TT.esc(r.name) + '</span>' +
                   '<span class="rs">Sleeps ' + r.sleeps + ' &middot; ' + n + ' room' + (n===1?'':'s') + ' for your party</span></span>' +
                 '<span class="rp"><b>' + TT.money(r.night) + '</b><span>per room, per night</span></span>' +
               '</button>';
             }).join('') +
           '</div>' +
-          '<div class="hsel">' +
+          '<div class="hsel hchoose">' +
+            '<button type="button" class="btn' + (isChosen ? '' : ' btn-primary') + '" data-choose="' + i + '">' +
+              (isChosen ? 'Chosen — remove' : 'Choose this hotel') + '</button>' +
             '<span class="sum"><b>' + TT.money(stayTotal) + '</b> for ' + nts(nights) + ' &middot; ' +
-              needed + ' &times; ' + TT.esc(chosen.name).toLowerCase() + '</span>' +
+              needed + ' &times; ' + TT.esc(pickedRoom.name).toLowerCase() + '</span>' +
           '</div>' +
         '</div>'
       : '') +
@@ -1816,11 +1837,19 @@ function wireSheet(d, st, nights){
   });
 
   inEl.querySelectorAll('[data-tier]').forEach(el=>{
-    el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; st.hotel = null; drawSheet(); });
+    el.addEventListener('click', ()=>{ st.tier = el.dataset.tier; st.open = null; st.hotel = null; drawSheet(); });
   });
   inEl.querySelectorAll('[data-hotel]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const i = +el.dataset.hotel;
+      st.open = (st.open === i) ? null : i;    /* looking is not choosing */
+      drawSheet();
+    });
+  });
+  inEl.querySelectorAll('[data-choose]').forEach(el=>{
+    el.addEventListener('click', e=>{
+      e.stopPropagation();
+      const i = +el.dataset.choose;
       st.hotel = (st.hotel === i) ? null : i;
       drawSheet();
     });
