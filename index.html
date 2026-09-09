@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
-<title>TravelTank Inspiration — three entry points</title>
-<link rel="stylesheet" href="assets/tt.css?v=74">
+<title>TravelTank Inspiration — five entry points</title>
+<link rel="stylesheet" href="assets/tt.css?v=76">
 <style>
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:8px;}
   @media(max-width:960px){.cards{grid-template-columns:1fr;}}
@@ -24,6 +24,9 @@
   .pill.p1{width:44px;}.pill.p2{width:62px;}.pill.p3{width:36px;}.pill.p4{width:54px;}.pill.p5{width:70px;}
   .box{border:1px solid var(--line);height:44px;}
   .box.tall{height:60px;}
+  .duo-prev{display:grid;grid-template-columns:1.5fr 1fr;gap:8px;width:100%;}
+  .duo-prev .dp{display:flex;flex-direction:column;gap:7px;border:1px solid var(--line-2);padding:9px;}
+  .duo-prev .dp.alt{background:var(--panel-2);}
   .ec ul{margin:14px 0 0;padding:0 20px 0 38px;font-size:.87rem;color:var(--ink-2);display:grid;gap:7px;}
   .ec .go{padding:18px 20px 20px;margin-top:auto;}
   .meta{border:1px solid var(--line);padding:20px 24px;margin-top:34px;background:var(--panel-2);}
@@ -36,9 +39,9 @@
 <body>
 
 <main class="shell">
-  <h1>Inspiration — three ways in</h1>
+  <h1>Inspiration — five ways in</h1>
   <p class="lede">
-    Three entry points to the same recommendation engine, presented as greyscale wireframes.
+    Five entry points to the same recommendation engine, presented as greyscale wireframes.
     Each one leads to the same results page, so the difference being tested is purely how the
     customer gives us their brief.
   </p>
@@ -120,10 +123,28 @@
       <div class="go"><a class="btn btn-primary" href="concept-4.html" style="text-decoration:none;display:inline-block;">Open concept 4</a></div>
     </div>
 
+    <div class="ec">
+      <div class="num">Entry point 5</div>
+      <h2>Two routes, side by side</h2>
+      <div class="sub">Concept 2&rsquo;s prompt lifted out of a fourth tab and set beside the standard search, so nobody has to find it.</div>
+      <div class="prev">
+        <div class="duo-prev">
+          <div class="dp"><div class="bar w4"></div><div class="pills"><span class="pill p1"></span><span class="pill p2"></span><span class="pill p3"></span></div><div class="box"></div></div>
+          <div class="dp alt"><div class="bar w2"></div><div class="box tall"></div></div>
+        </div>
+      </div>
+      <ul>
+        <li>The customer self-selects on what they know, not on a feature name</li>
+        <li>Flights keep the wider column, the left position and the tabs</li>
+        <li>Nothing is one click away &mdash; both routes are on screen at once</li>
+      </ul>
+      <div class="go"><a class="btn btn-primary" href="concept-5.html" style="text-decoration:none;display:inline-block;">Open concept 5</a></div>
+    </div>
+
   </div>
 
   <div class="meta">
-    <h2>What all three lead to</h2>
+    <h2>What all five lead to</h2>
     <div class="flow">
       <b>Entry point</b> → <b>Results: best match</b> ↔ <b>Premium</b> ↔ <b>Off the beaten track</b> → <b>Edit brief (side panel)</b> → <b>Re-picked</b>
     </div>
@@ -141,8 +162,8 @@
   </div>
 </main>
 
-<script src="assets/data.js?v=74"></script>
-<script src="assets/core.js?v=74"></script>
+<script src="assets/data.js?v=76"></script>
+<script src="assets/core.js?v=76"></script>
 <script>TT.mount('index.html');</script>
 </body>
 </html>

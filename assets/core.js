@@ -777,6 +777,7 @@ const TT = (function(){
       ['concept-2.html','2 · Prompt + help'],
       ['concept-3.html','3 · Conversation'],
       ['concept-4.html','4 · Stepped prompt'],
+      ['concept-5.html','5 · Two routes'],
       ['results.html','Results'],
       ['results-v2.html','Results v2'],
       ['flights.html','Your trip']

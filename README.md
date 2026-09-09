@@ -1,6 +1,6 @@
 # TravelTank — Inspiration
 
-Greyscale wireframes for the TravelTank inspiration function. Three entry points into the same
+Greyscale wireframes for the TravelTank inspiration function. Five entry points into the same
 recommendation engine, all leading to a shared results page.
 
 **Live preview:** https://mikec78uk.github.io/TravelTankInspiration/
@@ -12,11 +12,12 @@ recommendation engine, all leading to a shared results page.
 
 | Page | What it is |
 |---|---|
-| [`index.html`](index.html) | Overview — the four entry points side by side |
+| [`index.html`](index.html) | Overview — the five entry points side by side |
 | [`concept-1.html`](concept-1.html) | **Entry point 1** — guided brief (structured questions) |
 | [`concept-2.html`](concept-2.html) | **Entry point 2** — open prompt with suggestions and a *Need help?* modal |
 | [`concept-3.html`](concept-3.html) | **Entry point 3** — conversational, asks up to three follow-ups |
 | [`concept-4.html`](concept-4.html) | **Entry point 4** — stepped questions on the page, writing into the prompt |
+| [`concept-5.html`](concept-5.html) | **Entry point 5** — the two routes side by side, no tab to find |
 | [`results.html`](results.html) | Shared results — three destinations, flights, hotels, editable brief |
 | [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
 | [`flights.html`](flights.html) | Step 2 — the logistics, once the destination and hotel are settled |
@@ -24,7 +25,7 @@ recommendation engine, all leading to a shared results page.
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
 flights, hotels) and `core.js` (brief state, matching logic, page chrome).
 
-## The four entry points
+## The five entry points
 
 **1 — Guided brief.** The Figma frame, built out. Six groups of chips plus a free-text field.
 Every field is optional; submitting an empty form still returns a recommendation.
@@ -54,6 +55,21 @@ navigate, `↵` chooses, `esc` skips. Every question also carries a *Something e
 free-text answer, which is parsed the same way the opening message is, and the `×` stops the
 questioning outright and goes with whatever it has. Interests are multi-select — options
 toggle, and `esc` means done rather than discard once anything is picked.
+
+**5 — Two routes, side by side.** Concept 2's prompt and *Need help?*, lifted out of the fourth
+tab and set beside the standard search. The concern with concept 2 was that *Inspire me* is easy
+to miss and easy to dismiss as a gimmick, but making it the default tab gives up the position
+that earns the most revenue. This resolves both: the two panels are headed **I know where I want
+to go** and **Not sure where**, so the customer self-selects on what they know rather than on
+what a feature is called, and nothing has to be found.
+
+Flights keep the wider column, the left-hand position, the tabs and the full-width accent
+button, so the commercial hierarchy is unchanged. Pressing **Search** with no destination hands
+over to the prompt rather than erroring — an empty destination field is the moment the customer
+is in the wrong column.
+
+Unlike concept 2, the worked examples are on screen from the start. In a column that is always
+visible, an empty box with nothing under it is the thing that reads as a gimmick.
 
 ## The results page
 
@@ -240,8 +256,8 @@ a scrim instead ("cheaper", "too far", "more beach", a month, a
 budget figure). All three re-score all three destinations. **Not interested** drops that
 destination and promotes the next best fit for the slot.
 
-The brief carries from an entry point through to the results page in `sessionStorage`. All
-three entry points reset to their defaults on load — including on browser Back — so each run
+The brief carries from an entry point through to the results page in `sessionStorage`. Every
+entry point resets to its defaults on load — including on browser Back — so each run
 through starts from scratch rather than inheriting the last one's answers.
 
 ## Notes for review
