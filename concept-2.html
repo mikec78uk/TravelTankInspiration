@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Concept 2 — Prompt + Need help? · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=78">
+<link rel="stylesheet" href="assets/tt.css?v=79">
 <style>
   .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
   .mode-tab{
@@ -41,6 +41,7 @@
     font-size:.95rem;color:var(--ink-3);border-radius:2px;
   }
   .ai-icon:hover{border-color:var(--ink-3);color:var(--ink);}
+  .ai-icon .ic{width:16px;height:16px;}
   .help-btn{
     border:1px solid var(--line);background:#fff;padding:8px 16px;font-size:.83rem;
     cursor:pointer;border-radius:2px;color:var(--ink-2);
@@ -120,9 +121,9 @@
 
     <div id="panelAi" hidden>
       <form class="ai-pill" id="aiPill">
-        <textarea id="aiPrompt" rows="1" autocomplete="off" placeholder="Describe the trip you want and we'll find the destination…"></textarea>
+        <textarea id="aiPrompt" rows="1" autocomplete="off" placeholder="Describe the trip you want, or attach a picture — the Colosseum, a beach you saved — and we'll find the destination…"></textarea>
         <div class="ai-toolbar">
-          <button type="button" class="ai-icon" title="Attach">+</button>
+          <button type="button" class="ai-icon" id="aiAttach" title="Attach a picture"></button>
           <button type="button" class="help-btn" id="helpBtn"><b>Need help?</b> — pick from a few options instead</button>
           <button type="submit" class="ai-send" id="sendBtn" aria-label="Inspire me">&rarr;</button>
         </div>
@@ -176,13 +177,14 @@
   </div>
 </div>
 
-<script src="assets/data.js?v=78"></script>
-<script src="assets/core.js?v=78"></script>
+<script src="assets/data.js?v=79"></script>
+<script src="assets/core.js?v=79"></script>
 <script>
 TT.mount('concept-2.html');
 
 let brief = TT.fresh();   // the prompt panel always opens empty
 const ta = document.getElementById('aiPrompt');
+document.getElementById('aiAttach').innerHTML = TT.icon('clip');
 
 /* auto-grow textarea */
 function grow(){ ta.style.height='auto'; ta.style.height = Math.max(52, ta.scrollHeight) + 'px'; }
