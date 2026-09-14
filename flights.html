@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Your trip · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=88">
+<link rel="stylesheet" href="assets/tt.css?v=89">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -168,8 +168,8 @@
   <div id="page"></div>
 </main>
 
-<script src="assets/data.js?v=88"></script>
-<script src="assets/core.js?v=88"></script>
+<script src="assets/data.js?v=89"></script>
+<script src="assets/core.js?v=89"></script>
 <script>
 TT.mount('flights.html');
 
@@ -181,7 +181,12 @@ document.getElementById('startAgain').addEventListener('click', ()=>{
   TT.clear();
   location.href = brief.source ? brief.source + '.html' : 'index.html';
 });
-const backTo = (brief.trip && brief.trip.via) ? brief.trip.via : 'results-v2.html';
+/* Back should land the customer on the destination they were already looking
+   at, with the hotel and room they had picked — not the shortlist from
+   scratch. ?open= tells results-v2.html which one to reopen and restore. */
+const backTo = (brief.trip && brief.trip.via)
+  ? brief.trip.via + (brief.trip.dest ? '?open=' + encodeURIComponent(brief.trip.dest) : '')
+  : 'results-v2.html';
 document.getElementById('back').addEventListener('click', ()=>{ location.href = backTo; });
 
 if(!trip || !DEST.find(d=>d.id === trip.dest)){

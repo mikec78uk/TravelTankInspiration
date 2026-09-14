@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=88">
+<link rel="stylesheet" href="assets/tt.css?v=89">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -1199,8 +1199,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=88"></script>
-<script src="assets/core.js?v=88"></script>
+<script src="assets/data.js?v=89"></script>
+<script src="assets/core.js?v=89"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -2601,7 +2601,7 @@ document.getElementById('cfContinue').addEventListener('click', ()=>{
     adults: st.adults, children: st.children, childAges: st.childAges.slice(0, st.children), rooms: st.rooms,
     tier: st.tier,
     hotel: mode === 'flight' ? null : st.hotel,
-    room: st.room
+    room: st.room, board: st.board
   };
   TT.save(brief);
   location.href = 'flights.html';
@@ -3045,6 +3045,28 @@ if(sharedId && DEST.some(x=>x.id === sharedId)){
   TT.save(brief);
 }
 
+/* Arriving back from flights.html having already looked at a destination — pin
+   it back into the lead slot (it may not still be the algorithmic best match)
+   and restore exactly how they left it: tier, hotel, room, board and party,
+   all of which came home with them in brief.trip. */
+const openId = new URLSearchParams(location.search).get('open');
+if(openId && DEST.some(x=>x.id === openId)){
+  brief.pinned = openId;
+  TT.save(brief);
+  if(brief.trip && brief.trip.dest === openId){
+    const t = brief.trip, st = partyFor(openId);
+    st.tier = t.tier || st.tier;
+    st.adults = t.adults || st.adults;
+    st.children = t.children || 0;
+    st.childAges = (t.childAges || []).slice();
+    st.rooms = t.rooms || st.rooms;
+    st.room = t.room || st.room;
+    st.board = t.board || null;
+    st.hotel = (t.hotel === undefined || t.hotel === null) ? null : t.hotel;
+    st.open = st.hotel;   /* the chosen hotel's panel starts expanded, not collapsed */
+  }
+}
+
 /* Arriving from "Speak to a Travel Shark" on the flights page. */
 if(location.hash === '#shark'){
   history.replaceState(null, '', location.pathname + location.search);
@@ -3053,13 +3075,17 @@ if(location.hash === '#shark'){
 
 render();
 
-if(sharedId){
+if(sharedId || openId){
   history.replaceState(null, '', location.pathname);
+  const returnId = sharedId || openId;
   const L = TT.lanes(brief);
-  const k = LANE_KEYS.find(x=>L[x] && L[x].d.id === sharedId);
+  const k = LANE_KEYS.find(x=>L[x] && L[x].d.id === returnId);
   if(k){
     const card = document.getElementById('recs').children[LANE_KEYS.indexOf(k)];
-    if(card) setTimeout(()=>card.querySelector('[data-open]').click(), 120);
+    if(card) setTimeout(()=>{
+      card.querySelector('[data-open]').click();
+      if(openId) toSummary();   /* land back where the trip bar actually is */
+    }, 120);
   }
 }
 </script>
