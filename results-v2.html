@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=80">
+<link rel="stylesheet" href="assets/tt.css?v=81">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -634,7 +634,7 @@
   .hgal{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:210px;margin:20px 0 22px;}
   .hgal .ph:first-child{grid-row:1 / span 2;}
   @media(max-width:700px){.hgal{grid-template-columns:1fr 1fr;height:240px;}.hgal .ph:first-child{grid-column:1 / -1;grid-row:auto;}}
-  .hintro{margin-top:26px;}
+  .facs-lab{margin-top:26px;}
   .hintro-t{position:relative;}
   .hintro-t p{margin:0;font-size:1rem;line-height:1.68;color:var(--ink-2);max-width:70ch;}
   .hintro-t p + p{margin-top:13px;}
@@ -1098,8 +1098,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=80"></script>
-<script src="assets/core.js?v=80"></script>
+<script src="assets/data.js?v=81"></script>
+<script src="assets/core.js?v=81"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1933,9 +1933,6 @@ function hotelRow(h, i, st, nights, d){
           '</div>' +
           '<div class="hsplit">' +
             '<div>' +
-              '<span class="lab">Facilities</span>' +
-              '<div class="facs">' + facs.map(f=>
-                '<span class="fac">' + TT.icon(f.i) + TT.esc(f.t) + '</span>').join('') + '</div>' +
               '<div class="hintro">' +
                 '<span class="lab">About the hotel</span>' +
                 '<div class="hintro-t' + (st.intro ? '' : ' clamp') + '">' +
@@ -1944,6 +1941,9 @@ function hotelRow(h, i, st, nights, d){
                 '<button type="button" class="more-btn" data-hmore>' +
                   (st.intro ? 'Read less' : 'Read more') + '</button>' +
               '</div>' +
+              '<span class="lab facs-lab">Facilities</span>' +
+              '<div class="facs">' + facs.map(f=>
+                '<span class="fac">' + TT.icon(f.i) + TT.esc(f.t) + '</span>').join('') + '</div>' +
             '</div>' +
             '<div>' +
               '<span class="lab">Where it is</span>' +
