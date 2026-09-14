@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=76">
+<link rel="stylesheet" href="assets/tt.css?v=78">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -45,6 +45,47 @@
   }
   .fav:hover{border-color:var(--ink-3);color:var(--ink);}
   .fav.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .head-acts{flex:0 0 auto;margin-left:auto;display:flex;gap:8px;align-items:flex-start;}
+  .head-acts .fav{margin-left:0;}
+  .share{
+    flex:0 0 auto;width:42px;height:42px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;color:var(--ink-2);border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .share .ic{width:17px;height:17px;}
+  .share:hover{border-color:var(--ink);color:var(--ink);}
+  .gshare{
+    position:absolute;top:12px;right:56px;z-index:2;width:36px;height:36px;
+    border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink-2);
+    border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .gshare .ic{width:15px;height:15px;}
+  .gshare:hover{border-color:var(--ink);color:var(--ink);}
+
+  /* ---- the share menu ---- */
+  .sharepop{
+    position:fixed;z-index:99;width:276px;background:#fff;border:1px solid var(--ink);
+    box-shadow:0 12px 34px rgba(17,19,21,.14);display:none;
+  }
+  .sharepop.on{display:block;}
+  .sharepop .sp-hd{
+    padding:14px 16px 12px;border-bottom:1px solid var(--line-2);
+    font-size:.86rem;color:var(--ink-3);line-height:1.5;
+  }
+  .sharepop .sp-hd b{color:var(--ink);font-weight:600;}
+  .sharepop a,.sharepop button{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+    border:0;border-top:1px solid var(--line-2);background:#fff;cursor:pointer;
+    padding:13px 16px;font:inherit;font-size:.93rem;color:var(--ink);text-decoration:none;
+  }
+  .sharepop a:first-of-type{border-top:0;}
+  .sharepop a:hover,.sharepop button:hover{background:var(--panel-2);}
+  .sharepop .ic{width:17px;height:17px;color:var(--ink-3);flex:0 0 auto;}
+  .sharepop .sp-note{
+    padding:11px 16px;border-top:1px solid var(--line-2);background:var(--panel-2);
+    font-size:.78rem;color:var(--ink-3);
+  }
+  @media(max-width:520px){.sharepop{width:calc(100vw - 32px);}}
 
   .mosaic{display:grid;gap:10px;margin-bottom:26px;background:#fff;}
   .mosaic.big{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:420px;}
@@ -295,6 +336,13 @@
   .sheet-hd h2{margin:4px 0 0;font-size:1.9rem;letter-spacing:-.025em;}
   .sheet-hd .cty{font-size:.92rem;color:var(--ink-3);margin-top:4px;}
   .sheet-hd .sheet-x{position:absolute;top:12px;right:34px;margin:0;}
+  .sheet-share{
+    position:absolute;top:12px;left:34px;width:40px;height:40px;border:1px solid var(--line);
+    background:#fff;cursor:pointer;color:var(--ink-2);border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .sheet-share .ic{width:17px;height:17px;}
+  .sheet-share:hover{background:var(--ink);border-color:var(--ink);color:#fff;}
   .sheet-x{
     margin-left:auto;flex:0 0 auto;width:40px;height:40px;border:1px solid var(--line);
     background:#fff;cursor:pointer;font-size:1.2rem;line-height:1;color:var(--ink-2);border-radius:50%;
@@ -309,6 +357,7 @@
     .sheet{top:18px;}
     .sheet-hd{padding:10px 58px 16px;}
     .sheet-hd .sheet-x{top:8px;right:14px;width:34px;height:34px;}
+    .sheet-share{top:8px;left:14px;width:34px;height:34px;}
     .sheet-hd h2{font-size:1.45rem;}
     .sheet-body{padding:20px 18px 32px;}
   }
@@ -1031,10 +1080,14 @@
       <h2 id="sheetName"></h2>
       <div class="cty" id="sheetCty"></div>
     </div>
+    <button class="sheet-share" id="sheetShare" aria-label="Share this destination" title="Share this"></button>
     <button class="sheet-x" id="sheetX" aria-label="Close">&times;</button>
   </header>
   <div class="sheet-body" id="sheetBody"><div class="sheet-in" id="sheetIn"></div></div>
 </section>
+
+<!-- ============ share ============ -->
+<div class="sharepop" id="sharePop" role="dialog" aria-label="Share this destination"></div>
 
 <!-- ============ compare ============ -->
 <div class="sheet-scrim" id="cmpScrim"></div>
@@ -1049,8 +1102,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=76"></script>
-<script src="assets/core.js?v=76"></script>
+<script src="assets/data.js?v=78"></script>
+<script src="assets/core.js?v=78"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1081,6 +1134,12 @@ function stateFor(id){
   return ui[id];
 }
 
+/* A destination in the lead slot because it was pinned is "your pick" — unless it
+   is only there because someone else sent it. */
+function pinLabel(L){
+  return (brief.shared && L.best && L.best.d.id === brief.shared) ? 'Shared with you' : 'Your pick';
+}
+
 /* ================= render the three recommendations ================= */
 function render(noteText){
   TT.save(brief);
@@ -1103,15 +1162,16 @@ function render(noteText){
   const host = document.getElementById('recs');
   host.className = brief.view === 'grid' ? 'view-grid' : 'view-list';
   host.innerHTML = LANE_KEYS.map((k,i)=>{
-    /* If the lead slot is there because the customer pinned it, say so rather than
-       calling it our best match. */
+    /* If the lead slot is there because it was pinned, say so rather than calling
+       it our best match — and if it was pinned by arriving on someone else's link,
+       it is not the recipient's pick either. */
     const meta = (k === 'best' && L.pinned)
-      ? {label:'Your pick', prose:'your pick', blurb:LANE_META.best.blurb}
+      ? {label:pinLabel(L), prose:pinLabel(L).toLowerCase(), blurb:LANE_META.best.blurb}
       : LANE_META[k];
     return brief.view === 'grid' ? gridHtml(L[k], meta, i===0, k) : recHtml(L[k], meta, i===0, k);
   }).join('');
   LANE_KEYS.forEach((k,i)=>wireRec(host.children[i], L[k],
-    (k === 'best' && L.pinned) ? {label:'Your pick'} : LANE_META[k], k));
+    (k === 'best' && L.pinned) ? {label:pinLabel(L)} : LANE_META[k], k));
 
   renderDrawerBrief();
   renderIncluded();
@@ -1169,6 +1229,8 @@ function gridHtml(item, meta, lead, laneKey){
       '<div class="gshot ph' + (shot % 2 ? ' ph-sm' : '') + '"></div>' +
       '<span class="gtag">' + meta.label + '</span>' +
       '<button class="gfav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
+      '<button class="gshare" data-share aria-label="Share ' + TT.esc(d.name) + '" ' +
+        'title="Share this">' + TT.icon('share') + '</button>' +
       '<button class="gnav prev" data-shot="-1" aria-label="Previous picture">&lsaquo;</button>' +
       '<button class="gnav next" data-shot="1" aria-label="Next picture">&rsaquo;</button>' +
       '<span class="gcount">' + (shot + 1) + ' / ' + SHOTS + '</span>' +
@@ -1263,7 +1325,11 @@ function recHtml(item, meta, lead, laneKey){
         '<h2 class="rec-name">' + TT.esc(d.name) + '</h2>' +
         '<div class="rec-sub">' + TT.esc(d.country) + ' &nbsp;·&nbsp; ' + facts + '</div>' +
       '</div>' +
-      '<button class="fav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
+      '<div class="head-acts">' +
+        '<button class="share" data-share aria-label="Share ' + TT.esc(d.name) + '" ' +
+          'title="Share this">' + TT.icon('share') + '</button>' +
+        '<button class="fav' + (fav.has(d.id)?' on':'') + '" data-fav aria-label="Save">&#9825;</button>' +
+      '</div>' +
     '</div>' +
 
     '<div class="mosaic ' + (lead ? 'big' : 'small') + '">' +
@@ -1306,6 +1372,91 @@ function recHtml(item, meta, lead, laneKey){
   '</article>';
 }
 
+/* ================= share =================
+   A shared link has to land the recipient on the destination that was shared, not
+   on their own three — so it carries ?d=<id>, which pins that destination into the
+   lead slot and opens it. Nothing here sends anything: WhatsApp and mail open with
+   the message written, and the customer sends it. */
+function shareLink(d){
+  return location.origin + location.pathname + '?d=' + d.id;
+}
+
+function shareText(d){
+  return d.name + ', ' + d.country + ' — TravelTank picked this one out for us.\n\n' +
+    d.why + '\n\n' +
+    'From ' + TT.money(d.flights[0].price) + ' return · ' + hrs(d.hours) + ' from Lagos · ' +
+    VISA_LABEL[d.visa] + '\n\n' +
+    shareLink(d);
+}
+
+const sharePop = document.getElementById('sharePop');
+let shareBtn = null;
+
+function drawShare(d){
+  const body = encodeURIComponent(shareText(d));
+  const subj = encodeURIComponent('TravelTank: ' + d.name + ', ' + d.country);
+  sharePop.innerHTML =
+    '<div class="sp-hd">Send <b>' + TT.esc(d.name) + '</b> to someone</div>' +
+    '<a href="https://wa.me/?text=' + body + '" target="_blank" rel="noopener">' +
+      TT.icon('chat') + 'WhatsApp</a>' +
+    '<a href="mailto:?subject=' + subj + '&body=' + body + '">' +
+      TT.icon('mail') + 'Email</a>' +
+    '<button type="button" data-copy>' + TT.icon('link') + '<span>Copy link</span></button>' +
+    '<div class="sp-note">Opens with the message written. You send it.</div>';
+
+  sharePop.querySelector('[data-copy]').addEventListener('click', async e=>{
+    const label = e.currentTarget.querySelector('span');
+    try{
+      await navigator.clipboard.writeText(shareLink(d));
+      label.textContent = 'Link copied';
+      setTimeout(closeShare, 900);
+    }catch(err){
+      /* Clipboard access can be refused outright — say so rather than claiming
+         a copy that did not happen. */
+      label.textContent = 'Press ' + (/Mac/.test(navigator.platform) ? '\u2318' : 'Ctrl') + '+C';
+      const box = document.createElement('input');
+      box.value = shareLink(d);
+      box.style.cssText = 'width:100%;border:0;border-top:1px solid var(--line-2);padding:11px 16px;font:inherit;font-size:.82rem;color:var(--ink-2);';
+      sharePop.insertBefore(box, sharePop.querySelector('.sp-note'));
+      box.focus(); box.select();
+    }
+  });
+}
+
+function placeShare(btn){
+  const r = btn.getBoundingClientRect();
+  const w = sharePop.offsetWidth, h = sharePop.offsetHeight;
+  let left = Math.min(r.right - w, innerWidth - w - 12);
+  left = Math.max(12, left);
+  let top = r.bottom + 8;
+  if(top + h > innerHeight - 12) top = Math.max(12, r.top - h - 8);
+  sharePop.style.left = left + 'px';
+  sharePop.style.top  = top + 'px';
+}
+
+function openShare(btn, d){
+  if(shareBtn === btn){ closeShare(); return; }
+  shareBtn = btn;
+  drawShare(d);
+  sharePop.classList.add('on');
+  placeShare(btn);
+}
+
+function closeShare(){
+  sharePop.classList.remove('on');
+  sharePop.innerHTML = '';
+  shareBtn = null;
+}
+
+document.addEventListener('click', e=>{
+  if(!shareBtn) return;
+  if(sharePop.contains(e.target) || shareBtn.contains(e.target)) return;
+  closeShare();
+}, true);
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && shareBtn) closeShare(); });
+addEventListener('resize', ()=>{ if(shareBtn) placeShare(shareBtn); });
+addEventListener('scroll', ()=>{ if(shareBtn) placeShare(shareBtn); }, true);
+
 /* Everything here is read off the brief and the destination record — no claim
    that is not checkable against what the customer actually told us. */
 function confidenceHtml(d, rep){
@@ -1333,6 +1484,10 @@ function wireRec(el, item, meta, laneKey){
     if(fav.has(d.id)) fav.delete(d.id); else fav.add(d.id);
     e.currentTarget.classList.toggle('on');
     renderIncluded();
+  });
+  el.querySelector('[data-share]').addEventListener('click', e=>{
+    e.stopPropagation();
+    openShare(e.currentTarget, d);
   });
   el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta, laneKey));
   const nf = el.querySelector('[data-notfor]');
@@ -1919,6 +2074,11 @@ function wireSheet(d, st, nights){
   });
 }
 
+document.getElementById('sheetShare').innerHTML = TT.icon('share');
+document.getElementById('sheetShare').addEventListener('click', e=>{
+  e.stopPropagation();
+  if(sheetItem) openShare(e.currentTarget, sheetItem.d);
+});
 document.getElementById('sheetX').addEventListener('click', closeSheet);
 sheetScrim.addEventListener('click', closeSheet);
 
@@ -2280,6 +2440,7 @@ function drawCompare(){
       changed.push('kept ' + MONTHS_FULL[brief.month-1] + ', which is outside its best window');
     }
     brief.pinned = mine.id;
+    brief.shared = null;      /* their own pick now, not the one they were sent */
     closeCompare();
     render(changed.length
       ? 'Built around ' + mine.name + ' — we ' + changed.join(', ') + '. Take the chip off your brief to undo it.'
@@ -2557,6 +2718,16 @@ document.getElementById('startAgain').addEventListener('click', ()=>{
 
 document.getElementById('compareAll').addEventListener('click', openCompare);
 
+/* Arriving on a shared link. The recipient's brief is their own — often empty —
+   so the shared destination is pinned into the lead slot rather than left to the
+   scoring, which would very likely not pick it. */
+const sharedId = new URLSearchParams(location.search).get('d');
+if(sharedId && DEST.some(x=>x.id === sharedId)){
+  brief.pinned = sharedId;
+  brief.shared = sharedId;
+  TT.save(brief);
+}
+
 /* Arriving from "Speak to a Travel Shark" on the flights page. */
 if(location.hash === '#shark'){
   history.replaceState(null, '', location.pathname + location.search);
@@ -2564,6 +2735,16 @@ if(location.hash === '#shark'){
 }
 
 render();
+
+if(sharedId){
+  history.replaceState(null, '', location.pathname);
+  const L = TT.lanes(brief);
+  const k = LANE_KEYS.find(x=>L[x] && L[x].d.id === sharedId);
+  if(k){
+    const card = document.getElementById('recs').children[LANE_KEYS.indexOf(k)];
+    if(card) setTimeout(()=>card.querySelector('[data-open]').click(), 120);
+  }
+}
 </script>
 </body>
 </html>

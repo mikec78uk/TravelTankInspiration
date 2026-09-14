@@ -12,7 +12,7 @@ const TT = (function(){
     return {
       origin:'Lagos', who:null, vibes:[], month:null, budget:null,
       maxHours:null, visa:null, heat:null, quieter:false, freeText:'', source:'', thread:[],
-      dismissed:[], rejectedWhy:{}, rejectedFrom:{}, pinned:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
+      dismissed:[], rejectedWhy:{}, rejectedFrom:{}, pinned:null, shared:null, swap:{}, swapFrom:{}, stay:null, lane:'best'
     };
   }
   function load(){
@@ -478,7 +478,11 @@ const TT = (function(){
     room:'M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5M3 18v2M21 18v2M6 11V8a1.5 1.5 0 011.5-1.5h9A1.5 1.5 0 0118 8v3',
     pin:'M12 22s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12zM12 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z',
     history:'M3.2 12a8.8 8.8 0 102.6-6.3L3 8.2M3 3.6v4.6h4.6M12 7.8v4.4l3 1.8',
-    bin:'M4 6.5h16M9.5 6.5V4.6a1 1 0 011-1h3a1 1 0 011 1v1.9M6.5 6.5l.9 13a1 1 0 001 .9h7.2a1 1 0 001-.9l.9-13M10 10.5v6M14 10.5v6'
+    bin:'M4 6.5h16M9.5 6.5V4.6a1 1 0 011-1h3a1 1 0 011 1v1.9M6.5 6.5l.9 13a1 1 0 001 .9h7.2a1 1 0 001-.9l.9-13M10 10.5v6M14 10.5v6',
+    share:'M18 7.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM6 14.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM18 21.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8.2 10.8l7.6-3.9M8.2 13.2l7.6 3.9',
+    mail:'M3 6h18v12H3zM3 6.6l9 6.4 9-6.4',
+    chat:'M21 12a8.5 8.5 0 01-12.3 7.6L3.5 21l1.4-5.1A8.5 8.5 0 1121 12z',
+    link:'M10.5 13.5a3.5 3.5 0 005 0l3-3a3.5 3.5 0 00-5-5l-1.3 1.3M13.5 10.5a3.5 3.5 0 00-5 0l-3 3a3.5 3.5 0 005 5l1.3-1.3'
   };
   function icon(name, cls){
     const d = ICONS[name];
