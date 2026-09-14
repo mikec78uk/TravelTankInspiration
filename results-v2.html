@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=85">
+<link rel="stylesheet" href="assets/tt.css?v=86">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -978,14 +978,6 @@
   .hi-scrim.on{display:block;}
   .hi-modal{z-index:96;}
   .roommodal{width:min(880px,94vw);}
-  .cf-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
-  .cf-row .k{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;}
-  .cf-row .v{font-size:.95rem;color:var(--ink);margin-top:4px;}
-  .cf-change{
-    flex:0 0 auto;border:0;background:none;padding:0;font-size:.82rem;
-    color:var(--ink-2);text-decoration:underline;cursor:pointer;font:inherit;
-  }
-  .cf-change:hover{color:var(--ink);}
   .cf-note{margin:18px 0 0;font-size:.86rem;color:var(--ink-2);padding-top:16px;border-top:1px solid var(--line-2);}
   .cf-ages{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;}
   .cf-hint{margin-top:10px;font-size:.8rem;color:var(--ink-3);}
@@ -1110,9 +1102,10 @@
     <p>Everything so far is priced on this — check it before we take it to flights.</p>
   </div>
   <div class="modal-bd">
-    <div class="cf-row">
-      <div><div class="k">Where and when</div><div class="v" id="cfWhen"></div></div>
-      <button type="button" class="cf-change" id="cfChange">Change</button>
+    <div class="pricing">
+      <span class="pl">Every price here is based on</span>
+      <div class="pricing-row" id="cfRow"></div>
+      <div class="pricing-note" id="cfNote"></div>
     </div>
     <div id="cfAgesWrap"></div>
   </div>
@@ -1206,8 +1199,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=85"></script>
-<script src="assets/core.js?v=85"></script>
+<script src="assets/data.js?v=86"></script>
+<script src="assets/core.js?v=86"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -2208,7 +2201,7 @@ function wireSheet(d, st, nights){
   const t2 = inEl.querySelector('#toStay2'); if(t2) t2.addEventListener('click', jump);
 
   inEl.querySelectorAll('[data-go]').forEach(b=>{
-    b.addEventListener('click', ()=>{ openConfirm(b.dataset.go, d, st, nights); });
+    b.addEventListener('click', ()=>{ openConfirm(b.dataset.go, d, st); });
   });
 }
 
@@ -2486,22 +2479,62 @@ rmScrim.addEventListener('click', closeRoomDetails);
    Everything past this point — flights, room pricing — is quoted against dates
    and a party size that may still be whatever we defaulted them to, and children
    travel at a price that depends on how old they are, which we never ask for
-   until now. So the customer sees exactly what is about to be priced and fills
-   in what is missing before it is carried anywhere. */
+   until now. Jumping back to the stay panel to fix any of that is a real detour
+   when the customer picked "Flights only" and there is no hotel panel involved —
+   so the fields themselves live in the overlay, the same controls as the stay
+   panel, wired to the same state. */
 const cfScrim = document.getElementById('cfScrim');
 const confirmModal = document.getElementById('confirmModal');
-let pendingGo = null;   // {mode, d, st, nights} — held until confirmed
+let pendingGo = null;   // {mode, d, st} — held until confirmed
 
 function agesComplete(st){
   return st.childAges.slice(0, st.children).every(a => a !== undefined && a !== null && a !== '');
 }
 
 function drawConfirm(){
-  const {d, st, nights} = pendingGo;
+  const {d, st} = pendingGo;
   const stay = TT.stayOf(brief);
+  const nights = TT.nights(brief);
   const out = TT.addDays(stay.from, nights);
-  document.getElementById('cfWhen').textContent =
-    TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' · ' + travellers(st);
+
+  document.getElementById('cfRow').innerHTML =
+    '<label class="dfield"><span class="dl">Check in</span>' +
+      '<input type="date" id="cfDateIn" value="' + stay.from + '"></label>' +
+    '<label class="dfield"><span class="dl">Check out</span>' +
+      '<input type="date" id="cfDateOut" value="' + out + '"></label>' +
+    '<span class="sep"></span>' +
+    mini('adults', 'adults', st.adults, 1, 12) +
+    mini('children', 'children', st.children, 0, 8) +
+    mini('rooms', 'rooms', st.rooms, 1, 6);
+  document.getElementById('cfNote').innerHTML =
+    '<b>' + nights + ' night' + (nights===1?'':'s') + '</b> &middot; ' +
+    TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' &middot; ' + travellers(st);
+
+  const dIn = document.getElementById('cfDateIn'), dOut = document.getElementById('cfDateOut');
+  dIn.addEventListener('change', ()=>{
+    const s = TT.stayOf(brief);
+    s.from = dIn.value || s.from;
+    if(TT.daysBetween(s.from, dOut.value) < 1) s.nights = 1;
+    TT.save(brief); drawConfirm(); drawSheet();
+  });
+  dOut.addEventListener('change', ()=>{
+    const s = TT.stayOf(brief);
+    const n = TT.daysBetween(s.from, dOut.value);
+    s.nights = n >= 1 ? Math.min(n, 60) : 1;
+    TT.save(brief); drawConfirm(); drawSheet();
+  });
+  document.getElementById('cfRow').querySelectorAll('[data-step]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const k = b.dataset.step, dir = +b.dataset.dir;
+      const lim = {adults:[1,12], children:[0,8], rooms:[1,6]}[k];
+      st[k] = Math.min(lim[1], Math.max(lim[0], st[k] + dir));
+      if(k === 'children'){
+        while(st.childAges.length < st.children) st.childAges.push(undefined);
+        st.childAges.length = st.children;
+      }
+      drawConfirm(); drawSheet();
+    });
+  });
 
   const wrap = document.getElementById('cfAgesWrap');
   const complete = agesComplete(st);
@@ -2528,8 +2561,8 @@ function drawConfirm(){
   document.getElementById('cfContinue').disabled = !complete;
 }
 
-function openConfirm(mode, d, st, nights){
-  pendingGo = {mode, d, st, nights};
+function openConfirm(mode, d, st){
+  pendingGo = {mode, d, st};
   drawConfirm();
   cfScrim.classList.add('on');
   confirmModal.classList.add('on');
@@ -2541,14 +2574,9 @@ function closeConfirm(){
 }
 document.getElementById('cfBack').addEventListener('click', closeConfirm);
 cfScrim.addEventListener('click', closeConfirm);
-document.getElementById('cfChange').addEventListener('click', ()=>{
-  closeConfirm();
-  const target = document.getElementById('stay');
-  if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-});
 document.getElementById('cfContinue').addEventListener('click', ()=>{
   if(!pendingGo || !agesComplete(pendingGo.st)) return;
-  const {mode, d, st, nights} = pendingGo;
+  const {mode, d, st} = pendingGo;
   brief.trip = {
     dest: d.id, mode: mode,
     from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v2.html',
