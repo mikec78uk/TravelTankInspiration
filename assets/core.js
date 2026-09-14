@@ -622,6 +622,48 @@ const TT = (function(){
     return Math.max(1, Math.ceil((adults + children) / room.sleeps));
   }
 
+  /* Board is a hotel-wide policy, not a per-room one — you can add meals on top of
+     what a property already includes, but a room can't opt out of the hotel's own
+     board on its own. So the list always starts at the hotel's home board and only
+     runs upward through richer tiers, each costing a bit more per room, per night. */
+  const BOARD_ORDER = ['Room only','Breakfast','Half board','Full board','All inclusive'];
+  const BOARD_STEP = .14;
+  function boardsFor(h, roomNight){
+    const home = Math.max(0, BOARD_ORDER.indexOf(h.board));
+    return BOARD_ORDER.slice(home).map((label, i) => ({
+      label,
+      night: i === 0 ? roomNight : Math.round(roomNight * (1 + BOARD_STEP * i) / 1000) * 1000
+    }));
+  }
+
+  /* A room's own facilities and bed layout — read off its sleeping capacity and the
+     hotel's star rating, the same way everything else on the card is, rather than
+     authored per room. */
+  const ROOM_FACS = ['Bathroom','Minibar','Fridge','Individually adjustable air conditioning',
+    'Wi-Fi','Turndown service','Toiletries','Cable TV','Housekeeping','Electric kettle'];
+  function roomFacilitiesFor(r, h){
+    const n = h.stars >= 5 ? 10 : h.stars >= 4 ? 8 : 6;
+    const facs = ROOM_FACS.slice(0, n);
+    if(r.sleeps >= 4) facs.push('Sofa bed');
+    if(h.stars >= 5)  facs.push('Soundproof room');
+    return facs;
+  }
+  function bedFor(r){
+    return r.sleeps >= 4 ? 'Two double beds, or one double and a sofa bed'
+         : r.id === 'sup' ? 'One king-size bed, 180cm width'
+         : 'One queen-size bed, 150–154cm width';
+  }
+  function roomSizeFor(r){
+    return r.sleeps >= 4 ? '32–36 sqm' : r.id === 'sup' ? '26–30 sqm' : '20–24 sqm';
+  }
+  function roomHighlightsFor(r, h){
+    return [
+      bedFor(r),
+      roomSizeFor(r) + ' of room',
+      r.id === 'sup' ? 'Better view than the standard room' : 'Sleeps up to ' + r.sleeps
+    ];
+  }
+
   function matchReport(d, b){
     const checks = [];
     const add = (label, ok) => checks.push({label:label, ok:!!ok});
@@ -818,6 +860,6 @@ const TT = (function(){
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   return {blank,load,save,clear,fresh,money,nights,stayOf,defaultStay,addDays,fmtDate,daysBetween,iso,monthRuns,score,lanes,LANE_META,tripCost,
-          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,nudgeOptionsFor,roomsFor,roomsNeeded,icon,facilitiesFor,hotelIntro,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
+          isEmpty,summary,chips,removeChip,promptFromBrief,promptFragment,matchReport,nudgeOptionsFor,roomsFor,roomsNeeded,boardsFor,roomFacilitiesFor,bedFor,roomSizeFor,roomHighlightsFor,icon,facilitiesFor,hotelIntro,CABINS,cabinsFor,cabinOf,farePrice,legOf,baggageFor,fareRules,aircraftFor,parse,nudge,addVibe,
           navbar,siteHeader,mount,go,esc};
 })();
