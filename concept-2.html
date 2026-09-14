@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Concept 2 — Prompt + Need help? · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=90">
+<link rel="stylesheet" href="assets/tt.css?v=91">
 <style>
   .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
   .mode-tab{
@@ -108,6 +108,11 @@
   }
   .support-opts a span{font-weight:400;font-size:.82rem;color:var(--ink-3);}
   .support-opts a.btn-primary span{color:rgba(255,255,255,.75);}
+  .support-hours{
+    display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;padding:0 24px;
+    font-size:.78rem;color:var(--ink-3);
+  }
+  .support-hours b{color:var(--ink-2);font-weight:600;}
 </style>
 </head>
 <body>
@@ -208,7 +213,13 @@
     <div class="support-echo" id="sEcho"></div>
     <div class="support-opts">
       <a class="btn btn-primary" href="#" id="sChat">Chat with us now</a>
-      <a class="btn" href="tel:+2340000000">Call customer service<span>+234 000 0000</span></a>
+      <div>
+        <a class="btn" href="tel:+2347000202020">Call customer service<span>+234 (0) 7000202020</span></a>
+        <div class="support-hours">
+          <span><b>Mon &ndash; Fri</b> 08h00 &ndash; 23h00</span>
+          <span><b>Sat &ndash; Sun</b> 09h00 &ndash; 23h00</span>
+        </div>
+      </div>
       <a class="btn" href="mailto:support@traveltank.example">Email support<span>support@traveltank.example</span></a>
     </div>
   </div>
@@ -217,8 +228,8 @@
   </div>
 </div>
 
-<script src="assets/data.js?v=90"></script>
-<script src="assets/core.js?v=90"></script>
+<script src="assets/data.js?v=91"></script>
+<script src="assets/core.js?v=91"></script>
 <script>
 TT.mount('concept-2.html');
 
