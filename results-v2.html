@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=79">
+<link rel="stylesheet" href="assets/tt.css?v=80">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -81,10 +81,6 @@
   .sharepop a:first-of-type{border-top:0;}
   .sharepop a:hover,.sharepop button:hover{background:var(--panel-2);}
   .sharepop .ic{width:17px;height:17px;color:var(--ink-3);flex:0 0 auto;}
-  .sharepop .sp-note{
-    padding:11px 16px;border-top:1px solid var(--line-2);background:var(--panel-2);
-    font-size:.78rem;color:var(--ink-3);
-  }
   @media(max-width:520px){.sharepop{width:calc(100vw - 32px);}}
 
   .mosaic{display:grid;gap:10px;margin-bottom:26px;background:#fff;}
@@ -1102,8 +1098,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=79"></script>
-<script src="assets/core.js?v=79"></script>
+<script src="assets/data.js?v=80"></script>
+<script src="assets/core.js?v=80"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1401,8 +1397,7 @@ function drawShare(d){
       TT.icon('chat') + 'WhatsApp</a>' +
     '<a href="mailto:?subject=' + subj + '&body=' + body + '">' +
       TT.icon('mail') + 'Email</a>' +
-    '<button type="button" data-copy>' + TT.icon('link') + '<span>Copy link</span></button>' +
-    '<div class="sp-note">Opens with the message written. You send it.</div>';
+    '<button type="button" data-copy>' + TT.icon('link') + '<span>Copy link</span></button>';
 
   sharePop.querySelector('[data-copy]').addEventListener('click', async e=>{
     const label = e.currentTarget.querySelector('span');
@@ -1417,7 +1412,7 @@ function drawShare(d){
       const box = document.createElement('input');
       box.value = shareLink(d);
       box.style.cssText = 'width:100%;border:0;border-top:1px solid var(--line-2);padding:11px 16px;font:inherit;font-size:.82rem;color:var(--ink-2);';
-      sharePop.insertBefore(box, sharePop.querySelector('.sp-note'));
+      sharePop.appendChild(box);
       box.focus(); box.select();
     }
   });
