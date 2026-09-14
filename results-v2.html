@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=82">
+<link rel="stylesheet" href="assets/tt.css?v=83">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -1171,8 +1171,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=82"></script>
-<script src="assets/core.js?v=82"></script>
+<script src="assets/data.js?v=83"></script>
+<script src="assets/core.js?v=83"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -2028,7 +2028,20 @@ function hotelRow(h, i, st, nights, d){
               '<div class="map-cap"><b>' + TT.esc(h.area) + '</b> &middot; ' + TT.esc(d.name) + '</div>' +
             '</div>' +
           '</div>' +
-          '<span class="lab">Choose a room</span>' +
+          (boardOpts.length > 1
+            ? '<div class="board-pick">' +
+                '<span class="lab">Board</span>' +
+                '<div class="board-pills">' +
+                  boardOpts.map(b=>{
+                    const d2 = b.night - boardOpts[0].night;
+                    return '<button type="button" class="bpill' + (b.label===boardLabel?' on':'') + '" data-board="' + TT.esc(b.label) + '">' +
+                      TT.esc(b.label) + (d2 > 0 ? '<span>+' + TT.money(d2) + '/night</span>' : '') +
+                    '</button>';
+                  }).join('') +
+                '</div>' +
+              '</div>'
+            : '') +
+          '<span class="lab' + (boardOpts.length > 1 ? ' facs-lab' : '') + '">Choose a room</span>' +
           '<div class="rooms">' +
             rooms.map(r=>{
               const n = Math.max(st.rooms, TT.roomsNeeded(r, st.adults, st.children));
@@ -2051,19 +2064,6 @@ function hotelRow(h, i, st, nights, d){
               '</div>';
             }).join('') +
           '</div>' +
-          (boardOpts.length > 1
-            ? '<div class="board-pick">' +
-                '<span class="lab">Board</span>' +
-                '<div class="board-pills">' +
-                  boardOpts.map(b=>{
-                    const d2 = b.night - boardOpts[0].night;
-                    return '<button type="button" class="bpill' + (b.label===boardLabel?' on':'') + '" data-board="' + TT.esc(b.label) + '">' +
-                      TT.esc(b.label) + (d2 > 0 ? '<span>+' + TT.money(d2) + '/night</span>' : '') +
-                    '</button>';
-                  }).join('') +
-                '</div>' +
-              '</div>'
-            : '') +
           '<div class="hsel hchoose">' +
             '<button type="button" class="btn' + (isChosen ? '' : ' btn-primary') + '" data-choose="' + i + '">' +
               (isChosen ? 'Chosen — remove' : 'Choose this hotel') + '</button>' +
