@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Concept 2 — Prompt + Need help? · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=89">
+<link rel="stylesheet" href="assets/tt.css?v=90">
 <style>
   .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
   .mode-tab{
@@ -92,6 +92,22 @@
     padding:14px 16px;font-size:.92rem;color:var(--ink-2);min-height:52px;
   }
   .preview em{color:var(--ink-3);}
+
+  /* ---- not every prompt is about a new trip ---- */
+  .support-modal{width:min(480px,calc(100vw - 32px));}
+  .support-body{padding:6px 26px 26px;}
+  .support-body p{margin:0 0 10px;font-size:.86rem;color:var(--ink-3);}
+  .support-echo{
+    border:1px solid var(--line-2);background:var(--panel);padding:12px 16px;
+    font-size:.9rem;color:var(--ink-2);font-style:italic;margin-bottom:22px;
+  }
+  .support-opts{display:grid;gap:10px;}
+  .support-opts a{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    text-decoration:none;font-weight:600;
+  }
+  .support-opts a span{font-weight:400;font-size:.82rem;color:var(--ink-3);}
+  .support-opts a.btn-primary span{color:rgba(255,255,255,.75);}
 </style>
 </head>
 <body>
@@ -177,8 +193,32 @@
   </div>
 </div>
 
-<script src="assets/data.js?v=89"></script>
-<script src="assets/core.js?v=89"></script>
+<!-- ============ not a trip prompt ============ -->
+<div class="ovl" id="supportOvl"></div>
+<div class="modal support-modal" id="supportModal" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="modal-head">
+    <div>
+      <h2 id="sTitle">That doesn't read like a new trip</h2>
+      <div class="hint">Here's the fastest way to reach a person about it.</div>
+    </div>
+    <button class="modal-x" id="sClose" aria-label="Close">&times;</button>
+  </div>
+  <div class="support-body">
+    <p>What you typed:</p>
+    <div class="support-echo" id="sEcho"></div>
+    <div class="support-opts">
+      <a class="btn btn-primary" href="#" id="sChat">Chat with us now</a>
+      <a class="btn" href="tel:+2340000000">Call customer service<span>+234 000 0000</span></a>
+      <a class="btn" href="mailto:support@traveltank.example">Email support<span>support@traveltank.example</span></a>
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn" id="sBack">&lsaquo; No, let me describe my trip</button>
+  </div>
+</div>
+
+<script src="assets/data.js?v=90"></script>
+<script src="assets/core.js?v=90"></script>
 <script>
 TT.mount('concept-2.html');
 
@@ -234,9 +274,47 @@ document.querySelectorAll('.sug').forEach(s=>{
   });
 });
 
+/* ---------------- not every prompt is about a new trip ----------------
+   The box is free text, so it will catch requests that have nothing to do
+   with inspiration — an existing booking, a refund, a complaint. Those need
+   a person, not a destination match, so they get routed there instead of
+   silently treated as a trip and sent to a "broadest crowd-pleaser" result. */
+const SUPPORT_SIGNALS = [
+  'refund','cancel','cancellation','complain','complaint','compensation',
+  'existing booking','my booking','booking reference','pnr',
+  'change my flight','change my booking','reschedule',
+  'lost bag','baggage','delayed','delay','missed my flight',
+  'speak to someone','speak to a human','talk to a person','customer service',
+  'an agent','my account','log in','login','password',
+  'payment failed','charged twice','double charged','still waiting','not received'
+];
+function looksLikeSupport(text){
+  const t = text.toLowerCase();
+  return SUPPORT_SIGNALS.some(s => t.includes(s));
+}
+
+const supportOvl = document.getElementById('supportOvl');
+const supportModal = document.getElementById('supportModal');
+function openSupport(text){
+  document.getElementById('sEcho').textContent = text;
+  supportOvl.classList.add('on'); supportModal.classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeSupport(){
+  supportOvl.classList.remove('on'); supportModal.classList.remove('on');
+  document.body.style.overflow = '';
+  ta.focus();
+}
+document.getElementById('sClose').addEventListener('click', closeSupport);
+document.getElementById('sBack').addEventListener('click', closeSupport);
+document.getElementById('sChat').addEventListener('click', e=>e.preventDefault());
+supportOvl.addEventListener('click', closeSupport);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && supportModal.classList.contains('on')) closeSupport(); });
+
 /* submit */
 function submit(){
   const text = ta.value.trim();
+  if(text && looksLikeSupport(text)){ openSupport(text); return; }
   brief = TT.load();
   brief.freeText = text;
   if(text) TT.parse(text, brief);
