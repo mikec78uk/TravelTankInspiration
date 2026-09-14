@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=87">
+<link rel="stylesheet" href="assets/tt.css?v=88">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -1199,8 +1199,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=87"></script>
-<script src="assets/core.js?v=87"></script>
+<script src="assets/data.js?v=88"></script>
+<script src="assets/core.js?v=88"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1633,6 +1633,7 @@ function wireRec(el, item, meta, laneKey){
 
 /* ================= the destination sheet ================= */
 let sheetItem = null, sheetLane = null, savedY = 0;
+let sheetNote = null;   // a one-off banner for the next drawSheet — e.g. "prices have been updated"
 const sheet = document.getElementById('sheet');
 const sheetScrim = document.getElementById('sheetScrim');
 
@@ -1690,6 +1691,7 @@ function drawSheet(){
   const st = partyFor(d.id);
   const nights = TT.nights(brief);
   const I = TT.icon;
+  const note = sheetNote; sheetNote = null;   /* shown once, then gone */
 
   document.getElementById('sheetIn').innerHTML =
     '<div class="mosaic big" style="margin-bottom:30px;">' +
@@ -1739,6 +1741,8 @@ function drawSheet(){
       '</div>' +
       '<p class="tier-note">' + TT.esc(TIER_NOTE[st.tier]) + '</p>' +
       '<div>' + d.hotels[st.tier].map((h,i)=>hotelRow(h, i, st, nights, d)).join('') + '</div>', 'stay') +
+
+    (note ? '<div class="note">' + TT.esc(note) + '</div>' : '') +
 
     /* ---- what you are buying ---- */
     tripBar(d, st, nights);
@@ -2517,13 +2521,13 @@ function drawConfirm(){
     const s = TT.stayOf(brief);
     s.from = dIn.value || s.from;
     if(TT.daysBetween(s.from, dOut.value) < 1) s.nights = 1;
-    TT.save(brief); drawConfirm(); drawSheet();
+    TT.save(brief); pendingGo.dirty = true; drawConfirm(); drawSheet();
   });
   dOut.addEventListener('change', ()=>{
     const s = TT.stayOf(brief);
     const n = TT.daysBetween(s.from, dOut.value);
     s.nights = n >= 1 ? Math.min(n, 60) : 1;
-    TT.save(brief); drawConfirm(); drawSheet();
+    TT.save(brief); pendingGo.dirty = true; drawConfirm(); drawSheet();
   });
   document.getElementById('cfRow').querySelectorAll('[data-step]').forEach(b=>{
     b.addEventListener('click', ()=>{
@@ -2534,7 +2538,7 @@ function drawConfirm(){
         while(st.childAges.length < st.children) st.childAges.push(undefined);
         st.childAges.length = st.children;
       }
-      drawConfirm(); drawSheet();
+      pendingGo.dirty = true; drawConfirm(); drawSheet();
     });
   });
 
@@ -2564,7 +2568,7 @@ function drawConfirm(){
 }
 
 function openConfirm(mode, d, st){
-  pendingGo = {mode, d, st};
+  pendingGo = {mode, d, st, dirty: false};
   drawConfirm();
   cfScrim.classList.add('on');
   confirmModal.classList.add('on');
@@ -2578,7 +2582,19 @@ document.getElementById('cfBack').addEventListener('click', closeConfirm);
 cfScrim.addEventListener('click', closeConfirm);
 document.getElementById('cfContinue').addEventListener('click', ()=>{
   if(!pendingGo || !agesComplete(pendingGo.st)) return;
-  const {mode, d, st} = pendingGo;
+  const {mode, d, st, dirty} = pendingGo;
+
+  /* A hotel was already chosen against the old dates and party — if either just
+     changed, the room and its price may no longer be right, so show the customer
+     what it is now rather than carrying a price they never actually saw. A
+     flights-only trip has no hotel price to get wrong, so it can just go on. */
+  if(mode !== 'flight' && dirty){
+    sheetNote = 'Prices have been updated for your new dates and party — have a look below before you continue.';
+    closeConfirm();
+    drawSheet();
+    return;
+  }
+
   brief.trip = {
     dest: d.id, mode: mode,
     from: TT.stayOf(brief).from, nights: TT.nights(brief), via: 'results-v2.html',
