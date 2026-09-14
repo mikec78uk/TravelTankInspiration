@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=86">
+<link rel="stylesheet" href="assets/tt.css?v=87">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -1199,8 +1199,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=86"></script>
-<script src="assets/core.js?v=86"></script>
+<script src="assets/data.js?v=87"></script>
+<script src="assets/core.js?v=87"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1954,10 +1954,11 @@ function keyTile(ic, label, value, sub){
     '<div class="ks">' + TT.esc(sub) + '</div></div>';
 }
 
-function travellers(st){
+function travellers(st, withRooms){
   const bits = [st.adults + ' adult' + (st.adults===1?'':'s')];
   if(st.children) bits.push(st.children + ' child' + (st.children===1?'':'ren'));
-  return bits.join(' and ') + ', ' + st.rooms + ' room' + (st.rooms===1?'':'s');
+  const who = bits.join(' and ');
+  return withRooms === false ? who : who + ', ' + st.rooms + ' room' + (st.rooms===1?'':'s');
 }
 
 function mini(key, label, val, min, max){
@@ -2492,7 +2493,8 @@ function agesComplete(st){
 }
 
 function drawConfirm(){
-  const {d, st} = pendingGo;
+  const {d, st, mode} = pendingGo;
+  const withRooms = mode !== 'flight';   /* nobody's booking a room on a flights-only trip */
   const stay = TT.stayOf(brief);
   const nights = TT.nights(brief);
   const out = TT.addDays(stay.from, nights);
@@ -2505,10 +2507,10 @@ function drawConfirm(){
     '<span class="sep"></span>' +
     mini('adults', 'adults', st.adults, 1, 12) +
     mini('children', 'children', st.children, 0, 8) +
-    mini('rooms', 'rooms', st.rooms, 1, 6);
+    (withRooms ? mini('rooms', 'rooms', st.rooms, 1, 6) : '');
   document.getElementById('cfNote').innerHTML =
     '<b>' + nights + ' night' + (nights===1?'':'s') + '</b> &middot; ' +
-    TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' &middot; ' + travellers(st);
+    TT.fmtDate(stay.from) + ' to ' + TT.fmtDate(out) + ' &middot; ' + travellers(st, withRooms);
 
   const dIn = document.getElementById('cfDateIn'), dOut = document.getElementById('cfDateOut');
   dIn.addEventListener('change', ()=>{
