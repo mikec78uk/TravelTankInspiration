@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=94">
+<link rel="stylesheet" href="assets/tt.css?v=95">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -106,6 +106,7 @@
   .ticks li::before{content:'\2713';position:absolute;left:0;top:-1px;color:var(--ink);font-weight:600;}
   .trade p{margin:0;font-size:.95rem;line-height:1.6;color:var(--ink-2);}
   .trade .lab{display:block;margin-bottom:12px;}
+  .split-more{display:none;}
 
   .conf{border-top:1px solid var(--line-2);}
   .conf summary{
@@ -152,6 +153,16 @@
     .verdict,.split,.conf-in{grid-template-columns:1fr;gap:12px;}
     .verdict p{font-size:.98rem;}
     .marks{columns:1;}
+
+    /* Stacked, "Why it fits you" plus "The trade-off" runs long enough to make
+       the whole tile feel endless — clamp it and let the customer ask for more. */
+    .split.clamp{max-height:220px;overflow:hidden;position:relative;}
+    .split.clamp::after{
+      content:'';position:absolute;left:0;right:0;bottom:0;height:56px;
+      background:linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+      pointer-events:none;
+    }
+    .split-more{display:inline-block;margin:14px 0 26px;}
   }
 
   /* ================= human handoff ================= */
@@ -1199,8 +1210,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=94"></script>
-<script src="assets/core.js?v=94"></script>
+<script src="assets/data.js?v=95"></script>
+<script src="assets/core.js?v=95"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1392,6 +1403,7 @@ function nudgeRow(d, laneKey, cls){
 
 function recHtml(item, meta, lead, laneKey){
   const d = item.d;
+  const splitOpen = !!stateFor(d.id).splitOpen;
   const rep = TT.matchReport(d, brief);
   /* Score against the brief the customer actually gave us, not the relaxed one the
      premium lane is picked with — otherwise this list can claim a place is "priced
@@ -1440,7 +1452,7 @@ function recHtml(item, meta, lead, laneKey){
       '<p>' + TT.esc(d.why) + '</p>' +
     '</div>' +
 
-    '<div class="split">' +
+    '<div class="split' + (splitOpen ? '' : ' clamp') + '">' +
       '<span class="lab">Why it fits you</span>' +
       '<ul class="ticks">' + fits.map(w=>'<li>' + TT.esc(w) + '</li>').join('') + '</ul>' +
       '<div class="trade">' +
@@ -1448,6 +1460,8 @@ function recHtml(item, meta, lead, laneKey){
         '<p>' + TT.esc(d.tradeoff) + '</p>' +
       '</div>' +
     '</div>' +
+    '<button type="button" class="more-btn split-more" data-splitmore>' +
+      (splitOpen ? 'Read less' : 'Read more') + '</button>' +
 
     '<details class="conf">' +
       '<summary>Why we&rsquo;re confident</summary>' +
@@ -1585,6 +1599,21 @@ function wireRec(el, item, meta, laneKey){
     e.stopPropagation();
     openShare(e.currentTarget, d);
   });
+
+  /* Read more only earns its keep on mobile, and only when the content is
+     actually cut off there — on desktop, or if it already fits, there is
+     nothing to expand. */
+  const sm = el.querySelector('[data-splitmore]');
+  if(sm){
+    const st = stateFor(d.id);
+    const body = el.querySelector('.split');
+    if(!st.splitOpen && body.scrollHeight <= body.clientHeight + 1){
+      body.classList.remove('clamp');
+      sm.remove();
+    } else {
+      sm.addEventListener('click', ()=>{ st.splitOpen = !st.splitOpen; render(); });
+    }
+  }
   el.querySelector('[data-open]').addEventListener('click', ()=>openSheet(item, meta, laneKey));
   const nf = el.querySelector('[data-notfor]');
   if(!nf.disabled) nf.addEventListener('click', ()=>openWhy(d, laneKey));
