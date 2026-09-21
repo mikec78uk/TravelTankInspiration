@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=93">
+<link rel="stylesheet" href="assets/tt.css?v=94">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -1199,8 +1199,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=93"></script>
-<script src="assets/core.js?v=93"></script>
+<script src="assets/data.js?v=94"></script>
+<script src="assets/core.js?v=94"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -2504,9 +2504,9 @@ function drawConfirm(){
   const out = TT.addDays(stay.from, nights);
 
   document.getElementById('cfRow').innerHTML =
-    '<label class="dfield"><span class="dl">Check in</span>' +
+    '<label class="dfield"><span class="dl">' + (withRooms ? 'Check in' : 'Departing') + '</span>' +
       '<input type="date" id="cfDateIn" value="' + stay.from + '"></label>' +
-    '<label class="dfield"><span class="dl">Check out</span>' +
+    '<label class="dfield"><span class="dl">' + (withRooms ? 'Check out' : 'Returning') + '</span>' +
       '<input type="date" id="cfDateOut" value="' + out + '"></label>' +
     '<span class="sep"></span>' +
     mini('adults', 'adults', st.adults, 1, 12) +
