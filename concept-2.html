@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Concept 2 — Prompt + Need help? · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=96">
+<link rel="stylesheet" href="assets/tt.css?v=97">
 <style>
   .mode-tabs{display:flex;gap:2px;margin:30px 0 0;flex-wrap:wrap;}
   .mode-tab{
@@ -26,6 +26,77 @@
   .classic-form .field .val{font-size:.93rem;color:var(--ink-2);}
   .classic-form .search-btn{border:0;background:var(--accent);color:#fff;padding:0 30px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;}
   @media(max-width:860px){.classic-form{grid-template-columns:1fr;}.classic-form .field{border-right:0;border-bottom:1px solid var(--line);}.classic-form .search-btn{padding:16px;}}
+
+
+  /* ---- "Going to": a destination or a described trip, Kayak-style ---- */
+  .classic-form .field{position:relative;}
+  .field.dest{cursor:text;}
+  .field.dest:focus-within{box-shadow:inset 0 0 0 1px var(--ink);}
+  .dest-in{
+    width:100%;border:0;outline:none;background:transparent;padding:0;
+    font:inherit;font-size:.93rem;color:var(--ink);
+  }
+  .dest-in::placeholder{color:var(--ink-3);}
+  .dest-pop{
+    position:absolute;top:calc(100% + 1px);left:-1px;z-index:30;width:700px;max-width:calc(100vw - 48px);
+    background:#fff;border:1px solid var(--ink);box-shadow:0 12px 30px rgba(17,19,21,.14);
+    max-height:min(700px,80vh);overflow:auto;
+  }
+  .dp-lab{display:block;padding:14px 18px 6px;margin:0;}
+  .dp-row{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    border:0;border-top:1px solid var(--line-2);background:#fff;cursor:pointer;
+    padding:11px 18px;font:inherit;color:var(--ink);
+  }
+  .dp-lab + .dp-row{border-top:0;}
+  .dp-row:hover,.dp-row.cur{background:var(--panel);}
+  .dp-ic{
+    flex:0 0 auto;width:30px;height:30px;border:1px solid var(--line);border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;color:var(--ink-2);background:#fff;
+  }
+  .dp-ic .ic{width:15px;height:15px;}
+  .dp-txt{flex:1;min-width:0;}
+  .dp-name{display:block;font-size:.93rem;font-weight:600;line-height:1.3;}
+  .dp-name b{background:var(--ink);color:#fff;font-weight:600;padding:0 2px;}
+  .dp-meta{display:block;font-size:.8rem;color:var(--ink-3);margin-top:2px;}
+  .dp-code{flex:0 0 auto;font-size:.72rem;letter-spacing:.08em;color:var(--ink-3);font-weight:600;}
+  .dp-tag{
+    flex:0 0 auto;border:1px solid var(--line);padding:2px 8px;font-size:.62rem;
+    letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-2);background:#fff;
+  }
+  .dp-row.trip .dp-name{font-weight:500;}
+  .dp-ask{display:flex;align-items:center;gap:14px;padding:18px 18px 8px;}
+  .dp-ic.bare{border:0;background:none;width:30px;color:var(--ink);}
+  .dp-ic.bare .ic{width:20px;height:20px;}
+  .dp-row.ai{border-top:0;padding:10px 18px;}
+  .dp-row.ai .dp-name{font-weight:500;}
+  .dp-row.ai .dp-ic.bare{color:var(--ink-2);}
+  .dp-sec{border-top:1px solid var(--line);margin-top:8px;}
+  .dp-head{display:flex;align-items:baseline;justify-content:space-between;padding:16px 18px 8px;}
+  .dp-head .lab{margin:0;}
+  .dp-clear{border:0;background:none;padding:0;font:inherit;font-size:.82rem;font-weight:600;color:var(--accent);cursor:pointer;}
+  .dp-clear:hover{text-decoration:underline;}
+  .dp-grid{display:grid;grid-template-columns:1fr 1fr;padding:0 8px 8px;}
+  .dp-grid .dp-row,.dp-recent .dp-row{border-top:0;padding:8px 10px;}
+  .dp-recent{padding:0 8px 8px;}
+  .dp-thumb{flex:0 0 auto;width:48px;height:48px;border:1px solid var(--line-2);display:block;}
+  .dp-thumb.sq{display:inline-flex;align-items:center;justify-content:center;background:var(--panel-2);color:var(--ink-2);}
+  .dp-thumb .ic{width:18px;height:18px;}
+  .dp-popname{display:flex;gap:8px;align-items:baseline;min-width:0;}
+  .dp-popname .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.93rem;font-weight:600;line-height:1.3;}
+  .dp-popname .dp-code{font-weight:400;}
+  .dest-wrap{position:relative;}
+  .dest-in{line-height:1.5;display:block;}
+  .dest-hint{
+    position:absolute;left:0;top:0;right:0;height:1.5em;overflow:hidden;pointer-events:none;
+    font-size:.93rem;line-height:1.5;color:var(--ink-3);
+  }
+  .dest-track{display:block;transition:transform .45s cubic-bezier(.22,.7,.3,1);}
+  .dest-track.jump{transition:none;}
+  .dest-track span{display:block;height:1.5em;white-space:nowrap;}
+  .dest-wrap.filled .dest-hint{display:none;}
+  .dp-foot{padding:11px 18px;border-top:1px solid var(--line-2);font-size:.78rem;color:var(--ink-3);background:var(--panel-2);}
+  @media(max-width:860px){.dest-pop{width:auto;right:-1px;max-height:60vh;}.dp-tag{display:none;}.dp-grid{grid-template-columns:1fr;}}
 
   .ai-pill{border:1px solid var(--line);padding:16px 18px 12px;}
   .ai-pill:focus-within{border-color:var(--ink-3);}
@@ -135,12 +206,20 @@
     <div id="panelClassic">
       <div class="classic-form">
         <div class="field"><label>Leaving from</label><div class="val">Lagos (LOS)</div></div>
-        <div class="field"><label>Going to</label><div class="val">City, airport or place</div></div>
+        <div class="field dest" id="destField">
+          <label for="destIn">Going to</label>
+          <div class="dest-wrap">
+            <input id="destIn" class="dest-in" type="text" autocomplete="off" spellcheck="false"
+                   role="combobox" aria-expanded="false" aria-controls="destPop">
+            <span class="dest-hint" id="destHint" aria-hidden="true"><span class="dest-track" id="destTrack"></span></span>
+          </div>
+          <div class="dest-pop" id="destPop" role="listbox" hidden></div>
+        </div>
         <div class="field"><label>When?</label><div class="val">Choose a date</div></div>
         <div class="field"><label>Passengers &amp; class</label><div class="val">1 Adult · Economy</div></div>
-        <button class="search-btn" type="button">Search</button>
+        <button class="search-btn" type="button" id="classicSearch">Search</button>
       </div>
-      <p class="hint" style="margin-top:16px;">Standard search, shown for context only — this is where the customer lands. Select <b>Inspire me</b> above for the concept.</p>
+      <p class="hint" style="margin-top:16px;">Type a place, or describe the trip you want — <b>city break next weekend</b>, <b>somewhere warm in November</b> — and we will find the destination for you. Other fields are shown for context only.</p>
     </div>
 
     <div id="panelAi" hidden>
@@ -231,8 +310,8 @@
   </div>
 </div>
 
-<script src="assets/data.js?v=96"></script>
-<script src="assets/core.js?v=96"></script>
+<script src="assets/data.js?v=97"></script>
+<script src="assets/core.js?v=97"></script>
 <script>
 TT.mount('concept-2.html');
 
@@ -314,10 +393,11 @@ function openSupport(text){
   supportOvl.classList.add('on'); supportModal.classList.add('on');
   document.body.style.overflow = 'hidden';
 }
+let supportReturn = ta;
 function closeSupport(){
   supportOvl.classList.remove('on'); supportModal.classList.remove('on');
   document.body.style.overflow = '';
-  ta.focus();
+  supportReturn.focus();
 }
 document.getElementById('sClose').addEventListener('click', closeSupport);
 document.getElementById('sBack').addEventListener('click', closeSupport);
@@ -326,8 +406,9 @@ supportOvl.addEventListener('click', closeSupport);
 document.addEventListener('keydown', e=>{ if(e.key==='Escape' && supportModal.classList.contains('on')) closeSupport(); });
 
 /* submit */
-function submit(){
-  const text = ta.value.trim();
+function submit(fromEl){
+  const text = (fromEl ? fromEl.value : ta.value).trim();
+  supportReturn = fromEl || ta;
   if(text && looksLikeSupport(text)){ openSupport(text); return; }
   brief = TT.load();
   brief.freeText = text;
@@ -338,6 +419,190 @@ function submit(){
 document.getElementById('aiPill').addEventListener('submit', e=>{ e.preventDefault(); submit(); });
 ta.addEventListener('keydown', e=>{
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); submit(); }
+});
+
+
+/* ---------------- Flights: "Going to" — a place, or a described trip ----------------
+   Focus opens a default list (trip ideas + popular places). Typing narrows it to
+   matching destinations and always offers the typed words as a trip to describe.
+   Picking a place fills the field; picking a trip hands the words to Inspire me. */
+const destIn = document.getElementById('destIn');
+const destPop = document.getElementById('destPop');
+const codeOf = d => { const r = d.flights[0].route.split('→'); return r[r.length-1].trim(); };
+let dpRows = [], dpCur = -1;
+
+function wordStart(text, term){
+  const t = text.toLowerCase();
+  if(t.indexOf(term) === 0) return 0;
+  const i = t.search(new RegExp('[\\s&(]' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
+  return i === -1 ? -1 : i + 1;
+}
+function dpHighlight(name, term){
+  const i = term ? wordStart(name, term) : -1;
+  if(i === -1 || !term) return TT.esc(name);
+  return TT.esc(name.slice(0,i)) + '<b>' + TT.esc(name.slice(i,i+term.length)) + '</b>' + TT.esc(name.slice(i+term.length));
+}
+function dpPlace(d, term){
+  return {kind:'place', d:d, html:
+    '<span class="dp-ic">' + TT.icon('plane') + '</span>' +
+    '<span class="dp-txt"><span class="dp-name">' + dpHighlight(d.name, term) + '</span>' +
+    '<span class="dp-meta">' + TT.esc(d.country) + ' · ' + d.hours + (d.hours===1?' hour':' hours') + ' from Lagos · from ' + TT.money(d.flights[0].price) + '</span></span>' +
+    '<span class="dp-code">' + codeOf(d) + '</span>'};
+}
+function dpTrip(text, label, meta){
+  return {kind:'trip', text:text, html:
+    '<span class="dp-ic">' + TT.icon('sun') + '</span>' +
+    '<span class="dp-txt"><span class="dp-name">' + (label || TT.esc(text)) + '</span>' +
+    (meta ? '<span class="dp-meta">' + meta + '</span>' : '') + '</span>' +
+    '<span class="dp-tag">Inspire me</span>'};
+}
+
+const SPARK = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/></svg>';
+const AI_PROMPTS = [
+  'City break next weekend',
+  'Cheapest flights to Accra next weekend',
+  'Warm beach week in November for two of us'
+];
+let recents = [
+  {id:'accra', dates:'6 Nov – 9 Nov'},
+  {id:'dakar', dates:'20 Nov – 27 Nov'}
+];
+const destById = id => DEST.find(d=>d.id===id);
+const airportOf = d => AIRPORTS[codeOf(d)] || 'All airports';
+
+function dpBtn(r, extra){
+  const i = dpRows.length; dpRows.push(r);
+  return '<button type="button" class="dp-row ' + r.kind + (extra ? ' ' + extra : '') + '" role="option" data-i="' + i + '">' + r.html + '</button>';
+}
+
+/* The default list, in the order Kayak shows it: ask in your own words, popular places, recent searches. */
+function dpDefaultHtml(){
+  let html = '<div class="dp-ask"><span class="dp-ic bare">' + SPARK + '</span>' +
+    '<span class="dp-txt"><span class="dp-name">Ask AI</span><span class="dp-meta">Describe your next trip in your own words.</span></span></div>';
+  AI_PROMPTS.forEach(t=>{
+    html += dpBtn({kind:'trip', text:t, html:'<span class="dp-ic bare">' + SPARK + '</span><span class="dp-txt"><span class="dp-name">' + TT.esc(t) + '</span></span>'}, 'ai');
+  });
+
+  html += '<div class="dp-sec"><div class="dp-head"><span class="lab">Popular destinations</span></div><div class="dp-grid">';
+  DEST.slice(0,4).forEach(d=>{
+    html += dpBtn({kind:'place', d:d, html:
+      '<span class="dp-thumb ph ph-sm"></span>' +
+      '<span class="dp-txt"><span class="dp-popname"><span class="nm">' + TT.esc(d.name) + '</span><span class="dp-code">' + codeOf(d) + '</span></span>' +
+      '<span class="dp-meta">' + TT.esc(airportOf(d)) + '</span></span>'}, 'pop');
+  });
+  html += '</div></div>';
+
+  if(recents.length){
+    html += '<div class="dp-sec"><div class="dp-head"><span class="lab">Recent searches</span>' +
+      '<button type="button" class="dp-clear" id="dpClear">clear</button></div><div class="dp-recent">';
+    recents.forEach(r=>{
+      const d = destById(r.id); if(!d) return;
+      html += dpBtn({kind:'place', d:d, html:
+        '<span class="dp-thumb sq">' + TT.icon('plane') + '</span>' +
+        '<span class="dp-txt"><span class="dp-name">Lagos (LOS) – ' + TT.esc(d.name.split(' &')[0]) + ' (' + codeOf(d) + ')</span>' +
+        '<span class="dp-meta">' + r.dates + '</span></span>'}, 'recent');
+    });
+    html += '</div></div>';
+  }
+  return html;
+}
+
+function dpRender(){
+  const raw = destIn.value, term = raw.trim().toLowerCase();
+  dpRows = []; let html = '';
+  if(!term){
+    html = dpDefaultHtml();
+  } else {
+    const groups = [];   // {lab, rows}
+    const places = DEST.filter(d=>wordStart(d.name+' '+d.country, term) !== -1).slice(0,5);
+    const words = term.split(/\s+/).length;
+    const tripRow = dpTrip(raw.trim(), '&ldquo;' + TT.esc(raw.trim()) + '&rdquo;', 'Describe it — we will find where to send you');
+    /* three or more words, or nothing of ours matches: it reads as a description, so lead with it */
+    if(words >= 3 || !places.length){
+      groups.push({lab:'Find me a trip', rows:[tripRow]});
+      if(places.length) groups.push({lab:'Places', rows:places.map(d=>dpPlace(d,term))});
+    } else {
+      groups.push({lab:'Places', rows:places.map(d=>dpPlace(d,term))});
+      groups.push({lab:'Or describe a trip', rows:[tripRow]});
+    }
+    groups.forEach(g=>{
+      html += '<span class="lab dp-lab">' + g.lab + '</span>';
+      g.rows.forEach(r=>{ html += dpBtn(r); });
+    });
+  }
+  destPop.innerHTML = html;
+  dpCur = dpRows.length ? 0 : -1;
+  dpPaint();
+  destPop.querySelectorAll('.dp-row').forEach(b=>{
+    b.addEventListener('mousedown', e=>e.preventDefault());   // keep focus in the field
+    b.addEventListener('click', ()=>dpChoose(+b.dataset.i));
+  });
+  const clr = document.getElementById('dpClear');
+  if(clr){
+    clr.addEventListener('mousedown', e=>e.preventDefault());
+    clr.addEventListener('click', ()=>{ recents = []; dpRender(); });
+  }
+  destPop.hidden = false; destIn.setAttribute('aria-expanded','true');
+}
+function dpPaint(){
+  destPop.querySelectorAll('.dp-row').forEach((b,i)=>b.classList.toggle('cur', i===dpCur));
+  const cur = destPop.querySelector('.dp-row.cur');
+  if(cur) cur.scrollIntoView({block:'nearest'});
+}
+function dpClose(){ destPop.hidden = true; destIn.setAttribute('aria-expanded','false'); }
+function dpChoose(i){
+  const r = dpRows[i]; if(!r) return;
+  if(r.kind === 'place'){
+    destIn.value = r.d.name + ' (' + codeOf(r.d) + ')'; syncHint();
+    dpClose();
+  } else {
+    destIn.value = r.text; syncHint();
+    dpClose();
+    submit(destIn);
+  }
+}
+
+destIn.addEventListener('focus', dpRender);
+destIn.addEventListener('input', dpRender);
+destIn.addEventListener('blur', ()=>setTimeout(()=>{ if(document.activeElement !== destIn) dpClose(); }, 120));
+destIn.addEventListener('keydown', e=>{
+  if(e.key === 'Escape'){ dpClose(); return; }
+  if(destPop.hidden){ if(e.key === 'ArrowDown') dpRender(); return; }
+  if(e.key === 'ArrowDown'){ e.preventDefault(); dpCur = (dpCur+1) % dpRows.length; dpPaint(); }
+  else if(e.key === 'ArrowUp'){ e.preventDefault(); dpCur = (dpCur-1+dpRows.length) % dpRows.length; dpPaint(); }
+  else if(e.key === 'Enter'){ e.preventDefault(); dpChoose(dpCur); }
+});
+
+/* The hint rolls up through what the box can do, while it is empty. The first line is
+   repeated at the end so the last roll lands on it, then the track snaps back to the top. */
+const HINTS = ['Explore destinations','Plan a trip','Ask anything','Choose arrival airport'];
+const destTrack = document.getElementById('destTrack');
+const destWrap = destIn.parentElement;
+destTrack.innerHTML = HINTS.concat(HINTS[0]).map(h=>'<span>' + h + '</span>').join('');
+let hintAt = 0;
+const syncHint = ()=> destWrap.classList.toggle('filled', destIn.value !== '');
+destIn.addEventListener('input', syncHint);
+destIn.addEventListener('change', syncHint);
+function rollHint(){
+  if(destIn.value) return;
+  hintAt++;
+  destTrack.style.transform = 'translateY(' + (-hintAt * 1.5) + 'em)';
+  if(hintAt === HINTS.length){
+    setTimeout(()=>{
+      destTrack.classList.add('jump');
+      destTrack.style.transform = 'translateY(0)';
+      hintAt = 0;
+      void destTrack.offsetHeight;
+      destTrack.classList.remove('jump');
+    }, 500);
+  }
+}
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(rollHint, 2800);
+document.getElementById('destField').addEventListener('click', ()=>destIn.focus());
+document.getElementById('classicSearch').addEventListener('click', ()=>{
+  const v = destIn.value.trim();
+  /* A place picked from the list reads "Name (CODE)" — that is a plain search, not a described trip. */
+  if(v && !/\([A-Z]{3}\)$/.test(v)) submit(destIn);
 });
 
 /* ---------------- Need help? modal ---------------- */

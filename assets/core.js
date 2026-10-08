@@ -768,6 +768,7 @@ const TT = (function(){
     [/couple|two of us|me and my (wife|husband|partner|girlfriend|boyfriend)|partner/i, b=>b.who='couple','a trip for two'],
     [/friends|group of us|the lads|the girls/i,       b=>b.who='friends', 'a trip with friends'],
     [/short flight|nearby|quick hop/i,                b=>b.maxHours=3,    'a short flight'],
+    [/weekend|city break|short break|few days/i,      b=>{ if(!b.maxHours || b.maxHours>6) b.maxHours=6; }, 'a short break'],
     [/too far|too long a flight|closer to home|not so far/i, b=>{
        const o=[3,6,10,99], c=b.maxHours||99;
        b.maxHours = o[Math.max(0,o.indexOf(c)-1)];
