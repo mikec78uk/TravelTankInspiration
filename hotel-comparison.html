@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="cache-control" content="no-cache">
+<title>Hotel comparison — Hotels in Lagos · TravelTank Inspiration</title>
+<link rel="stylesheet" href="assets/tt.css?v=97">
+<style>
+  /* ============ page frame: the existing hotel results page, full width ============ */
+  .wide{max-width:1440px;margin:0 auto;padding-left:24px;padding-right:24px;}
+  .site-header.wide{max-width:1440px;}
+  .hc-searchband{background:var(--panel-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:22px;}
+  .hc-searchband .wide{padding-top:18px;padding-bottom:18px;}
+  .hc-search{display:grid;grid-template-columns:1.6fr 1.1fr 1fr auto;border:1px solid var(--line);background:#fff;}
+  .hc-search .f{padding:12px 18px;border-right:1px solid var(--line);min-width:0;}
+  .hc-search .f label{display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;}
+  .hc-search .f .v{font-size:.93rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .hc-search .go{border:0;background:var(--ink);color:#fff;padding:0 26px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .hc-search .go .ic{width:18px;height:18px;}
+  .main-nav a.on{box-shadow:inset 0 -2px 0 var(--ink);}
+
+  .hc-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:0 24px;align-items:start;padding-top:28px;padding-bottom:60px;}
+  .hc-main.nomap{grid-template-columns:minmax(0,1fr);}
+  .hc-main.nomap .map-col{display:none;}
+
+  /* ---- list column ---- */
+  .hc-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .hc-head h1{margin:0;font-size:1.9rem;}
+  .hc-head h1 span{color:var(--ink-3);}
+  .sw{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--ink-3);}
+  .sw b{color:var(--ink);font-weight:600;}
+  .sw button{
+    width:42px;height:22px;border:1px solid var(--ink-3);border-radius:999px;background:#fff;
+    position:relative;cursor:pointer;padding:0;
+  }
+  .sw button::after{
+    content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+    background:var(--ink-3);transition:transform .15s,background .15s;
+  }
+  .sw button[aria-checked="true"]{background:var(--ink);border-color:var(--ink);}
+  .sw button[aria-checked="true"]::after{background:#fff;transform:translateX(20px);}
+  .hc-tip{margin:10px 0 0;font-size:.9rem;color:var(--ink-2);display:flex;align-items:center;gap:8px;}
+  .hc-tip .ic{width:17px;height:17px;color:var(--ink-3);flex:0 0 auto;}
+  .hc-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 16px;}
+  .hc-bar .sort{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--ink-3);}
+  .hc-bar select{
+    border:1px solid var(--line);background:#fff;padding:10px 34px 10px 14px;font:inherit;font-size:.9rem;
+    font-weight:600;color:var(--ink);
+  }
+  .show-map{display:none;}
+  .hc-main.nomap .show-map{display:inline-block;}
+
+  /* ---- a hotel card ---- */
+  .hc{
+    display:grid;grid-template-columns:240px minmax(0,1fr) 220px;gap:0;
+    border:1px solid var(--line);background:#fff;margin-bottom:16px;position:relative;
+    box-shadow:0 1px 3px rgba(17,19,21,.05);
+  }
+  .hc.sel{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink);}
+  .hc.flash{animation:hcflash 1.6s ease;}
+  @keyframes hcflash{0%,60%{background:var(--panel);}100%{background:#fff;}}
+  .hc-img{display:flex;flex-direction:column;}
+  .hc-img .ph{flex:1;min-height:200px;}
+  .quick{
+    margin:10px 14px 12px;border:1px solid var(--line);background:#fff;padding:7px;cursor:pointer;
+    font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
+  }
+  .quick:hover{border-color:var(--ink);color:var(--ink);}
+  .hc-body{padding:18px 20px;min-width:0;}
+  .hc-body h3{margin:0;font-size:1.15rem;line-height:1.25;letter-spacing:-.01em;}
+  .hc-body .loc{font-size:.86rem;color:var(--ink-2);margin-top:6px;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;}
+  .hc-body .dist{font-size:.83rem;color:var(--ink-3);margin-top:3px;}
+  .hc-rates{display:flex;align-items:center;gap:22px;margin:12px 0 14px;flex-wrap:wrap;}
+  .stars{font-size:.9rem;color:var(--ink);letter-spacing:2px;}
+  .ta{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--ink-3);}
+  .dots{display:flex;gap:3px;}
+  .dots i{width:9px;height:9px;border-radius:50%;border:1px solid var(--ink-2);display:block;}
+  .dots i.on{background:var(--ink);border-color:var(--ink);}
+  .fac{list-style:none;margin:0;padding:0;display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;gap:9px 18px;}
+  .fac li{font-size:.82rem;color:var(--ink-2);display:flex;align-items:center;gap:8px;min-width:0;}
+  .fac li::before{content:'';width:9px;height:9px;border:1px solid var(--ink-3);flex:0 0 auto;}
+  .hc-buy{
+    border-left:1px solid var(--line-2);padding:18px 20px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;gap:0;position:relative;
+  }
+  .fav{
+    position:absolute;top:12px;right:14px;border:0;background:none;cursor:pointer;
+    font-size:1.2rem;line-height:1;color:var(--ink-3);padding:2px;
+  }
+  .fav:hover{color:var(--ink);}
+  .fav.on{color:var(--ink);}
+  .price{font-size:1.65rem;font-weight:600;letter-spacing:-.02em;line-height:1.1;margin-top:8px;}
+  .price-sub{font-size:.88rem;color:var(--ink-2);margin-top:6px;}
+  .refund{font-size:.82rem;color:var(--ink-3);margin-top:3px;}
+  .hc-buy .btn{margin-top:16px;width:100%;display:flex;justify-content:space-between;align-items:center;}
+  .cmp{
+    margin-top:14px;display:flex;align-items:center;gap:9px;font-size:.88rem;font-weight:600;
+    color:var(--ink);cursor:pointer;user-select:none;
+  }
+  .cmp input{width:18px;height:18px;margin:0;accent-color:var(--ink);cursor:pointer;}
+  .cmp input:disabled{cursor:not-allowed;}
+  .cmp.off{color:var(--ink-3);cursor:not-allowed;}
+
+  /* ---- the compare bar: only once something is ticked ---- */
+  .cmpbar{
+    position:sticky;bottom:16px;z-index:20;margin-top:6px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--ink);padding:16px 20px;box-shadow:0 10px 26px rgba(17,19,21,.14);
+  }
+  .cmpbar[hidden]{display:none;}
+  .cmpbar b{display:block;font-size:1rem;}
+  .cmpbar span{font-size:.86rem;color:var(--ink-3);}
+  .cmpbar .acts{display:flex;align-items:center;gap:14px;}
+  .linkbtn{border:0;background:none;padding:0;font:inherit;font-size:.82rem;font-weight:600;color:var(--ink-3);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .linkbtn:hover{color:var(--ink);}
+
+  /* ---- map column ---- */
+  .map-col{position:sticky;top:0;height:100vh;align-self:start;}
+  .map{
+    position:absolute;inset:0;overflow:hidden;border:1px solid var(--line);
+    background:
+      repeating-linear-gradient(0deg,transparent 0 27px,var(--line-2) 27px 28px),
+      repeating-linear-gradient(90deg,transparent 0 27px,var(--line-2) 27px 28px),
+      var(--panel-2);
+  }
+  .map .road{position:absolute;background:#fff;box-shadow:0 0 0 1px var(--line-2);}
+  .map .water{position:absolute;left:0;right:0;bottom:0;height:46%;background:var(--panel);
+    clip-path:polygon(0 42%,26% 22%,52% 40%,78% 18%,100% 30%,100% 100%,0 100%);}
+  .map .lbl{position:absolute;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);}
+  .map .lbl.big{font-size:.95rem;color:var(--ink-2);letter-spacing:.06em;}
+  .pin{
+    position:absolute;transform:translate(-50%,-100%);border:1px solid var(--ink);background:#fff;color:var(--ink);
+    font:inherit;font-size:.78rem;font-weight:600;padding:5px 9px;cursor:pointer;white-space:nowrap;z-index:2;
+  }
+  .pin::after{content:'';position:absolute;left:50%;bottom:-5px;width:8px;height:8px;background:inherit;
+    border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);transform:translateX(-50%) rotate(45deg);}
+  .pin.sel{background:var(--ink);color:#fff;z-index:3;}
+  .pin:hover{z-index:4;}
+  .map-btn{
+    position:absolute;z-index:6;border:1px solid var(--line);background:#fff;cursor:pointer;font:inherit;
+    font-size:.85rem;color:var(--ink);padding:9px 14px;box-shadow:0 2px 8px rgba(17,19,21,.1);
+  }
+  .map-btn.hide{top:12px;right:12px;}
+  .zoom{position:absolute;right:12px;bottom:16px;z-index:6;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .zoom span{width:36px;height:36px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ink-2);}
+
+  /* ---- the AI comparison flyout, over the map ---- */
+  .flyout{
+    position:absolute;z-index:8;top:16px;bottom:16px;left:16px;width:min(500px,calc(100% - 32px));
+    background:#fff;border:1px solid var(--line);box-shadow:0 14px 40px rgba(17,19,21,.18);
+    display:flex;flex-direction:column;
+    visibility:hidden;opacity:0;transform:translateX(18px);
+    transition:opacity .2s ease,transform .22s ease,visibility 0s linear .22s;
+  }
+  .flyout.on{visibility:visible;opacity:1;transform:none;transition:opacity .2s ease,transform .22s ease;}
+  .fly-hd{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);flex:0 0 auto;}
+  .fly-hd h2{margin:0;font-size:1.15rem;display:flex;align-items:center;gap:9px;outline:none;}
+  .fly-hd h2 .ic{width:20px;height:20px;}
+  .fly-tag{margin-left:auto;border:1px solid var(--line);padding:3px 9px;font-size:.7rem;color:var(--ink-3);}
+  .fly-x{width:32px;height:32px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:1.1rem;line-height:1;color:var(--ink-2);}
+  .fly-x:hover{border-color:var(--ink);color:var(--ink);}
+  .fly-body{padding:22px 22px 26px;overflow:auto;flex:1 1 auto;}
+  .fly-k{font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--ink-3);}
+  .fly-big{font-size:1.9rem;line-height:1.12;letter-spacing:-.025em;font-weight:600;margin:10px 0 12px;}
+  .fly-sub{font-size:.95rem;color:var(--ink-2);margin:0;line-height:1.5;}
+  .fly-meta{font-size:.82rem;color:var(--ink-3);margin:12px 0 0;}
+  .fly-h{font-size:1rem;font-weight:600;margin:26px 0 10px;}
+  .fly-row{border-top:1px solid var(--line-2);padding:14px 0;}
+  .fly-row b{display:block;font-size:.93rem;margin-bottom:4px;}
+  .fly-row p{margin:0;font-size:.9rem;color:var(--ink-2);line-height:1.55;}
+  .fly-q{margin:22px 0 8px;font-size:.95rem;font-weight:600;}
+  .fly-sel{
+    width:100%;border:1px solid var(--line);background:#fff;padding:12px 14px;font:inherit;font-size:.93rem;
+    color:var(--ink);
+  }
+  .fly-call{background:var(--panel);padding:16px 18px;margin-top:14px;}
+  .fly-call b{display:block;font-size:.95rem;margin-bottom:6px;}
+  .fly-call p{margin:0;font-size:.9rem;color:var(--ink-2);line-height:1.55;}
+  .fly-src{margin:16px 0 20px;font-size:.84rem;color:var(--ink-2);}
+  .fly-src summary{cursor:pointer;font-weight:600;}
+  .fly-src p{margin:8px 0 0;color:var(--ink-3);line-height:1.55;}
+  .fly-cta{width:100%;display:flex;justify-content:center;gap:8px;}
+  .skel{display:grid;gap:12px;}
+  .skel i{display:block;height:14px;background:var(--panel);animation:pulse 1s ease-in-out infinite alternate;}
+  .skel i.l{height:34px;width:78%;}
+  .skel i.s{width:55%;}
+  @keyframes pulse{from{opacity:.45;}to{opacity:1;}}
+  .fly-scrim{display:none;}
+
+  /* ---- smaller screens: no map; the comparison becomes a sheet ---- */
+  @media(max-width:1100px){
+    .hc{grid-template-columns:200px minmax(0,1fr);}
+    .hc-buy{grid-column:1 / -1;border-left:0;border-top:1px solid var(--line-2);flex-direction:row;flex-wrap:wrap;justify-content:space-between;text-align:left;gap:8px 16px;}
+    .hc-buy .btn{width:auto;margin-top:0;}
+    .price{margin-top:0;}
+    .cmp{margin-top:0;}
+  }
+  @media(max-width:900px){
+    .hc-main{grid-template-columns:minmax(0,1fr);}
+    .map-col{position:static;height:0;}
+    .map,.map-btn,.zoom{display:none;}
+    .flyout{position:fixed;top:auto;left:0;right:0;bottom:0;width:auto;max-height:90vh;height:90vh;z-index:90;transform:translateY(24px);}
+    .flyout.on{transform:none;}
+    .fly-scrim.on{display:block;position:fixed;inset:0;background:rgba(17,19,21,.42);z-index:89;}
+    .hc-search{grid-template-columns:1fr;}
+    .hc-search .f{border-right:0;border-bottom:1px solid var(--line);}
+    .hc-search .go{padding:14px;}
+    .show-map{display:none !important;}
+  }
+  @media(max-width:620px){
+    .wide{padding-left:16px;padding-right:16px;}
+    .hc{grid-template-columns:1fr;}
+    .hc-img .ph{min-height:170px;}
+    .fac{grid-template-rows:none;grid-auto-flow:row;grid-template-columns:1fr;}
+    .fly-big{font-size:1.6rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header wide">
+  <div class="logo">TravelTank</div>
+  <ul class="main-nav">
+    <li><a href="#">Flights</a></li><li><a href="#" class="on">Hotels</a></li>
+    <li><a href="#">Holidays</a></li><li><a href="#">More</a></li>
+  </ul>
+  <div class="header-right"><span>Favourites (0)</span><span>NGN (₦) Naira</span><span>My account</span></div>
+</header>
+
+<div class="hc-searchband">
+  <div class="wide">
+    <div class="hc-search" role="search" aria-label="Hotel search (shown for context)">
+      <div class="f"><label>Where would you like to stay?</label><div class="v">Lagos, Nigeria</div></div>
+      <div class="f"><label>Dates</label><div class="v">17 Nov 26 &ndash; 19 Nov 26</div></div>
+      <div class="f"><label>Guests</label><div class="v">2 Adults &middot; 1 Room</div></div>
+      <button class="go" type="button" aria-label="Search" id="goBtn"></button>
+    </div>
+  </div>
+</div>
+
+<main class="wide hc-main" id="hcMain">
+
+  <section aria-labelledby="hcTitle">
+    <div class="hc-head">
+      <h1 id="hcTitle">Hotels <span>in Lagos</span></h1>
+      <div class="sw">
+        <b>Total price</b>
+        <button type="button" role="switch" aria-checked="false" id="perNight" aria-label="Show price per night"></button>
+        <span>Per night</span>
+      </div>
+    </div>
+    <p class="hc-tip" id="hcTip"></p>
+
+    <div class="hc-bar">
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-sm" type="button">Filter</button>
+        <button class="btn btn-sm show-map" type="button" id="showMap">Show map</button>
+      </div>
+      <label class="sort">Sort by
+        <select id="sortBy">
+          <option value="rec">Recommended</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+          <option value="stars">Star rating</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="cmpbar" id="cmpbar" hidden>
+      <div><b id="cmpCount"></b><span id="cmpNote"></span></div>
+      <div class="acts">
+        <button class="linkbtn" type="button" id="cmpClear">Clear</button>
+        <button class="btn btn-primary" type="button" id="cmpGo">Compare hotels &rarr;</button>
+      </div>
+    </div>
+
+    <p class="hint" style="margin-top:28px;">
+      Hotel comparison &mdash; the existing hotel results page, with a Compare box on each result. Tick two or more and a
+      comparison appears over the map. The summary is generated from what this page already shows (price, stars, refund terms,
+      facilities, distance); prices are from the supplied results.
+    </p>
+  </section>
+
+  <aside class="map-col" id="mapCol" aria-label="Map">
+    <div class="map" id="map">
+      <div class="water"></div>
+      <div class="road" style="left:0;right:0;top:24%;height:9px"></div>
+      <div class="road" style="left:0;right:0;top:50%;height:11px"></div>
+      <div class="road" style="left:0;right:0;top:63%;height:8px"></div>
+      <div class="road" style="top:0;bottom:0;left:30%;width:9px"></div>
+      <div class="road" style="top:0;bottom:0;left:57%;width:11px"></div>
+      <div class="road" style="top:0;bottom:0;left:78%;width:8px"></div>
+      <span class="lbl" style="left:6%;top:10%">Ojodu</span>
+      <span class="lbl" style="left:40%;top:14%">Ikeja</span>
+      <span class="lbl big" style="left:46%;top:36%">Lagos</span>
+      <span class="lbl" style="left:66%;top:42%">Ebute-Metta</span>
+      <span class="lbl" style="left:6%;top:66%">Apapa</span>
+      <span class="lbl" style="left:70%;top:90%">Lekki</span>
+      <span class="lbl" style="left:34%;top:88%">Lagos Island</span>
+      <div id="pins"></div>
+      <button class="map-btn hide" type="button" id="hideMap">Hide map</button>
+      <div class="zoom" aria-hidden="true"><span>+</span><span>&minus;</span></div>
+    </div>
+
+    <div class="fly-scrim" id="flyScrim"></div>
+    <section class="flyout" id="flyout" role="dialog" aria-labelledby="flyTitle">
+      <div class="fly-hd">
+        <h2 id="flyTitle" tabindex="-1"><span id="flySpark"></span>Compare hotels</h2>
+        <span class="fly-tag">AI summary</span>
+        <button class="fly-x" type="button" id="flyX" aria-label="Close comparison">&times;</button>
+      </div>
+      <div class="fly-body" id="flyBody"></div>
+    </section>
+  </aside>
+
+</main>
+
+<script src="assets/data.js?v=97"></script>
+<script src="assets/core.js?v=97"></script>
+<script>
+document.body.insertAdjacentHTML('afterbegin', TT.navbar('hotel-comparison.html'));
+document.getElementById('goBtn').innerHTML = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
+const SPARK = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/></svg>';
+document.getElementById('flySpark').innerHTML = SPARK;
+document.getElementById('hcTip').innerHTML = SPARK + '<span>Tick <b>Compare</b> on two or more hotels to see what the price difference gets you.</span>';
+
+/* ---------------- the results, as supplied ----------------
+   total is for the two nights shown; ta is the guest rating out of 5 (0 = none shown);
+   dist is the distance from the centre as the card prints it (null = not shown). */
+const NIGHTS = 2;
+const FAC_A = ['Wheelchair-accessible','Car park','Wi-fi','Airport Shuttle','Laundry service','Air conditioning in public areas'];
+const FAC_B = ['Wheelchair-accessible','Car park','Wi-fi','Airport Shuttle','Laundry service','Garden'];
+const HOTELS = [
+  {id:'continental', name:'Lagos Continental Hotel', short:'Lagos Continental', area:'Victoria Island, Lagos', dist:'2km',   stars:5, ta:4, total:1066501, refundable:false, fac:FAC_A, pin:[63,74]},
+  {id:'crown',       name:'Victoria Crown Plaza Hotel', short:'Victoria Crown Plaza', area:'Lagos, Lagos', dist:'0.1km', stars:4, ta:4, total:706023,  refundable:false, fac:FAC_A, pin:[50,60]},
+  {id:'ibis',        name:'ibis Lagos Ikeja', short:'ibis Lagos Ikeja', area:'Ikeja, Lagos', dist:'0km', stars:3, ta:0, total:306272, refundable:false, fac:FAC_A, pin:[40,22]},
+  {id:'eko',         name:'Eko Hotels and Suites', short:'Eko Hotels', area:'Lagos, Lagos', dist:null, stars:5, ta:0, total:631624, refundable:true, fac:FAC_B, pin:[70,84]},
+  {id:'parkinn',     name:'Park Inn by Radisson Serviced Apt. Lagos Victoria', short:'Park Inn Victoria', area:'Victoria Island, Lagos', dist:null, stars:4, ta:0, total:611448, refundable:false, fac:FAC_A, pin:[58,80]}
+];
+const byId = id => HOTELS.find(h=>h.id===id);
+const MAX_COMPARE = 4;
+
+let perNight = false, sortKey = 'rec', selected = [];
+const money = n => TT.money(n);
+const shown = h => perNight ? Math.round(h.total / NIGHTS) : h.total;
+
+/* ---------------- list ---------------- */
+function sorted(){
+  const l = HOTELS.slice();
+  if(sortKey==='low') l.sort((a,b)=>a.total-b.total);
+  if(sortKey==='high') l.sort((a,b)=>b.total-a.total);
+  if(sortKey==='stars') l.sort((a,b)=>b.stars-a.stars || a.total-b.total);
+  return l;
+}
+function cardHtml(h){
+  const on = selected.includes(h.id);
+  const full = !on && selected.length >= MAX_COMPARE;
+  return '<article class="hc' + (on?' sel':'') + '" id="hc-' + h.id + '" data-id="' + h.id + '">' +
+    '<div class="hc-img"><div class="ph"></div><button class="quick" type="button">Quick view</button></div>' +
+    '<div class="hc-body"><h3>' + h.name + '</h3>' +
+      '<div class="loc">' + h.area + '</div>' +
+      (h.dist ? '<div class="dist">' + h.dist + ' from center</div>' : '') +
+      '<div class="hc-rates"><span class="stars" aria-label="' + h.stars + ' stars">' + '★'.repeat(h.stars) + '</span>' +
+        '<span class="ta">Guest rating <span class="dots">' +
+          [1,2,3,4,5].map(i=>'<i class="' + (i<=h.ta?'on':'') + '"></i>').join('') + '</span></span></div>' +
+      '<ul class="fac">' + h.fac.map(f=>'<li>' + f + '</li>').join('') + '</ul></div>' +
+    '<div class="hc-buy"><button class="fav" type="button" aria-label="Save ' + h.name + '">♡</button>' +
+      '<div class="price">' + money(shown(h)) + '</div>' +
+      '<div class="price-sub">' + (perNight ? 'Per night' : 'Total for ' + NIGHTS + ' nights') + '</div>' +
+      '<div class="refund">' + (h.refundable ? 'Refundable' : 'Non Refundable') + '</div>' +
+      '<button class="btn" type="button"><span>CHOOSE ROOM</span><span>&rarr;</span></button>' +
+      '<label class="cmp' + (full?' off':'') + '"' + (full ? ' title="Compare up to ' + MAX_COMPARE + ' hotels"' : '') + '>' +
+        '<input type="checkbox" data-cmp="' + h.id + '"' + (on?' checked':'') + (full?' disabled':'') + '>Compare</label>' +
+    '</div></article>';
+}
+function drawList(){
+  document.getElementById('list').innerHTML = sorted().map(cardHtml).join('');
+  drawPins();
+}
+function drawPins(){
+  document.getElementById('pins').innerHTML = HOTELS.map(h=>
+    '<button type="button" class="pin' + (selected.includes(h.id)?' sel':'') + '" data-pin="' + h.id + '" ' +
+    'style="left:' + h.pin[0] + '%;top:' + h.pin[1] + '%" aria-label="' + h.name + ', ' + money(shown(h)) + '">' + money(shown(h)) + '</button>').join('');
+}
+
+/* ---------------- selection + the compare bar ---------------- */
+function updateBar(){
+  const n = selected.length, bar = document.getElementById('cmpbar');
+  bar.hidden = n === 0;
+  document.getElementById('cmpCount').textContent = n + (n===1 ? ' hotel selected' : ' hotels selected');
+  document.getElementById('cmpNote').textContent = n >= 2 ? 'Ready to compare.' : 'Choose one more to compare.';
+  const go = document.getElementById('cmpGo');
+  go.disabled = n < 2;
+  go.classList.toggle('btn-primary', !flyOpen);
+}
+function setSelected(id, on){
+  selected = on ? selected.filter(x=>x!==id).concat(id) : selected.filter(x=>x!==id);
+  document.querySelectorAll('.hc').forEach(c=>{
+    const isOn = selected.includes(c.dataset.id);
+    c.classList.toggle('sel', isOn);
+    const box = c.querySelector('[data-cmp]');
+    box.checked = isOn;
+    const full = !isOn && selected.length >= MAX_COMPARE;
+    box.disabled = full;
+    box.closest('.cmp').classList.toggle('off', full);
+    if(full) box.closest('.cmp').title = 'Compare up to ' + MAX_COMPARE + ' hotels'; else box.closest('.cmp').removeAttribute('title');
+  });
+  drawPins();
+  updateBar();
+  if(flyOpen){ if(selected.length < 2) closeFly(); else renderFly(true); }
+}
+document.getElementById('list').addEventListener('change', e=>{
+  const id = e.target.dataset && e.target.dataset.cmp;
+  if(id) setSelected(id, e.target.checked);
+});
+document.getElementById('list').addEventListener('click', e=>{
+  const f = e.target.closest('.fav');
+  if(f){ f.classList.toggle('on'); f.textContent = f.classList.contains('on') ? '♥' : '♡'; }
+});
+document.getElementById('cmpClear').addEventListener('click', ()=>{
+  selected.slice().forEach(id=>setSelected(id,false));
+});
+
+function jumpTo(id){
+  const c = document.getElementById('hc-' + id);
+  if(!c) return;
+  c.scrollIntoView({behavior:'smooth', block:'center'});
+  c.classList.remove('flash'); void c.offsetWidth; c.classList.add('flash');
+}
+document.getElementById('pins').addEventListener('click', e=>{
+  const p = e.target.closest('[data-pin]');
+  if(p) jumpTo(p.dataset.pin);
+});
+
+/* ---------------- price toggle, sort, map ---------------- */
+const sw = document.getElementById('perNight');
+sw.addEventListener('click', ()=>{
+  perNight = !perNight;
+  sw.setAttribute('aria-checked', perNight);
+  drawList();
+});
+document.getElementById('sortBy').addEventListener('change', e=>{ sortKey = e.target.value; drawList(); });
+const hcMain = document.getElementById('hcMain');
+document.getElementById('hideMap').addEventListener('click', ()=>{ closeFly(); hcMain.classList.add('nomap'); });
+document.getElementById('showMap').addEventListener('click', ()=>hcMain.classList.remove('nomap'));
+
+/* ---------------- the comparison ----------------
+   Written from the facts on the page, so every sentence can be traced to a card. */
+const FAC_SHORT = {
+  'Wheelchair-accessible':'wheelchair access', 'Car park':'a car park', 'Wi-fi':'Wi-Fi',
+  'Airport Shuttle':'an airport shuttle', 'Laundry service':'laundry service',
+  'Air conditioning in public areas':'air conditioning in public areas', 'Garden':'a garden'
+};
+const join = a => a.length < 2 ? (a[0]||'') : a.slice(0,-1).join(', ') + ' and ' + a[a.length-1];
+const PRIORITIES = [
+  {id:'cost',    label:'Keeping the cost down'},
+  {id:'comfort', label:'Comfort and star rating'},
+  {id:'central', label:'Being close to the centre'},
+  {id:'flex',    label:'Flexibility to cancel'}
+];
+let priority = 'cost', pick = null;
+
+function compareRows(sel){
+  const n = sel.length, both = n === 2 ? 'Both' : 'All', verb = n === 2 ? 'Neither' : 'None';
+  const byPrice = sel.slice().sort((a,b)=>a.total-b.total);
+  const cheap = byPrice[0], dear = byPrice[n-1];
+  const rows = [];
+
+  /* stars */
+  const sv = sel.map(h=>h.stars), smin = Math.min(...sv), smax = Math.max(...sv);
+  if(smin === smax){
+    rows.push(['The same star rating', both + ' are listed as ' + smin + '-star, so the price gap is not a step down in star rating.']);
+  } else if(n === 2){
+    rows.push(cheap.stars < dear.stars
+      ? ['The trade-off: a lower star rating', cheap.short + ' is listed as ' + cheap.stars + '-star, compared with ' + dear.stars + '-star for ' + dear.short + '.']
+      : ['A better star rating for less', cheap.short + ' is listed as ' + cheap.stars + '-star against ' + dear.stars + '-star for ' + dear.short + ', at the lower price.']);
+  } else {
+    const at = v => join(sel.filter(h=>h.stars===v).map(h=>h.short));
+    rows.push(['Star ratings vary', 'Listed star ratings run from ' + smin + '-star (' + at(smin) + ') to ' + smax + '-star (' + at(smax) + ').']);
+  }
+
+  /* cancellation */
+  const ref = sel.filter(h=>h.refundable), non = sel.filter(h=>!h.refundable);
+  if(!ref.length) rows.push(['Cancellation flexibility', both + ' displayed rates are non-refundable. ' + verb + ' offers a cancellation advantage on these results.']);
+  else if(!non.length) rows.push(['Cancellation flexibility', both + ' displayed rates are refundable, so flexibility does not separate them.']);
+  else rows.push(['Cancellation flexibility', join(ref.map(h=>h.short)) + (ref.length>1?' have':' has') + ' a refundable rate; ' +
+    join(non.map(h=>h.short)) + (non.length>1?' are':' is') + ' non-refundable. That flexibility is worth weighing against the price gap.']);
+
+  /* facilities */
+  const common = sel[0].fac.filter(f=>sel.every(h=>h.fac.includes(f)));
+  const only = h => h.fac.filter(f=>sel.every(o=>o===h || !o.fac.includes(f)));
+  const uniq = sel.map(h=>[h, only(h)]).filter(([,u])=>u.length);
+  let ftxt = both + ' list ' + join(common.map(f=>FAC_SHORT[f] || f.toLowerCase())) + '.';
+  uniq.forEach(([h,u])=>{ ftxt += ' Only ' + h.short + ' lists ' + join(u.map(f=>FAC_SHORT[f] || f.toLowerCase())) + '.'; });
+  ftxt += ' Availability and extra charges need checking.';
+  rows.push([uniq.length ? 'The facilities differ a little' : 'The essentials look similar', ftxt]);
+
+  /* guest ratings */
+  const rated = sel.filter(h=>h.ta), unrated = sel.filter(h=>!h.ta);
+  rows.push(['Guest ratings', !rated.length
+    ? 'No guest rating is shown for these hotels, so reviews cannot separate them on this page.'
+    : join(rated.map(h=>h.short + ' scores ' + h.ta + ' out of 5')) + '.' +
+      (unrated.length ? ' No rating is shown for ' + join(unrated.map(h=>h.short)) + ', so reviews cannot settle it.' : '')]);
+
+  /* location */
+  const withD = sel.filter(h=>h.dist), noD = sel.filter(h=>!h.dist);
+  rows.push(['Location', (withD.length
+      ? join(withD.map(h=>h.short + ' is ' + h.dist + ' from the centre')) + '.'
+      : 'No distance from the centre is shown for these hotels.') +
+    (withD.length && noD.length ? ' No distance is shown for ' + join(noD.map(h=>h.short)) + '.' : '') +
+    ' Distance is to the city centre, not to where you will actually be spending your time.']);
+
+  rows.push(['Still worth checking', 'Room type, meals and exact location. These results do not establish equivalent rooms or which location fits your plans.']);
+  return {rows, cheap, dear};
+}
+
+function callout(sel, cheap, dear){
+  const n = sel.length;
+  const dearLabel = n === 2 ? dear.short : 'the dearest (' + dear.short + ')';
+  let p = cheap, text;
+  if(priority === 'cost'){
+    text = cheap.short + ' leaves ' + money(dear.total - cheap.total) + ' more in your budget than ' + dearLabel +
+      '. Check the room type and meal plan before treating the rates as equivalent.';
+  } else if(priority === 'comfort'){
+    const top = sel.slice().sort((a,b)=>b.stars-a.stars || b.ta-a.ta || a.total-b.total)[0];
+    const level = sel.every(h=>h.stars===sel[0].stars);
+    if(level){ text = 'Star ratings are level, so price and location decide. ' + cheap.short + ' is the cheapest of them.'; }
+    else if(top === cheap){ p = top; text = top.short + ' has the highest star rating and is also the cheapest, so it is worth a closer look first.'; }
+    else { p = top; text = top.short + ' has the highest listing (' + top.stars + '-star) and costs ' + money(top.total - cheap.total) +
+      ' more than ' + cheap.short + '. Check what that premium actually buys in the room itself.'; }
+  } else if(priority === 'central'){
+    const d = sel.filter(h=>h.dist).sort((a,b)=>parseFloat(a.dist)-parseFloat(b.dist) || a.total-b.total);
+    if(!d.length || parseFloat(d[0].dist) === parseFloat(d[d.length-1].dist)){
+      text = 'Distance from the centre does not separate these, so price and rating decide.';
+    } else { p = d[0]; text = d[0].short + ' is closest to the centre at ' + d[0].dist + '. Check that the centre is where you actually need to be.'; }
+  } else {
+    const r = sel.filter(h=>h.refundable).sort((a,b)=>a.total-b.total);
+    if(!r.length){ text = 'None of these shows a refundable rate, so flexibility does not separate them. Check the cancellation terms again once you choose a room.'; }
+    else { p = r[0]; text = r[0] === cheap
+      ? r[0].short + ' is both the cheapest and refundable, so it is worth a closer look first.'
+      : r[0].short + ' is the refundable option, at ' + money(r[0].total) + ' — ' + money(r[0].total - cheap.total) + ' more than ' + cheap.short + '.'; }
+  }
+  pick = p;
+  return text;
+}
+
+function flyHtml(sel){
+  const n = sel.length;
+  const {rows, cheap, dear} = compareRows(sel);
+  const diff = dear.total - cheap.total;
+  const ctaText = callout(sel, cheap, dear);
+  const head = n === 2
+    ? '<div class="fly-big">' + money(diff) + ' less<br>at ' + cheap.short + '</div><p class="fly-sub">Compared with ' + dear.short + ' for your two-night stay.</p>'
+    : '<div class="fly-big">' + money(diff) + '<br>between the cheapest and the dearest</div><p class="fly-sub">' + cheap.short + ' is the cheapest and ' + dear.short + ' the dearest of the ' + n + ', for your two-night stay.</p>';
+  return '<div class="fly-k">The price difference</div>' + head +
+    '<p class="fly-meta">17–19 November · 2 adults · 1 room</p>' +
+    '<div class="fly-h">What changes — and what doesn’t</div>' +
+    rows.map(([t,x])=>'<div class="fly-row"><b>' + t + '</b><p>' + x + '</p></div>').join('') +
+    '<div class="fly-q"><label for="flyPri">What matters most to you?</label></div>' +
+    '<select class="fly-sel" id="flyPri">' + PRIORITIES.map(o=>'<option value="' + o.id + '"' + (o.id===priority?' selected':'') + '>' + o.label + '</option>').join('') + '</select>' +
+    '<div class="fly-call"><b>Worth a closer look</b><p>' + ctaText + '</p></div>' +
+    '<details class="fly-src"><summary>Sources &amp; comparison limits</summary>' +
+      '<p>Built only from the details on this results page: the displayed totals, star ratings, guest ratings, listed facilities, refund terms and distance from the centre. ' +
+      'Room types, meal plans, extra charges and live availability are not compared. This is an AI-generated summary — check the details before you book.</p></details>' +
+    '<button class="btn btn-primary fly-cta" type="button" id="flyCta">Explore ' + pick.short + ' rooms <span>&rarr;</span></button>';
+}
+
+/* ---------------- the flyout ---------------- */
+const fly = document.getElementById('flyout'), flyBody = document.getElementById('flyBody'), flyScrim = document.getElementById('flyScrim');
+let flyOpen = false, flyToken = 0;
+
+function paintFly(sel){
+  flyBody.innerHTML = flyHtml(sel);
+  document.getElementById('flyPri').addEventListener('change', e=>{
+    priority = e.target.value;
+    const keep = flyBody.scrollTop;
+    paintFly(sel);
+    flyBody.scrollTop = keep;
+    document.getElementById('flyPri').focus();
+  });
+  document.getElementById('flyCta').addEventListener('click', ()=>{ const id = pick.id; closeFly(); jumpTo(id); });
+}
+function renderFly(quick){
+  const sel = selected.map(byId);
+  const token = ++flyToken;
+  flyBody.innerHTML = '<div class="skel" aria-busy="true"><i class="s"></i><i class="l"></i><i></i><i class="s"></i><i></i><i></i><i class="s"></i></div>';
+  setTimeout(()=>{
+    if(token !== flyToken || !flyOpen) return;
+    paintFly(sel);
+  }, quick ? 350 : 700);
+}
+function openFly(){
+  if(selected.length < 2) return;
+  hcMain.classList.remove('nomap');
+  flyOpen = true;
+  fly.classList.add('on'); flyScrim.classList.add('on');
+  updateBar();
+  renderFly(false);
+  document.getElementById('flyTitle').focus({preventScroll:true});
+}
+function closeFly(){
+  if(!flyOpen) return;
+  flyOpen = false; flyToken++;
+  fly.classList.remove('on'); flyScrim.classList.remove('on');
+  updateBar();
+  document.getElementById('cmpGo').focus({preventScroll:true});
+}
+document.getElementById('cmpGo').addEventListener('click', openFly);
+document.getElementById('flyX').addEventListener('click', closeFly);
+flyScrim.addEventListener('click', closeFly);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeFly(); });
+
+drawList();
+updateBar();
+</script>
+</body>
+</html>

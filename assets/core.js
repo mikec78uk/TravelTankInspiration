@@ -828,7 +828,8 @@ const TT = (function(){
       ['concept-5.html','5 · Two routes'],
       ['results.html','Results'],
       ['results-v2.html','Results v2'],
-      ['flights.html','Your trip']
+      ['flights.html','Your trip'],
+      ['hotel-comparison.html','Hotel comparison']
     ];
     return '<div class="wf-bar"><div class="wf-bar-in">' +
       '<span class="wf-tag">Wireframe</span>' +
