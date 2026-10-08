@@ -446,7 +446,7 @@ function dpPlace(d, term){
   return {kind:'place', d:d, html:
     '<span class="dp-ic">' + TT.icon('plane') + '</span>' +
     '<span class="dp-txt"><span class="dp-name">' + dpHighlight(d.name, term) + '</span>' +
-    '<span class="dp-meta">' + TT.esc(d.country) + ' · ' + d.hours + (d.hours===1?' hour':' hours') + ' from Lagos · from ' + TT.money(d.flights[0].price) + '</span></span>' +
+    '<span class="dp-meta">' + TT.esc(d.country) + ' · ' + d.hours + (d.hours===1?' hour':' hours') + ' from Lagos</span></span>' +
     '<span class="dp-code">' + codeOf(d) + '</span>'};
 }
 function dpTrip(text, label, meta){
