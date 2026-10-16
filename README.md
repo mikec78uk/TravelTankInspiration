@@ -22,6 +22,7 @@ recommendation engine, all leading to a shared results page.
 | [`results-v2.html`](results-v2.html) | Working copy of the results page, so the original survives edits |
 | [`flights.html`](flights.html) | Step 2 — the logistics, once the destination and hotel are settled |
 | [`hotel-comparison.html`](hotel-comparison.html) | The hotel results page with a Compare box on each hotel and an AI comparison flyout over the map |
+| [`hotel-comparison-table.html`](hotel-comparison-table.html) | The same results page, but Compare opens a modal with a side-by-side table and AI summary, pick and Q&A |
 
 Shared code lives in `assets/`: `tt.css` (the wireframe system), `data.js` (destinations,
 flights, hotels) and `core.js` (brief state, matching logic, page chrome).
