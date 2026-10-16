@@ -164,17 +164,16 @@
   .cm-ft .btn{margin-left:auto;}
 
   /* AI input */
-  .ai{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;border:1px solid var(--line);background:var(--panel-2);padding:20px 22px;margin:20px 0 20px;}
+  .ai{border:1px solid var(--line);background:var(--panel-2);padding:20px 22px;margin:20px 0 20px;}
+  .ask{border:1px solid var(--line);background:var(--panel-2);padding:16px 18px 18px;margin-top:18px;}
   .ai-hd{display:flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-2);margin-bottom:10px;}
   .ai-hd .ic{width:17px;height:17px;}
   .ai-tag{margin-left:6px;border:1px solid var(--line);background:#fff;padding:2px 8px;font-size:.66rem;letter-spacing:.06em;color:var(--ink-3);font-weight:400;text-transform:none;}
-  .ai-sum{margin:0;font-size:1.02rem;line-height:1.55;color:var(--ink);min-height:3.1em;}
-  .ai-pri{margin-top:16px;}
-  .ai-pri label{display:block;font-size:.82rem;font-weight:600;margin-bottom:6px;}
-  .ai select,.ai input[type=text]{
+  .ai-sum{margin:0;font-size:1.02rem;line-height:1.55;color:var(--ink);min-height:1.6em;max-width:80ch;}
+  .ask input[type=text],.ai input[type=text]{
     width:100%;border:1px solid var(--line);background:#fff;padding:11px 13px;font:inherit;font-size:.92rem;color:var(--ink);
   }
-  .ai input[type=text]:focus,.ai select:focus{outline:none;border-color:var(--ink);}
+  .ask input[type=text]:focus,.ai input[type=text]:focus{outline:none;border-color:var(--ink);}
   .ai-form{display:flex;gap:8px;}
   .ai-form button{width:42px;flex:0 0 auto;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;font-size:1rem;}
   .ai-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
@@ -196,8 +195,6 @@
     font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
   }
   .ct thead .rl{z-index:4;}
-  .ct th.pick,.ct td.pick{background:var(--panel-2);}
-  .ct thead th.pick{box-shadow:inset 0 3px 0 var(--ink);}
   .ct tr.sec th{background:var(--panel);color:var(--ink-2);padding:9px 16px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;border-bottom:1px solid var(--line-2);position:static;border-right:0;}
   .ct tr.sec th .ic{width:14px;height:14px;vertical-align:-2px;margin-right:6px;}
   .ct td b,.ct td.best{color:var(--ink);font-weight:600;}
@@ -249,7 +246,7 @@
     .cm{inset:0;left:0;top:0;transform:none;width:auto;max-height:none;border:0;}
     .cm-hd,.cm-ft{padding-left:16px;padding-right:16px;}
     .cm-body{padding:0 16px 16px;}
-    .ai{grid-template-columns:1fr;gap:20px;padding:16px;}
+    .ai{padding:16px;}
     .ctw{overflow-x:auto;margin:0 -16px;padding:0 16px;}
     table.ct{min-width:560px;}
     .ct thead th{position:static;}
@@ -298,6 +295,16 @@
       </div>
     </div>
     <p class="hc-tip" id="hcTip"></p>
+
+    <div class="ask">
+      <div class="ai-hd"><span id="aiSpark2"></span>Ask about these hotels<span class="ai-tag">AI-generated</span></div>
+      <form class="ai-form" id="askForm">
+        <input type="text" id="askQ" autocomplete="off" placeholder="e.g. Which is cheapest?" aria-label="Ask a question about these hotels">
+        <button type="submit" aria-label="Ask">&rarr;</button>
+      </form>
+      <div class="ai-chips" id="askChips"></div>
+      <div class="ai-ans" id="askAns" hidden aria-live="polite"></div>
+    </div>
 
     <div class="hc-bar">
       <div style="display:flex;gap:10px;">
@@ -368,23 +375,8 @@
   </header>
   <div class="cm-body" id="cmBody">
     <div class="ai">
-      <div>
-        <div class="ai-hd"><span id="aiSpark"></span>AI summary<span class="ai-tag">AI-generated</span></div>
-        <p class="ai-sum" id="aiSum" aria-live="polite"></p>
-        <div class="ai-pri">
-          <label for="aiPri">What matters most to you?</label>
-          <select id="aiPri"></select>
-        </div>
-      </div>
-      <div>
-        <div class="ai-hd"><span id="aiSpark2"></span>Ask about these hotels</div>
-        <form class="ai-form" id="aiForm">
-          <input type="text" id="aiQ" autocomplete="off" placeholder="e.g. Is it worth paying more?" aria-label="Ask a question about these hotels">
-          <button type="submit" aria-label="Ask">&rarr;</button>
-        </form>
-        <div class="ai-chips" id="aiChips"></div>
-        <div class="ai-ans" id="aiAns" hidden aria-live="polite"></div>
-      </div>
+      <div class="ai-hd"><span id="aiSpark"></span>AI summary<span class="ai-tag">AI-generated</span></div>
+      <p class="ai-sum" id="aiSum" aria-live="polite"></p>
     </div>
     <div class="ct-tools">
       <label><input type="checkbox" id="diffOnly">Show differences only</label>
@@ -528,7 +520,7 @@ document.getElementById('hideMap').addEventListener('click', ()=>hcMain.classLis
 document.getElementById('showMap').addEventListener('click', ()=>hcMain.classList.remove('nomap'));
 
 /* ---------------- the comparison table ----------------
-   The table is plain data from the cards. The AI parts (summary, "our pick", strengths and
+   The table is plain data from the cards. The AI parts (summary, strengths and
    watch-outs, and the answers) are written from those same facts, so each can be traced back. */
 const FAC_SHORT = {
   'Wheelchair-accessible':'wheelchair access', 'Car park':'a car park', 'Wi-fi':'Wi-Fi',
@@ -536,14 +528,7 @@ const FAC_SHORT = {
   'Air conditioning in public areas':'air conditioning in public areas', 'Garden':'a garden'
 };
 const join = a => a.length < 2 ? (a[0]||'') : a.slice(0,-1).join(', ') + ' and ' + a[a.length-1];
-const PRIORITIES = [
-  {id:'cost',    label:'Keeping the cost down'},
-  {id:'comfort', label:'Comfort and star rating'},
-  {id:'central', label:'Being close to the centre'},
-  {id:'flex',    label:'Flexibility to cancel'}
-];
-const QUESTIONS = ['Is it worth paying more?','Which is closest to the centre?','Which has the best cancellation terms?','Which is best for a family?'];
-let priority = 'cost';
+const QUESTIONS = ['Which is cheapest?','Which is closest to the centre?','Which has the best cancellation terms?','Which is best for a family?'];
 
 function stats(sel){
   const byPrice = sel.slice().sort((a,b)=>a.total-b.total);
@@ -568,27 +553,6 @@ function analyse(sel){
     head = cheap.short + ' is cheapest at ' + money(cheap.total) + ' and ' + dear.short + ' the dearest at ' + money(dear.total) + ' — ' + money(diff) + ' apart.';
   }
 
-  let pick = cheap, line;
-  if(priority === 'cost'){
-    line = 'If cost matters most, ' + cheap.short + ' is the one to look at first.';
-  } else if(priority === 'comfort'){
-    const top = sel.slice().sort((a,b)=>b.stars-a.stars || b.ta-a.ta || a.total-b.total)[0];
-    if(S.maxStars === S.minStars) line = 'Star ratings are level, so price and location decide.';
-    else { pick = top; line = 'If comfort matters most, ' + top.short + ' has the highest star rating (' + top.stars + '-star)' +
-      (top === cheap ? ' and is also the cheapest.' : ', for ' + money(top.total - cheap.total) + ' more than ' + cheap.short + '.'); }
-  } else if(priority === 'central'){
-    const d = sel.filter(h=>h.dist).sort((a,b)=>parseFloat(a.dist)-parseFloat(b.dist) || a.total-b.total);
-    if(!d.length || !S.distVaries) line = 'Distance from the centre does not separate these, so price and rating decide.';
-    else { pick = d[0]; line = 'If location matters most, ' + d[0].short + ' is closest to the centre at ' + d[0].dist + '.' +
-      (d.length < n ? ' No distance is shown for ' + join(sel.filter(h=>!h.dist).map(h=>h.short)) + '.' : ''); }
-  } else {
-    const r = sel.filter(h=>h.refundable).sort((a,b)=>a.total-b.total);
-    if(!r.length) line = 'None of these shows a refundable rate, so flexibility does not separate them.';
-    else if(S.allRef) line = 'All of these show a refundable rate, so flexibility does not separate them.';
-    else { pick = r[0]; line = 'If flexibility matters most, ' + r[0].short + ' is the refundable option' +
-      (r[0] === cheap ? ' and the cheapest.' : ', at ' + money(r[0].total - cheap.total) + ' more than ' + cheap.short + '.'); }
-  }
-
   const only = h => h.fac.filter(f=>sel.every(o=>o===h || !o.fac.includes(f)));
   const rated = sel.filter(h=>h.ta);
   const takes = {};
@@ -608,13 +572,13 @@ function analyse(sel){
     if(!h.dist) watch.push('Distance from the centre not shown');
     takes[h.id] = {good:good.slice(0,3), watch:watch.slice(0,3)};
   });
-  return {S, cheap, dear, diff, pick, summary: head + ' ' + line, takes};
+  return {S, cheap, dear, diff, summary: head, takes};
 }
 
 /* ---- the table ---- */
 function tableHtml(sel, A){
   const S = A.S, n = sel.length;
-  const cell = (h, html, best) => '<td class="' + (h.id === A.pick.id ? 'pick' : '') + (best ? ' best' : '') + '">' + html + '</td>';
+  const cell = (h, html, best) => '<td class="' + (best ? 'best' : '') + '">' + html + '</td>';
   const rows = [];
   const add = (label, fn, keyFn, bestFn, opts) => {
     const keys = sel.map(keyFn);
@@ -644,8 +608,8 @@ function tableHtml(sel, A){
   });
 
   const head = '<thead><tr><th class="rl" scope="col"><span class="sr-only">Hotel</span></th>' + sel.map(h=>{
-    const badges = (h.id === A.pick.id ? '<span class="bd on">Our pick for you</span>' : '') + (h === A.cheap ? '<span class="bd">Cheapest</span>' : '');
-    return '<th scope="col" class="' + (h.id === A.pick.id ? 'pick' : '') + '"><div class="badges">' + badges + '</div><div class="ph"></div>' +
+    const badges = h === A.cheap ? '<span class="bd on">Cheapest</span>' : '';
+    return '<th scope="col"><div class="badges">' + badges + '</div><div class="ph"></div>' +
       '<div class="hn">' + h.name + '</div><div class="ha">' + h.area + '</div>' +
       '<button class="rm" type="button" data-rm="' + h.id + '">Remove</button></th>';
   }).join('') + '</tr></thead>';
@@ -660,7 +624,7 @@ function tableHtml(sel, A){
   body += '<tr><th class="rl" scope="row">Strengths</th>' + sel.map(h=>cell(h, list('good', A.takes[h.id].good))).join('') + '</tr>';
   body += '<tr><th class="rl" scope="row">Watch out for</th>' + sel.map(h=>cell(h, list('watch', A.takes[h.id].watch))).join('') + '</tr>';
   body += '<tr class="last"><th class="rl" scope="row"><span class="sr-only">Choose</span></th>' + sel.map(h=>
-    cell(h, '<button class="btn btn-sm' + (h.id === A.pick.id ? ' btn-primary' : '') + '" type="button" data-choose="' + h.id + '">Choose room &rarr;</button>')).join('') + '</tr>';
+    cell(h, '<button class="btn btn-sm" type="button" data-choose="' + h.id + '">Choose room &rarr;</button>')).join('') + '</tr>';
 
   return '<table class="ct' + (document.getElementById('diffOnly').checked ? ' diff-only' : '') + '">' +
     '<caption class="sr-only">Side-by-side comparison of the selected hotels</caption>' + head + '<tbody>' + body + '</tbody></table>';
@@ -668,11 +632,8 @@ function tableHtml(sel, A){
 
 /* ---- the AI panel ---- */
 const cm = document.getElementById('cm'), mscrim = document.getElementById('mscrim');
-const aiSum = document.getElementById('aiSum'), aiAns = document.getElementById('aiAns'), aiQ = document.getElementById('aiQ');
-let cmpOpen = false, aiToken = 0, ansToken = 0, current = null;
-
-document.getElementById('aiPri').innerHTML = PRIORITIES.map(o=>'<option value="' + o.id + '">' + o.label + '</option>').join('');
-document.getElementById('aiChips').innerHTML = QUESTIONS.map(q=>'<button type="button" class="chip chip-sm" data-q="' + q + '">' + q + '</button>').join('');
+const aiSum = document.getElementById('aiSum');
+let cmpOpen = false, aiToken = 0, current = null;
 
 function answer(q, sel, A){
   const t = q.toLowerCase(), S = A.S, n = sel.length, {cheap, dear} = A;
@@ -713,28 +674,32 @@ function answer(q, sel, A){
   }
   return 'I can only compare using what is on these results: price, star and guest ratings, refund terms, listed facilities and distance from the centre. Try asking about one of those.';
 }
+/* ---- ask about the whole result set (on the results page, not in the modal) ---- */
+const askAns = document.getElementById('askAns'), askQ = document.getElementById('askQ');
+let ansToken = 0;
+document.getElementById('askChips').innerHTML = QUESTIONS.map(q=>'<button type="button" class="chip chip-sm" data-q="' + q + '">' + q + '</button>').join('');
 function ask(q){
   if(!q.trim()) return;
-  const sel = selected.map(byId), A = current || analyse(sel), token = ++ansToken;
-  aiAns.hidden = false;
-  aiAns.innerHTML = '<q>' + TT.esc(q) + '</q><span class="skel"><i></i><i class="s"></i></span>';
+  const sel = HOTELS.slice(), byP = sel.slice().sort((a,b)=>a.total-b.total);
+  const A = {S: stats(sel), cheap: byP[0], dear: byP[byP.length-1]}, token = ++ansToken;
+  askAns.hidden = false;
+  askAns.innerHTML = '<q>' + TT.esc(q) + '</q><span class="skel"><i></i><i class="s"></i></span>';
   setTimeout(()=>{
     if(token !== ansToken) return;
-    aiAns.innerHTML = '<q>' + TT.esc(q) + '</q>' + TT.esc(answer(q, sel, A));
+    askAns.innerHTML = '<q>' + TT.esc(q) + '</q>' + TT.esc(answer(q, sel, A));
   }, 600);
 }
-document.getElementById('aiForm').addEventListener('submit', e=>{ e.preventDefault(); ask(aiQ.value); });
-document.getElementById('aiChips').addEventListener('click', e=>{
+document.getElementById('askForm').addEventListener('submit', e=>{ e.preventDefault(); ask(askQ.value); });
+document.getElementById('askChips').addEventListener('click', e=>{
   const b = e.target.closest('[data-q]'); if(!b) return;
-  aiQ.value = b.dataset.q; ask(b.dataset.q);
+  askQ.value = b.dataset.q; ask(b.dataset.q);
 });
-document.getElementById('aiPri').addEventListener('change', e=>{ priority = e.target.value; refresh(true); });
 document.getElementById('diffOnly').addEventListener('change', e=>{
   const t = document.querySelector('table.ct'); if(t) t.classList.toggle('diff-only', e.target.checked);
 });
 
 /* ---- open / close ---- */
-function refresh(keepAnswer){
+function refresh(){
   const sel = selected.map(byId);
   current = analyse(sel);
   document.getElementById('cmSub').textContent = sel.length + ' hotels · 17–19 Nov 2026 · 2 adults · 1 room';
@@ -742,16 +707,13 @@ function refresh(keepAnswer){
   const keep = document.getElementById('cmBody').scrollTop;
   document.getElementById('ctw').innerHTML = tableHtml(sel, current);
   aiSum.textContent = current.summary;
-  if(!keepAnswer){ aiAns.hidden = true; ansToken++; }
   document.getElementById('cmBody').scrollTop = keep;
 }
 function openCmp(){
   if(selected.length < 2) return;
   cmpOpen = true;
-  aiQ.value = ''; aiAns.hidden = true;
   cm.classList.add('on'); mscrim.classList.add('on');
   document.body.style.overflow = 'hidden';
-  document.getElementById('aiPri').value = priority;
   refresh();
   const token = ++aiToken, text = aiSum.textContent;
   aiSum.innerHTML = '<span class="skel"><i class="l"></i><i></i><i class="s"></i></span>';
@@ -760,7 +722,7 @@ function openCmp(){
 }
 function closeCmp(){
   if(!cmpOpen) return;
-  cmpOpen = false; aiToken++; ansToken++;
+  cmpOpen = false; aiToken++;
   cm.classList.remove('on'); mscrim.classList.remove('on');
   document.body.style.overflow = '';
   document.getElementById('cmpGo').focus({preventScroll:true});
