@@ -164,32 +164,59 @@
   .cm-ft .btn{margin-left:auto;}
 
   /* AI input */
-  .ai{border:1px solid var(--line);background:var(--panel-2);padding:20px 22px;margin:20px 0 20px;}
   .ask{border:1px solid var(--line);background:var(--panel-2);padding:16px 18px 18px;margin-top:18px;}
   .ai-hd{display:flex;align-items:center;gap:9px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-2);margin-bottom:10px;}
   .ai-hd .ic{width:17px;height:17px;}
   .ai-tag{margin-left:6px;border:1px solid var(--line);background:#fff;padding:2px 8px;font-size:.66rem;letter-spacing:.06em;color:var(--ink-3);font-weight:400;text-transform:none;}
-  .ai-sum{margin:0;font-size:1.02rem;line-height:1.55;color:var(--ink);min-height:1.6em;max-width:80ch;}
   .ask input[type=text],.ai input[type=text]{
     width:100%;border:1px solid var(--line);background:#fff;padding:11px 13px;font:inherit;font-size:.92rem;color:var(--ink);
   }
   .ask input[type=text]:focus,.ai input[type=text]:focus{outline:none;border-color:var(--ink);}
   .ai-form{display:flex;gap:8px;}
-  .ai-form button{width:42px;flex:0 0 auto;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;font-size:1rem;}
+  .ai-field{position:relative;flex:1;min-width:0;}
+  .ask .ai-field input[type=text]{padding-right:44px;}
+  .ai-clear{
+    position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:none;
+    cursor:pointer;font-size:1.35rem;line-height:1;color:var(--ink-3);
+  }
+  .ai-clear:hover{color:var(--ink);background:var(--panel);}
+  .ai-clear[hidden]{display:none;}
+  .ai-form > button{width:42px;flex:0 0 auto;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;font-size:1rem;}
   .ai-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
   .ai-chips .chip{font-size:.78rem;padding:6px 12px;}
   .ai-ans{margin-top:14px;font-size:.92rem;line-height:1.55;color:var(--ink-2);background:#fff;border:1px solid var(--line-2);padding:12px 14px;}
   .ai-ans[hidden]{display:none;}
+  .ai-ans.unknown{border-left:3px solid var(--ink-3);}
+  .ai-ans.off{background:var(--panel-2);color:var(--ink-3);}
+  .ans-flag{display:block;width:fit-content;border:1px solid var(--line);background:#fff;padding:2px 8px;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin-bottom:8px;}
+  .ans-act{margin-top:12px;}
+  .ai-ans a.hl{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;}
+  .ai-ans a.hl:hover{background:var(--panel);}
   .ai-ans q{display:block;font-style:normal;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:5px;quotes:none;}
 
-  .ct-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap;}
-  .ct-tools label{display:flex;align-items:center;gap:9px;font-size:.88rem;font-weight:600;cursor:pointer;}
-  .ct-tools input{width:18px;height:18px;margin:0;accent-color:var(--ink);}
-  .ct-tools span{font-size:.84rem;color:var(--ink-3);}
+  .ct thead tr.tools th{
+    position:sticky;top:var(--hb,0px);z-index:3;
+    background:var(--panel);border-right:0;border-bottom:1px solid var(--line-2);
+    padding:9px 16px;font-weight:400;text-transform:none;letter-spacing:0;
+  }
+  .tools-in{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .seg{display:inline-flex;align-items:center;gap:10px;}
+  .seg .lab{margin:0;font-size:.66rem;}
+  .seg-btns{display:inline-flex;border:1px solid var(--ink-3);background:#fff;}
+  .seg-btns button{
+    border:0;background:#fff;color:var(--ink-2);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;
+    padding:6px 13px;
+  }
+  .seg-btns button + button{border-left:1px solid var(--ink-3);}
+  .seg-btns button.on{background:var(--ink);color:#fff;}
+  .seg-btns button:not(.on):hover{background:var(--panel-2);color:var(--ink);}
+  .tools-in .note{font-size:.8rem;color:var(--ink-3);font-weight:400;}
 
-  table.ct{border-collapse:separate;border-spacing:0;width:100%;min-width:620px;}
+  table.ct{border-collapse:separate;border-spacing:0;width:100%;table-layout:fixed;min-width:calc(170px + var(--n,2) * 200px);}
   .ct th,.ct td{padding:12px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line-2);font-size:.92rem;color:var(--ink-2);}
-  .ct thead th{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--ink);padding-top:16px;vertical-align:bottom;}
+  .ct thead th{background:#fff;vertical-align:top;border-bottom:0;}
+  .ct thead tr.hA th{padding-top:16px;padding-bottom:0;}
+  .ct thead tr.hB th{position:sticky;top:0;z-index:3;border-bottom:1px solid var(--ink);padding-top:0;padding-bottom:14px;}
   .ct .rl{
     width:170px;position:sticky;left:0;z-index:2;background:#fff;border-right:1px solid var(--line-2);
     font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);
@@ -203,11 +230,18 @@
   .ct .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;min-height:22px;}
   .ct .bd{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:3px 8px;border:1px solid var(--ink);color:var(--ink);background:#fff;}
   .ct .bd.on{background:var(--ink);color:#fff;}
-  .ct .ph{height:64px;margin-bottom:12px;border:1px solid var(--line-2);}
-  .ct .hn{font-size:1.02rem;font-weight:600;color:var(--ink);line-height:1.25;}
+  .ct .ph{aspect-ratio:2000 / 1103;width:100%;margin-bottom:12px;border:1px solid var(--line-2);}
+  .ct .hn{font-size:1.02rem;font-weight:600;color:var(--ink);line-height:1.25;min-height:2.5em;}
   .ct .ha{font-size:.82rem;color:var(--ink-3);margin-top:3px;font-weight:400;}
-  .ct .rm{margin-top:10px;border:0;background:none;padding:0;font:inherit;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-3);cursor:pointer;}
-  .ct .rm:hover{color:var(--ink);text-decoration:underline;}
+  .ct .phw{position:relative;margin-bottom:12px;}
+  .ct .phw .ph{margin-bottom:0;}
+  .ct .rm{
+    position:absolute;top:8px;right:8px;width:32px;height:32px;padding:0;margin:0;border:1px solid var(--line);
+    background:#fff;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  }
+  .ct .rm .ic{width:16px;height:16px;}
+  .ct .rm:hover{border-color:var(--ink);color:var(--ink);}
+  .ct .hcta{margin-top:12px;width:100%;}
   .ct .tick{color:var(--ink);font-weight:600;}
   .ct .dash{color:var(--line);}
   .ct ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
@@ -246,10 +280,9 @@
     .cm{inset:0;left:0;top:0;transform:none;width:auto;max-height:none;border:0;}
     .cm-hd,.cm-ft{padding-left:16px;padding-right:16px;}
     .cm-body{padding:0 16px 16px;}
-    .ai{padding:16px;}
     .ctw{overflow-x:auto;margin:0 -16px;padding:0 16px;}
-    table.ct{min-width:560px;}
-    .ct thead th{position:static;}
+    table.ct{min-width:calc(112px + var(--n,2) * 180px);}
+    .ct thead th,.ct thead tr.tools th{position:static !important;}
     .ct .rl{width:112px;min-width:112px;font-size:.66rem;}
     .ct th,.ct td{padding:12px 12px;}
   }
@@ -299,7 +332,10 @@
     <div class="ask">
       <div class="ai-hd"><span id="aiSpark2"></span>Ask about these hotels<span class="ai-tag">AI-generated</span></div>
       <form class="ai-form" id="askForm">
-        <input type="text" id="askQ" autocomplete="off" placeholder="e.g. Which is cheapest?" aria-label="Ask a question about these hotels">
+        <div class="ai-field">
+          <input type="text" id="askQ" autocomplete="off" placeholder="Want to know something specific?" aria-label="Ask a question about these hotels">
+          <button type="button" class="ai-clear" id="askClear" aria-label="Clear the question and answer" title="Clear" hidden>&times;</button>
+        </div>
         <button type="submit" aria-label="Ask">&rarr;</button>
       </form>
       <div class="ai-chips" id="askChips"></div>
@@ -332,9 +368,9 @@
     </div>
 
     <p class="hint" style="margin-top:28px;">
-      Hotel comparison &mdash; the existing hotel results page, with a Compare box on each result. Tick two or more and a
-      comparison appears over the map. The summary is generated from what this page already shows (price, stars, refund terms,
-      facilities, distance); prices are from the supplied results.
+      Hotel comparison &mdash; the existing hotel results page, with a Compare box on each result. Tick two or more and Compare
+      opens a side-by-side table in a modal. The AI answers and notes are written from what this page already shows (price, stars,
+      refund terms, facilities, distance); prices are from the supplied results.
     </p>
   </section>
 
@@ -374,18 +410,10 @@
     <button class="cm-x" type="button" id="cmX" aria-label="Close comparison">&times;</button>
   </header>
   <div class="cm-body" id="cmBody">
-    <div class="ai">
-      <div class="ai-hd"><span id="aiSpark"></span>AI summary<span class="ai-tag">AI-generated</span></div>
-      <p class="ai-sum" id="aiSum" aria-live="polite"></p>
-    </div>
-    <div class="ct-tools">
-      <label><input type="checkbox" id="diffOnly">Show differences only</label>
-      <span id="ctNote"></span>
-    </div>
     <div class="ctw" id="ctw"></div>
   </div>
   <footer class="cm-ft">
-    <p class="hint">Prices are for 2 nights, 2 adults, 1 room, and indicative. The AI text uses only the details on the results page.</p>
+    <p class="hint">Prices are for 2 nights, 2 adults, 1 room, and indicative. The TravelTank verdict uses only the details on the results page.</p>
     <button class="btn" type="button" id="cmClose">Close</button>
   </footer>
 </section>
@@ -396,7 +424,6 @@
 document.body.insertAdjacentHTML('afterbegin', TT.navbar('hotel-comparison-table.html'));
 document.getElementById('goBtn').innerHTML = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
 const SPARK = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/></svg>';
-document.getElementById('aiSpark').innerHTML = SPARK;
 document.getElementById('aiSpark2').innerHTML = SPARK;
 document.getElementById('hcTip').innerHTML = SPARK + '<span>Tick <b>Compare</b> on two or more hotels to see them side by side.</span>';
 
@@ -520,15 +547,15 @@ document.getElementById('hideMap').addEventListener('click', ()=>hcMain.classLis
 document.getElementById('showMap').addEventListener('click', ()=>hcMain.classList.remove('nomap'));
 
 /* ---------------- the comparison table ----------------
-   The table is plain data from the cards. The AI parts (summary, strengths and
-   watch-outs, and the answers) are written from those same facts, so each can be traced back. */
+   The table is plain data from the cards. The AI parts (strengths and
+   watch-outs, and the answers on the results page) are written from those same facts, so each can be traced back. */
 const FAC_SHORT = {
   'Wheelchair-accessible':'wheelchair access', 'Car park':'a car park', 'Wi-fi':'Wi-Fi',
   'Airport Shuttle':'an airport shuttle', 'Laundry service':'laundry service',
   'Air conditioning in public areas':'air conditioning in public areas', 'Garden':'a garden'
 };
 const join = a => a.length < 2 ? (a[0]||'') : a.slice(0,-1).join(', ') + ' and ' + a[a.length-1];
-const QUESTIONS = ['Which is cheapest?','Which is closest to the centre?','Which has the best cancellation terms?','Which is best for a family?'];
+const QUESTIONS = ['Which is closest to the centre?','Which has the best cancellation terms?','Which is best for a family?'];
 
 function stats(sel){
   const byPrice = sel.slice().sort((a,b)=>a.total-b.total);
@@ -544,15 +571,6 @@ function stats(sel){
 
 function analyse(sel){
   const n = sel.length, S = stats(sel), {cheap, dear} = S, diff = dear.total - cheap.total;
-  let head;
-  if(n === 2){
-    const sd = dear.stars - cheap.stars;
-    head = cheap.short + ' is ' + money(diff) + ' cheaper than ' + dear.short +
-      (sd > 0 ? ', for ' + (sd === 1 ? 'one star' : sd + ' stars') + ' less.' : sd === 0 ? ', with the same star rating.' : ' and has a higher star rating.');
-  } else {
-    head = cheap.short + ' is cheapest at ' + money(cheap.total) + ' and ' + dear.short + ' the dearest at ' + money(dear.total) + ' — ' + money(diff) + ' apart.';
-  }
-
   const only = h => h.fac.filter(f=>sel.every(o=>o===h || !o.fac.includes(f)));
   const rated = sel.filter(h=>h.ta);
   const takes = {};
@@ -572,7 +590,7 @@ function analyse(sel){
     if(!h.dist) watch.push('Distance from the centre not shown');
     takes[h.id] = {good:good.slice(0,3), watch:watch.slice(0,3)};
   });
-  return {S, cheap, dear, diff, summary: head, takes};
+  return {S, cheap, dear, diff, takes};
 }
 
 /* ---- the table ---- */
@@ -607,43 +625,49 @@ function tableHtml(sel, A){
       html: sel.map(h=>cell(h, h.fac.includes(f) ? '<span class="tick" aria-label="Listed">✓</span>' : '<span class="dash" aria-label="Not listed">—</span>')).join('')};
   });
 
-  const head = '<thead><tr><th class="rl" scope="col"><span class="sr-only">Hotel</span></th>' + sel.map(h=>{
+  const headA = '<tr class="hA"><th class="rl" scope="col"><span class="sr-only">Hotel</span></th>' + sel.map(h=>{
     const badges = h === A.cheap ? '<span class="bd on">Cheapest</span>' : '';
-    return '<th scope="col"><div class="badges">' + badges + '</div><div class="ph"></div>' +
-      '<div class="hn">' + h.name + '</div><div class="ha">' + h.area + '</div>' +
-      '<button class="rm" type="button" data-rm="' + h.id + '">Remove</button></th>';
-  }).join('') + '</tr></thead>';
+    return '<th scope="col"><div class="badges">' + badges + '</div>' +
+      '<div class="phw"><div class="ph"></div><button class="rm" type="button" data-rm="' + h.id + '" aria-label="Remove ' + h.name + ' from the comparison" title="Remove">' + TT.icon('bin') + '</button></div></th>';
+  }).join('') + '</tr>';
+  const headB = '<tr class="hB"><th class="rl" scope="col"></th>' + sel.map(h=>
+    '<th scope="col"><div class="hn">' + h.name + '</div><div class="ha">' + h.area + '</div>' +
+    '<button class="btn btn-sm hcta" type="button" data-choose="' + h.id + '">Choose room &rarr;</button></th>').join('') + '</tr>';
 
   const row = r => '<tr data-same="' + (r.same ? 1 : 0) + '"><th class="rl" scope="row">' + r.label + '</th>' + r.html + '</tr>';
   const sec = (label, same) => '<tr class="sec" data-same="' + (same ? 1 : 0) + '"><th colspan="' + (n + 1) + '" scope="colgroup">' + label + '</th></tr>';
   const list = (cls, items) => '<ul class="' + cls + '">' + (items.length ? items.map(t=>'<li>' + t + '</li>').join('') : '<li class="none">Nothing sets it apart on these results.</li>') + '</ul>';
 
+  const tools = '<tr class="tools"><th colspan="' + (n + 1) + '" scope="colgroup"><div class="tools-in">' +
+    '<div class="seg"><span class="lab">Show</span><div class="seg-btns" role="group" aria-label="Which rows to show">' +
+      '<button type="button" data-diff="0" aria-pressed="' + !diffOnly + '" class="' + (diffOnly ? '' : 'on') + '">All details</button>' +
+      '<button type="button" data-diff="1" aria-pressed="' + diffOnly + '" class="' + (diffOnly ? 'on' : '') + '">Differences only</button>' +
+    '</div></div><span class="note">Best value in each row is in bold</span></div></th></tr>';
   let body = rows.map(row).join('');
-  body += sec('Facilities', facRows.every(r=>r.same)) + facRows.map(row).join('');
-  body += sec(SPARK + 'AI take', false);
+  body += sec(SPARK + 'TravelTank verdict', false);
   body += '<tr><th class="rl" scope="row">Strengths</th>' + sel.map(h=>cell(h, list('good', A.takes[h.id].good))).join('') + '</tr>';
   body += '<tr><th class="rl" scope="row">Watch out for</th>' + sel.map(h=>cell(h, list('watch', A.takes[h.id].watch))).join('') + '</tr>';
+  body += sec('Facilities', facRows.every(r=>r.same)) + facRows.map(row).join('');
   body += '<tr class="last"><th class="rl" scope="row"><span class="sr-only">Choose</span></th>' + sel.map(h=>
     cell(h, '<button class="btn btn-sm" type="button" data-choose="' + h.id + '">Choose room &rarr;</button>')).join('') + '</tr>';
 
-  return '<table class="ct' + (document.getElementById('diffOnly').checked ? ' diff-only' : '') + '">' +
-    '<caption class="sr-only">Side-by-side comparison of the selected hotels</caption>' + head + '<tbody>' + body + '</tbody></table>';
+  return '<table class="ct' + (diffOnly ? ' diff-only' : '') + '" style="--n:' + n + '">' +
+    '<caption class="sr-only">Side-by-side comparison of the selected hotels</caption><thead>' + headA + headB + tools + '</thead><tbody>' + body + '</tbody></table>';
 }
 
 /* ---- the AI panel ---- */
 const cm = document.getElementById('cm'), mscrim = document.getElementById('mscrim');
-const aiSum = document.getElementById('aiSum');
-let cmpOpen = false, aiToken = 0, current = null;
+let cmpOpen = false, current = null;
 
-function answer(q, sel, A){
+function answerKnown(q, sel, A){
   const t = q.toLowerCase(), S = A.S, n = sel.length, {cheap, dear} = A;
   const noD = sel.filter(h=>!h.dist);
   if(/famil|kid|child|toddler|baby/.test(t))
     return 'These results do not show room types, family rooms or children’s facilities, so I cannot rank them for a family. What they do show is the same on every card: ' +
       join((sel[0].fac.filter(f=>sel.every(h=>h.fac.includes(f)))).map(f=>FAC_SHORT[f] || f.toLowerCase())) + '. Check room sizes and bed types in the next step.';
-  if(/worth|more|pay|difference|value|extra/.test(t)){
+  if(/worth|pay(ing)? more|difference|value|extra/.test(t)){
     const sd = dear.stars - cheap.stars;
-    return 'Paying ' + money(dear.total - cheap.total) + ' more for ' + dear.short + ' gets you ' +
+    return 'Paying ' + money(dear.total - cheap.total) + ' more for ' + dear.short + ' than for ' + cheap.short + ' gets you ' +
       (sd > 0 ? (sd === 1 ? 'one more star' : sd + ' more stars') : sd === 0 ? 'the same star rating' : 'a lower star rating') +
       (dear.refundable && !cheap.refundable ? ' and a refundable rate' : !dear.refundable && cheap.refundable ? ' but not the refundable rate ' + cheap.short + ' has' : '') +
       '. The listed facilities ' + (JSON.stringify(dear.fac) === JSON.stringify(cheap.fac) ? 'are identical' : 'differ only slightly') +
@@ -663,7 +687,7 @@ function answer(q, sel, A){
   }
   if(/cheap|price|budget|afford|cost|save/.test(t))
     return cheap.short + ' is cheapest at ' + money(cheap.total) + ' for ' + NIGHTS + ' nights (' + money(Math.round(cheap.total/NIGHTS)) + ' a night). ' + dear.short + ' is the dearest at ' + money(dear.total) + '.';
-  if(/star|luxur|comfort|best|top|quality|rating|review/.test(t)){
+  if(/star|luxur|comfort|quality|rating|rated|review/.test(t)){
     const top = sel.filter(h=>h.stars === S.maxStars);
     return 'By star rating, ' + join(top.map(h=>h.short)) + (top.length > 1 ? ' lead' : ' leads') + ' at ' + S.maxStars + '-star.' +
       (S.maxTa ? ' Guest ratings are only shown for ' + join(sel.filter(h=>h.ta).map(h=>h.short + ' (' + h.ta + ' out of 5)')) + '.' : ' No guest ratings are shown for these hotels.');
@@ -672,41 +696,121 @@ function answer(q, sel, A){
     const sh = sel.filter(h=>h.fac.includes('Airport Shuttle'));
     return (sh.length === n ? 'All of them list an airport shuttle' : join(sh.map(h=>h.short)) + ' list an airport shuttle') + '. The results do not show how far each is from the airport.';
   }
-  return 'I can only compare using what is on these results: price, star and guest ratings, refund terms, listed facilities and distance from the centre. Try asking about one of those.';
+  return null;
+}
+
+/* What the page can actually speak to — anything with none of these words is not about the hotels. */
+const HOTEL_WORDS = /hotel|room|stay|book|lagos|nigeria|eko|continental|crown|ibis|park inn|price|cost|cheap|expens|afford|budget|deal|star|rating|rated|review|refund|cancel|centre|center|distance|location|walk|facilit|amenit|breakfast|pool|gym|spa\b|wi-?fi|internet|park|shuttle|airport|laundry|garden|wheelchair|access|famil|kid|child|trip|travel|holiday|flight|visa|beach|view|safe|quiet|noise|staff|restaurant|taxi|transfer|air.?con|worth|paying more|pay more|which (one|hotel)|recommend/;
+const FAC_Q = [
+  [/wi-?fi|internet/, 'Wi-fi'], [/park/, 'Car park'], [/shuttle/, 'Airport Shuttle'], [/laundry/, 'Laundry service'],
+  [/garden/, 'Garden'], [/wheelchair|accessib|disabled|mobility/, 'Wheelchair-accessible'], [/air.?con|a\/c|cooling/, 'Air conditioning in public areas']
+];
+
+/* Three outcomes: an answer, "the results don't say", or "that's not what this is for". */
+function reply(q, sel, A){
+  const t = q.toLowerCase(), S = A.S, {cheap, dear} = A;
+  if(!HOTEL_WORDS.test(t)) return {kind:'off',
+    text:'That is outside what I can help with here. I can answer questions about these hotels and your stay in Lagos — try price, cancellation, location or facilities.'};
+
+  const fq = FAC_Q.find(([re])=>re.test(t));
+  if(fq){
+    const label = fq[1], has = sel.filter(h=>h.fac.includes(label)), no = sel.filter(h=>!h.fac.includes(label)), nm = FAC_SHORT[label] || label.toLowerCase();
+    return {kind:'ok', text: (no.length === 0 ? 'All of these list ' + nm + '.' :
+      'Only ' + join(has.map(h=>h.short)) + ' ' + (has.length > 1 ? 'list' : 'lists') + ' ' + nm + '; ' + join(no.map(h=>h.short)) + ' ' + (no.length > 1 ? 'do not' : 'does not') + '.') +
+      ' Not being listed does not mean it is not there.'};
+  }
+
+  const known = answerKnown(q, sel, A);
+  if(known) return {kind:'ok', text:known};
+
+  if(/recommend|which (one|hotel)|should i (pick|choose|book)|which is best/.test(t)){
+    const top = sel.filter(h=>h.stars === S.maxStars), ref = sel.filter(h=>h.refundable);
+    return {kind:'ok', text:'It depends what matters most. ' + cheap.short + ' is the cheapest at ' + money(cheap.total) + '; ' +
+      join(top.map(h=>h.short)) + (top.length > 1 ? ' lead' : ' leads') + ' on stars at ' + S.maxStars + '-star' +
+      (ref.length && !S.allRef ? '; ' + join(ref.map(h=>h.short)) + ' ' + (ref.length > 1 ? 'are' : 'is') + ' the only refundable option' : '') + '. Tick two or more to compare them side by side.'};
+  }
+
+  return {kind:'unknown',
+    text:'These results do not say. All they show for each hotel is the price, star and guest ratings, refund terms, listed facilities and distance from the centre. A Travel Shark can find out for you.'};
 }
 /* ---- ask about the whole result set (on the results page, not in the modal) ---- */
-const askAns = document.getElementById('askAns'), askQ = document.getElementById('askQ');
+const askAns = document.getElementById('askAns'), askQ = document.getElementById('askQ'), askClear = document.getElementById('askClear');
 let ansToken = 0;
 document.getElementById('askChips').innerHTML = QUESTIONS.map(q=>'<button type="button" class="chip chip-sm" data-q="' + q + '">' + q + '</button>').join('');
+/* Any hotel named in an answer becomes a link down to its card. */
+const NAME_RE = new RegExp(HOTELS.map(h=>h.short).sort((a,b)=>b.length-a.length).join('|'), 'g');
+function linkHotels(html){
+  return html.replace(NAME_RE, n=>{
+    const h = HOTELS.find(x=>x.short === n);
+    return '<a class="hl" href="#hc-' + h.id + '" data-jump="' + h.id + '">' + n + '</a>';
+  });
+}
+askAns.addEventListener('click', e=>{
+  const a = e.target.closest('[data-jump]'); if(!a) return;
+  e.preventDefault(); jumpTo(a.dataset.jump);
+});
 function ask(q){
   if(!q.trim()) return;
   const sel = HOTELS.slice(), byP = sel.slice().sort((a,b)=>a.total-b.total);
   const A = {S: stats(sel), cheap: byP[0], dear: byP[byP.length-1]}, token = ++ansToken;
   askAns.hidden = false;
+  askClear.hidden = false;
+  askAns.className = 'ai-ans';
   askAns.innerHTML = '<q>' + TT.esc(q) + '</q><span class="skel"><i></i><i class="s"></i></span>';
   setTimeout(()=>{
     if(token !== ansToken) return;
-    askAns.innerHTML = '<q>' + TT.esc(q) + '</q>' + TT.esc(answer(q, sel, A));
+    const r = reply(q, sel, A);
+    askAns.className = 'ai-ans' + (r.kind === 'ok' ? '' : ' ' + r.kind);
+    askAns.innerHTML = '<q>' + TT.esc(q) + '</q>' +
+      (r.kind === 'unknown' ? '<span class="ans-flag">Can’t answer from these results</span>' : r.kind === 'off' ? '<span class="ans-flag">Not about these hotels</span>' : '') +
+      linkHotels(TT.esc(r.text)) +
+      (r.kind === 'unknown' ? '<div class="ans-act"><button type="button" class="btn btn-sm" data-shark>Ask a Travel Shark &rarr;</button></div>' : '');
   }, 600);
 }
+/* One click puts the box back to empty, ready for the next question. */
+function clearAsk(){
+  ansToken++;
+  askAns.hidden = true; askAns.className = 'ai-ans'; askAns.innerHTML = '';
+  askQ.value = ''; askClear.hidden = true; askQ.focus();
+}
+askClear.addEventListener('click', clearAsk);
+askQ.addEventListener('keydown', e=>{ if(e.key === 'Escape' && !askClear.hidden){ e.preventDefault(); clearAsk(); } });
+askAns.addEventListener('click', e=>{
+  const b = e.target.closest('[data-shark]'); if(!b) return;
+  b.disabled = true; b.textContent = 'Sent — a Travel Shark will be in touch';
+});
 document.getElementById('askForm').addEventListener('submit', e=>{ e.preventDefault(); ask(askQ.value); });
 document.getElementById('askChips').addEventListener('click', e=>{
   const b = e.target.closest('[data-q]'); if(!b) return;
   askQ.value = b.dataset.q; ask(b.dataset.q);
 });
-document.getElementById('diffOnly').addEventListener('change', e=>{
-  const t = document.querySelector('table.ct'); if(t) t.classList.toggle('diff-only', e.target.checked);
+let diffOnly = false;
+document.getElementById('ctw').addEventListener('click', e=>{
+  const b = e.target.closest('[data-diff]'); if(!b) return;
+  diffOnly = b.dataset.diff === '1';
+  const t = document.querySelector('table.ct');
+  t.classList.toggle('diff-only', diffOnly);
+  t.querySelectorAll('.seg-btns button').forEach(x=>{
+    const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on);
+  });
 });
+
+/* the toggle band sticks directly under the names row, whatever height that row is */
+function fitHead(){
+  const t = document.querySelector('table.ct'); if(!t) return;
+  const b = t.querySelector('tr.hB'); if(b) t.style.setProperty('--hb', b.getBoundingClientRect().height + 'px');
+}
+window.addEventListener('resize', fitHead);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitHead);
 
 /* ---- open / close ---- */
 function refresh(){
   const sel = selected.map(byId);
   current = analyse(sel);
   document.getElementById('cmSub').textContent = sel.length + ' hotels · 17–19 Nov 2026 · 2 adults · 1 room';
-  document.getElementById('ctNote').textContent = 'Best value in each row is in bold';
   const keep = document.getElementById('cmBody').scrollTop;
   document.getElementById('ctw').innerHTML = tableHtml(sel, current);
-  aiSum.textContent = current.summary;
+  fitHead();
   document.getElementById('cmBody').scrollTop = keep;
 }
 function openCmp(){
@@ -715,14 +819,11 @@ function openCmp(){
   cm.classList.add('on'); mscrim.classList.add('on');
   document.body.style.overflow = 'hidden';
   refresh();
-  const token = ++aiToken, text = aiSum.textContent;
-  aiSum.innerHTML = '<span class="skel"><i class="l"></i><i></i><i class="s"></i></span>';
-  setTimeout(()=>{ if(token === aiToken && cmpOpen) aiSum.textContent = text; }, 700);
   document.getElementById('cmTitle').focus({preventScroll:true});
 }
 function closeCmp(){
   if(!cmpOpen) return;
-  cmpOpen = false; aiToken++;
+  cmpOpen = false;
   cm.classList.remove('on'); mscrim.classList.remove('on');
   document.body.style.overflow = '';
   document.getElementById('cmpGo').focus({preventScroll:true});
