@@ -964,6 +964,28 @@
     resize:vertical;min-height:64px;outline:none;color:var(--ink);
   }
   .modal-note textarea:focus{border-color:var(--ink-3);}
+  .shark-contact{margin:22px 0 0;padding-top:20px;border-top:1px solid var(--line-2);display:grid;gap:16px;}
+  .shark-contact .lab{margin:0;}
+  .shark-contact .dfield input{width:100%;min-width:0;}
+  .shark-contact .dfield input.bad{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);}
+  .phone{display:flex;gap:8px;}
+  .phone input{flex:1;}
+  .cc{position:relative;flex:0 0 auto;border:1px solid var(--line);background:#fff;min-width:104px;}
+  .cc:focus-within{border-color:var(--ink);}
+  .cc-show{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;font-size:.92rem;color:var(--ink);white-space:nowrap;pointer-events:none;}
+  .cc-show::after{content:'';width:6px;height:6px;border-right:1.5px solid var(--ink-3);border-bottom:1.5px solid var(--ink-3);transform:rotate(45deg) translateY(-2px);}
+  .cc select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font:inherit;border:0;}
+  .cc[hidden]{display:none;}
+  .via{display:flex;gap:2px;}
+  .via button{
+    flex:1;border:1px solid var(--line);background:#fff;padding:11px 16px;cursor:pointer;font:inherit;font-size:.9rem;color:var(--ink-2);
+  }
+  .via button:hover{border-color:var(--ink-3);color:var(--ink);}
+  .via button[aria-checked="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600;}
+  .fhint{font-size:.78rem;color:var(--ink-3);}
+  .ferr{font-size:.82rem;color:var(--ink);font-weight:600;}
+  .ferr::before{content:'! ';font-weight:700;}
+  .ferr[hidden]{display:none;}
   .modal-ft{display:flex;align-items:center;gap:10px;padding:20px 26px 24px;}
   .modal-ft .spacer{flex:1;}
 
@@ -1048,6 +1070,35 @@
     <div class="modal-note">
       <span class="lab">Anything else?</span>
       <textarea id="sharkNote" placeholder="Tell them anything that did not fit the questions…" style="margin-top:8px;"></textarea>
+    </div>
+
+    <div class="shark-contact">
+      <span class="lab">How can they reach you?</span>
+      <div class="dfield">
+        <label class="dl" for="sharkName">Your name</label>
+        <input type="text" id="sharkName" autocomplete="name" placeholder="First name is fine">
+        <div class="ferr" id="errName" hidden></div>
+      </div>
+      <div class="dfield">
+        <span class="dl" id="lblVia">Preferred way to be contacted</span>
+        <div class="via" role="radiogroup" aria-labelledby="lblVia">
+          <button type="button" role="radio" aria-checked="true" data-via="whatsapp">WhatsApp</button>
+          <button type="button" role="radio" aria-checked="false" data-via="email">Email</button>
+        </div>
+        <div class="ferr" id="errVia" hidden></div>
+      </div>
+      <div class="dfield" id="contactWrap">
+        <label class="dl" for="sharkContact" id="lblContact"></label>
+        <div class="phone">
+          <div class="cc" id="ccWrap">
+            <span class="cc-show" id="ccShow" aria-hidden="true"></span>
+            <select id="sharkCc" aria-label="Country code"></select>
+          </div>
+          <input type="text" id="sharkContact">
+        </div>
+        <div class="fhint" id="hintContact"></div>
+        <div class="ferr" id="errContact" hidden></div>
+      </div>
     </div>
   </div>
   <div class="modal-ft">
@@ -2386,8 +2437,70 @@ function renderIncluded(){
     'They get everything you have done here, so you do not have to repeat yourself.<br>' +
     'Already with them: ' + list;
 }
+/* ---- contact details: name, plus email or WhatsApp depending on the choice ---- */
+const shName = document.getElementById('sharkName'), shContact = document.getElementById('sharkContact');
+const shWrap = document.getElementById('contactWrap');
+let shVia = null;
+const COUNTRIES = [
+  ['NG','Nigeria','+234','🇳🇬'],['DZ','Algeria','+213','🇩🇿'],['CA','Canada','+1','🇨🇦'],['EG','Egypt','+20','🇪🇬'],['FR','France','+33','🇫🇷'],
+  ['DE','Germany','+49','🇩🇪'],['GH','Ghana','+233','🇬🇭'],['IN','India','+91','🇮🇳'],['IE','Ireland','+353','🇮🇪'],['KE','Kenya','+254','🇰🇪'],
+  ['MA','Morocco','+212','🇲🇦'],['RW','Rwanda','+250','🇷🇼'],['SN','Senegal','+221','🇸🇳'],['ZA','South Africa','+27','🇿🇦'],
+  ['AE','United Arab Emirates','+971','🇦🇪'],['GB','United Kingdom','+44','🇬🇧'],['US','United States','+1','🇺🇸']
+];
+const shCc = document.getElementById('sharkCc'), ccShow = document.getElementById('ccShow'), ccWrap = document.getElementById('ccWrap');
+shCc.innerHTML = COUNTRIES.map(c=>'<option value="' + c[0] + '">' + c[3] + ' ' + c[1] + ' (' + c[2] + ')</option>').join('');
+const ccOf = () => COUNTRIES.find(c=>c[0] === shCc.value);
+function paintCc(){ const c = ccOf(); ccShow.textContent = c[3] + '  ' + c[2]; }
+shCc.addEventListener('change', ()=>{ paintCc(); shContact.focus(); });
+const VIA = {
+  email:    {label:'Your email address', ph:'name@example.com', type:'email', inputmode:'email', ac:'email', hint:'We will only use it to reply about this trip.'},
+  whatsapp: {label:'Your WhatsApp number', ph:'801 234 5678', type:'tel', inputmode:'tel', ac:'tel-national', hint:'We will message you on this number. No need to add the country code.'}
+};
+function fieldErr(inputEl, errId, msg){
+  const e = document.getElementById(errId);
+  e.hidden = !msg; e.textContent = msg || '';
+  if(inputEl) { inputEl.classList.toggle('bad', !!msg); inputEl.setAttribute('aria-invalid', !!msg); }
+}
+const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+const natDigits = v => v.replace(/[\s\-().]/g,'').replace(/^0+/,'');
+const phoneOk = v => { const d = v.trim().replace(/[\s\-().]/g,''); return d.startsWith('+') ? /^\+\d{7,15}$/.test(d) : /^\d{6,12}$/.test(natDigits(v)); };
+const fullPhone = v => { const d = v.trim(); return d.startsWith('+') ? d : ccOf()[2] + ' ' + natDigits(d); };
+function checkName(){ const ok = shName.value.trim().length > 0; fieldErr(shName,'errName', ok ? '' : 'Tell them what to call you.'); return ok; }
+function checkVia(){ const ok = !!shVia; fieldErr(null,'errVia', ok ? '' : 'Choose how you would like to be contacted.'); return ok; }
+function checkContact(){
+  if(!shVia) return false;
+  const v = shContact.value.trim();
+  const ok = shVia === 'email' ? emailOk(v) : phoneOk(v);
+  fieldErr(shContact,'errContact', ok ? '' : (!v ? (shVia === 'email' ? 'Enter your email address.' : 'Enter your WhatsApp number.')
+    : (shVia === 'email' ? 'That does not look like an email address.' : 'That does not look like a phone number.')));
+  return ok;
+}
+function setVia(v, quiet){
+  const changed = shVia !== v; shVia = v;
+  document.querySelectorAll('.via [data-via]').forEach(b=>b.setAttribute('aria-checked', b.dataset.via === v));
+  const c = VIA[v];
+  shWrap.hidden = false; ccWrap.hidden = v !== 'whatsapp';
+  document.getElementById('lblContact').textContent = c.label;
+  shContact.placeholder = c.ph; shContact.type = c.type; shContact.inputMode = c.inputmode; shContact.autocomplete = c.ac;
+  document.getElementById('hintContact').textContent = c.hint;
+  if(changed) shContact.value = '';
+  fieldErr(shContact,'errContact',''); fieldErr(null,'errVia','');
+  if(!quiet) shContact.focus();
+}
+document.querySelector('.via').addEventListener('click', e=>{ const b = e.target.closest('[data-via]'); if(b) setVia(b.dataset.via); });
+shName.addEventListener('blur', ()=>{ if(shName.value) checkName(); });
+shName.addEventListener('input', ()=>{ if(!document.getElementById('errName').hidden) checkName(); });
+shContact.addEventListener('blur', ()=>{ if(shContact.value) checkContact(); });
+shContact.addEventListener('input', ()=>{ if(!document.getElementById('errContact').hidden) checkContact(); });
+function resetContact(){
+  shName.value = ''; shContact.value = ''; shVia = null; shCc.value = 'NG'; paintCc();
+  setVia('whatsapp', true);                       // WhatsApp is the default
+  fieldErr(shName,'errName',''); fieldErr(null,'errVia',''); fieldErr(shContact,'errContact','');
+}
+
 function openShark(){
   sharkPicked = new Set();
+  resetContact();
   drawShark();
   mscrim.classList.add('on');
   sharkModal.classList.add('on');
@@ -2412,8 +2525,14 @@ function drawShark(){
 document.getElementById('sharkBtn').addEventListener('click', openShark);
 document.getElementById('sharkCancel').addEventListener('click', closeShark);
 document.getElementById('sharkSend').addEventListener('click', ()=>{
+  const nameOk = checkName(), viaOk = checkVia(), contactOk = viaOk ? checkContact() : false;
+  if(!(nameOk && viaOk && contactOk)){
+    (!nameOk ? shName : !viaOk ? document.querySelector('.via [data-via]') : shContact).focus();
+    return;
+  }
   const picks = [...sharkPicked];
   const note = document.getElementById('sharkNote').value.trim();
+  const who = shName.value.trim(), via = shVia, how = via === 'whatsapp' ? fullPhone(shContact.value) : shContact.value.trim();
   closeShark();
   const h = document.querySelector('.handoff');
   h.innerHTML =
@@ -2422,7 +2541,7 @@ document.getElementById('sharkSend').addEventListener('click', ()=>{
       (picks.length ? ', plus that you want help with ' + TT.esc(picks.join(', ').toLowerCase()) : '') +
       (note ? ' — and your note.' : '.') +
     '</p>' +
-    '<div class="incl">Expect a reply the same working day. Keep browsing in the meantime — anything else you change gets passed on too.</div>';
+    '<div class="incl">Thanks, ' + TT.esc(who) + '. Expect a reply by ' + (via === 'email' ? 'email' : 'WhatsApp') + ' to <b>' + TT.esc(how) + '</b> the same working day.</div>';
   h.scrollIntoView({behavior:'smooth', block:'center'});
 });
 
