@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="cache-control" content="no-cache">
 <title>Results v2 — Here's where we'd send you · TravelTank Inspiration</title>
-<link rel="stylesheet" href="assets/tt.css?v=97">
+<link rel="stylesheet" href="assets/tt.css?v=98">
 <style>
   .top-actions{display:flex;justify-content:space-between;padding:26px 0 0;gap:12px;}
   .shell{padding-bottom:80px;}
@@ -520,6 +520,12 @@
   }
   .srow .sn{font-size:1.05rem;font-weight:600;color:var(--ink);}
   .srow .sd{font-size:.94rem;color:var(--ink-3);margin-top:6px;line-height:1.6;max-width:62ch;}
+  .srow .sd.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .srow .smore{
+    margin-top:6px;border:0;background:none;padding:0;cursor:pointer;font:inherit;font-size:.84rem;font-weight:600;
+    color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;
+  }
+  .srow .smore:hover{color:var(--ink);}
   .more-btn{
     background:none;border:1px solid var(--line);padding:11px 20px;cursor:pointer;
     font:inherit;font-size:.85rem;font-weight:600;color:var(--ink-2);
@@ -1246,8 +1252,8 @@
   <div class="cmp-body"><div id="cmpIn"></div></div>
 </section>
 
-<script src="assets/data.js?v=97"></script>
-<script src="assets/core.js?v=97"></script>
+<script src="assets/data.js?v=98"></script>
+<script src="assets/core.js?v=98"></script>
 <script>
 TT.mount('results-v2.html');
 
@@ -1908,7 +1914,8 @@ function sightsBlock(d, st){
       '<li class="srow">' +
         '<div class="shot ph' + (i%2 ? ' ph-sm' : '') + '"><span class="no">' + (i+1) + '</span></div>' +
         '<div><div class="sn">' + TT.esc(x.n) + '</div>' +
-          '<div class="sd">' + TT.esc(x.d) + '</div></div>' +
+          '<div class="sd' + (st.sightOpen && st.sightOpen[i] ? '' : ' clamp') + '">' + TT.esc(x.d) + '</div>' +
+          '<button type="button" class="smore" data-smore="' + i + '">' + (st.sightOpen && st.sightOpen[i] ? 'Read less' : 'Read more') + '</button></div>' +
       '</li>').join('') + '</ul>' +
     (d.sights.length > 3
       ? '<button type="button" class="more-btn" data-moresights>' +
@@ -2242,6 +2249,14 @@ function wireSheet(d, st, nights){
       hm.addEventListener('click', ()=>{ st.intro = !st.intro; drawSheet(); });
     }
   }
+
+  /* A description only earns a Read more when it is actually cut off — measure, like the hotel intro. */
+  inEl.querySelectorAll('[data-smore]').forEach(btn=>{
+    const i = +btn.dataset.smore, sd = btn.previousElementSibling;
+    const open = !!(st.sightOpen && st.sightOpen[i]);
+    if(!open && sd.scrollHeight <= sd.clientHeight + 1){ sd.classList.remove('clamp'); btn.remove(); return; }
+    btn.addEventListener('click', ()=>{ st.sightOpen = st.sightOpen || {}; st.sightOpen[i] = !open; drawSheet(); });
+  });
 
   const ms = inEl.querySelector('[data-moresights]');
   if(ms) ms.addEventListener('click', ()=>{ st.allSights = !st.allSights; drawSheet(); });
